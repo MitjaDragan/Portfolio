@@ -4,7 +4,6 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
   const [position, setPosition] = useState(initialPosition);
   const draggingRef = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
-  const positionRef = useRef(position);
   const imgRef = useRef(null);
 
   const handleMouseDown = (e) => {
@@ -31,7 +30,7 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
     newX = Math.max(0, Math.min(newX, parentRect.width - imgRef.current.clientWidth));
     newY = Math.max(0, Math.min(newY, parentRect.height - imgRef.current.clientHeight));
 
-    positionRef.current = { x: newX, y: newY };
+    setPosition({ x: newX, y: newY });
 
     requestAnimationFrame(() => {
       imgRef.current.style.left = `${newX}px`;
@@ -42,7 +41,6 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
   const handleMouseUp = () => {
     draggingRef.current = false;
     imgRef.current.style.pointerEvents = 'auto';
-    setPosition(positionRef.current);
   };
 
   useEffect(() => {
@@ -79,8 +77,6 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
         top: `${position.y}px`,
         cursor: draggingRef.current ? 'grabbing' : 'grab',
         userSelect: 'none',
-        width: '20%',  // Ensure the image uses its natural width
-        height: '20%', // Ensure the image uses its natural height
       }}
     />
   );
