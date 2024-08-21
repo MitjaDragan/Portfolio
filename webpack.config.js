@@ -20,6 +20,10 @@ module.exports = {
         test: /\.css$/i,  // This rule handles CSS files
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.(gif|svg|jpg|png)$/,
+        loader: "file-loader",
+      }
     ],
   },
   resolve: {
@@ -27,7 +31,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './public/index.html',
     }),
   ],
   devServer: {
