@@ -17,14 +17,92 @@ import D2 from '../assets/images/Level1/D2.png';
 import D3 from '../assets/images/Level1/D3.png';
 import D4 from '../assets/images/Level1/D4.png';
 
-const imageMap = [A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4];
+const imageMap = [
+  { key: 'A1', src: A1, correctPosition: { x: 600, y: 100 } },
+  { key: 'A2', src: A2, correctPosition: { x: 676.1, y: 100 } },
+  { key: 'A3', src: A3, correctPosition: { x: 727.5, y: 102 } },
+  { key: 'A4', src: A4, correctPosition: { x: 831, y: 102 } },
+  { key: 'B1', src: B1, correctPosition: { x: 600, y: 150 } },
+  { key: 'B2', src: B2, correctPosition: { x: 651, y: 178 } },
+  { key: 'B3', src: B3, correctPosition: { x: 754.2, y: 151 } },
+  { key: 'B4', src: B4, correctPosition: { x: 805.3, y: 177 } },
+  { key: 'C1', src: C1, correctPosition: { x: 602, y: 255.5 } },
+  { key: 'C2', src: C2, correctPosition: { x: 677, y: 228.7 } },
+  { key: 'C3', src: C3, correctPosition: { x: 728, y: 254.7 } },
+  { key: 'C4', src: C4, correctPosition: { x: 830.5, y: 228 } },
+  { key: 'D1', src: D1, correctPosition: { x: 602, y: 305.5 } },
+  { key: 'D2', src: D2, correctPosition: { x: 651.5, y: 331 } },
+  { key: 'D3', src: D3, correctPosition: { x: 754.5, y: 305.6 } },
+  { key: 'D4', src: D4, correctPosition: { x: 805, y: 331 } },
+];
+
+const calculateRelativePositions = (imageMap) => {
+  const relativePositions = {};
+
+  imageMap.forEach(img1 => {
+    relativePositions[img1.key] = {};
+
+    imageMap.forEach(img2 => {
+      if (img1.key !== img2.key) {
+        relativePositions[img1.key][img2.key] = {
+          x: img2.correctPosition.x - img1.correctPosition.x,
+          y: img2.correctPosition.y - img1.correctPosition.y,
+        };
+      }
+    });
+  });
+
+  return relativePositions;
+};
+
+const relativePositions = calculateRelativePositions(imageMap);
+
+const getRandomPosition = () => {
+  const x = Math.floor(Math.random() * 400); // Random within the left area
+  const y = Math.floor(Math.random() * 400); // Random within the container height
+  return { x, y };
+};
 
 const DroppableArea = () => {
+  const [positions, setPositions] = useState(
+    imageMap.reduce((acc, img) => {
+      acc[img.key] = getRandomPosition();
+      return acc;
+    }, {})
+  );
 
-  const getRandomPosition = () => {
-    const x = Math.floor(Math.random() * 400); // Random within the left area
-    const y = Math.floor(Math.random() * 400); // Random within the container height
-    return { x, y };
+  const SNAP_THRESHOLD = 30;
+
+  const handlePositionChange = (key, newPosition) => {
+    setPositions(prevPositions => {
+      let snapped = false;
+      let newPositions = { ...prevPositions };
+
+      for (const otherKey in prevPositions) {
+        if (otherKey !== key) {
+          const expectedPosition = {
+            x: prevPositions[otherKey].x + relativePositions[otherKey][key].x,
+            y: prevPositions[otherKey].y + relativePositions[otherKey][key].y,
+          };
+
+          const distanceX = Math.abs(newPosition.x - expectedPosition.x);
+          const distanceY = Math.abs(newPosition.y - expectedPosition.y);
+
+          if (distanceX <= SNAP_THRESHOLD && distanceY <= SNAP_THRESHOLD) {
+            console.log("Lock");
+            newPositions[key] = expectedPosition;
+            snapped = true;
+            break;
+          }
+        }
+      }
+
+      if (!snapped) {
+        newPositions[key] = newPosition;
+      }
+
+      return newPositions;
+    });
   };
 
   return (
@@ -38,13 +116,14 @@ const DroppableArea = () => {
         overflow: 'hidden',
       }}
     >
-
-      {imageMap.map((key) => (
+      {imageMap.map(({ key, src, correctPosition }) => (
         <DraggableImage
-          key={String(key)}
-          src={key}
-          alt={`Puzzle Piece ${String(key)}`}
-          initialPosition={getRandomPosition()}
+          key={key}
+          src={src}
+          alt={`Puzzle Piece ${key}`}
+          initialPosition={positions[key]} // Start in the current random position
+          externalPosition={positions[key]} // Allow external updates to position
+          onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
         />
       ))}
     </div>

@@ -1,10 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const DraggableImage = ({ src, alt, initialPosition }) => {
+const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalPosition }) => {
   const [position, setPosition] = useState(initialPosition);
   const draggingRef = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const imgRef = useRef(null);
+
+  useEffect(() => {
+    if (externalPosition) {
+      setPosition(externalPosition); // Update the position when externalPosition changes
+    }
+  }, [externalPosition]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -41,6 +47,10 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
   const handleMouseUp = () => {
     draggingRef.current = false;
     imgRef.current.style.pointerEvents = 'auto';
+
+    if (onPositionChange) {
+      onPositionChange(position);  // Notify parent of the new position
+    }
   };
 
   useEffect(() => {
@@ -63,7 +73,7 @@ const DraggableImage = ({ src, alt, initialPosition }) => {
       document.removeEventListener('mousemove', handleDocumentMouseMove);
       document.removeEventListener('mouseup', handleDocumentMouseUp);
     };
-  }, []);
+  }, [position]);
 
   return (
     <img

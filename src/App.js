@@ -42,7 +42,6 @@ function App() {
         <DraggableImage src={D2} alt="Puzzle Piece D2" />
         <DraggableImage src={D3} alt="Puzzle Piece D3" />
         <DraggableImage src={D4} alt="Puzzle Piece D4" />
-        {/* Add more DraggableImage components as needed */}
       </DroppableArea>
     </div>
   );
