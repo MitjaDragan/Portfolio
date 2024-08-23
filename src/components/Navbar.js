@@ -50,19 +50,22 @@ function Navbar() {
                     <li className="nav-item">
                       <a className="nav-link mx-2" href="#!"><i className="fas fa-heart pe-2"></i>Certificates</a>
                     </li>
-                    <li className="nav-item ms-3">
-                      <a className="btn btn-black btn-rounded" href="#!">Hire me</a>
-                    </li>
+
                     <li className="nav-item ms-3">
                       <button onClick={toggleTheme} className="theme-toggle-btn">
-                          <img
-                              src={theme === 'dark' ? SunIcon : MoonIcon}
-                              alt="Toggle Button"
-                              height="30"
-                              className={transitioning ? 'fade-out' : 'fade-in'}
-                          />
+                        <img
+                            src={theme === 'dark' ? SunIcon : MoonIcon}
+                            alt="Toggle Button"
+                            height="30"
+                            className={transitioning ? 'fade-out' : 'fade-in'}
+                        />
                       </button>
-                  </li>
+                    </li>
+                    <li className="nav-item ms-3">
+                      <button className={`btn btn-rounded ${theme === 'dark' ? 'btn-dark-theme' : 'btn-light-theme'}`}>
+                          Hire me
+                      </button>
+                    </li>
                   </ul>                  
                 </div>
             </div>
