@@ -33,7 +33,7 @@ const imageMap = [
   { key: 'D1', src: D1, correctPosition: { x: 602, y: 305.5 } },
   { key: 'D2', src: D2, correctPosition: { x: 651.5, y: 331 } },
   { key: 'D3', src: D3, correctPosition: { x: 754.5, y: 305.6 } },
-  { key: 'D4', src: D4, correctPosition: { x: 805, y: 331 } },
+  { key: 'D4', src: D4, correctPosition: { x: 805.1, y: 331 } },
 ];
 
 const calculateRelativePositions = (imageMap) => {
@@ -121,7 +121,7 @@ const DroppableArea = () => {
           key={key}
           src={src}
           alt={`Puzzle Piece ${key}`}
-          initialPosition={positions[key]} // Start in the current random position
+          initialPosition={positions[key]} // Start in the current random position correctPosition / positions[key]
           externalPosition={positions[key]} // Allow external updates to position
           onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
         />
