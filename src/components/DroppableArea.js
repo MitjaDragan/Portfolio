@@ -20,22 +20,22 @@ console.log(images4x4['A1.png']);
 
 const levels = {
   easy: [
-    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 600, y: 100 } },
-    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 676.1, y: 100 } },
-    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 727.5, y: 102 } },
-    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 831, y: 102 } },
-    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 600, y: 150 } },
-    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 651, y: 178 } },
-    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 754.2, y: 151 } },
-    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 805.3, y: 177 } },
-    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 602, y: 255.5 } },
-    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 677, y: 228.7 } },
-    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 728, y: 254.7 } },
-    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 830.5, y: 228 } },
-    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 602, y: 305.5 } },
-    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 651.5, y: 331 } },
-    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 754.5, y: 305.6 } },
-    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 805.1, y: 331 } },
+    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 600, y: 100 }, size: { width: 20, height: 20 } },
+    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 676.1, y: 100 }, size: { width: 20, height: 20 } },
+    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 727.5, y: 102 }, size: { width: 20, height: 20 } },
+    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 831, y: 102 }, size: { width: 20, height: 20 } },
+    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 600, y: 150 }, size: { width: 20, height: 20 } },
+    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 651, y: 178 }, size: { width: 20, height: 20 } },
+    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 754.2, y: 151 }, size: { width: 20, height: 20 } },
+    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 805.3, y: 177 }, size: { width: 20, height: 20 } },
+    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 602, y: 255.5 }, size: { width: 20, height: 20 } },
+    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 677, y: 228.7 }, size: { width: 20, height: 20 } },
+    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 728, y: 254.7 }, size: { width: 20, height: 20 } },
+    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 830.5, y: 228 }, size: { width: 20, height: 20 } },
+    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 602, y: 305.5 }, size: { width: 20, height: 20 } },
+    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 651.5, y: 331 }, size: { width: 20, height: 20 } },
+    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 754.5, y: 305.6 }, size: { width: 20, height: 20 } },
+    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 805.1, y: 331 }, size: { width: 20, height: 20 } },
   ],
   medium: [
     { key: 'A1', src: images6x6['A1.png'].default, correctPosition: { x: 600, y: 100 } },
@@ -44,11 +44,11 @@ const levels = {
     { key: 'A4', src: images6x6['A4.png'].default, correctPosition: { x: 831, y: 102 } },
     { key: 'A5', src: images6x6['A5.png'].default, correctPosition: { x: 727.5, y: 102 } },
     { key: 'A6', src: images6x6['A6.png'].default, correctPosition: { x: 831, y: 102 } },
-    { key: 'B1', src: images6x6['B1.png'].default, correctPosition: { x: 600, y: 150 } },
+    { key: 'B1', src: images6x6['B1.png'].default, correctPosition: { x: 600, y: 200 } },
     { key: 'B2', src: images6x6['B2.png'].default, correctPosition: { x: 651, y: 178 } },
-    { key: 'B3', src: images6x6['B3.png'].default, correctPosition: { x: 754.2, y: 151 } },
+    { key: 'B3', src: images6x6['B3.png'].default, correctPosition: { x: 754.2, y: 201 } },
     { key: 'B4', src: images6x6['B4.png'].default, correctPosition: { x: 805.3, y: 177 } },
-    { key: 'B5', src: images6x6['B5.png'].default, correctPosition: { x: 754.2, y: 151 } },
+    { key: 'B5', src: images6x6['B5.png'].default, correctPosition: { x: 754.2, y: 201 } },
     { key: 'B6', src: images6x6['B6.png'].default, correctPosition: { x: 805.3, y: 177 } },
     { key: 'C1', src: images6x6['C1.png'].default, correctPosition: { x: 602, y: 255.5 } },
     { key: 'C2', src: images6x6['C2.png'].default, correctPosition: { x: 677, y: 228.7 } },
@@ -97,8 +97,8 @@ const calculateRelativePositions = (imageMap) => {
 };
 
 const getRandomPosition = () => {
-  const x = Math.floor(Math.random() * 400); // Random within the left area
-  const y = Math.floor(Math.random() * 400); // Random within the container height
+  const x = Math.floor(Math.random() * 800); // Random within the left area
+  const y = Math.floor(Math.random() * 800); // Random within the container height
   return { x, y };
 };
 
@@ -112,7 +112,7 @@ const DroppableArea = () => {
     }, {});
   });
 
-  const SNAP_THRESHOLD = 30;
+  const SNAP_THRESHOLD = 30; // Reduced threshold for responsiveness
   const imageMap = levels[level];
   const relativePositions = calculateRelativePositions(imageMap);
 
@@ -164,20 +164,23 @@ const DroppableArea = () => {
       <div
         style={{
           position: 'relative',
-          width: '1000px',
-          height: '500px',
+          width: '100%',
+          maxWidth: '1000px', // Maximum width for larger screens
+          aspectRatio: '2 / 1', // Aspect ratio to maintain height
           border: '2px solid #000',
           margin: '20px auto',
           overflow: 'hidden',
+          touchAction: 'none',
         }}
       >
-        {imageMap.map(({ key, src, correctPosition }) => (
+        {imageMap.map(({ key, src, correctPosition, size }) => (
           <DraggableImage
             key={key}
             src={src}
             alt={`Puzzle Piece ${key}`}
-            initialPosition={positions[key]} // Start in the current random position correctPosition / positions[key]
-            externalPosition={positions[key]} // Allow external updates to position
+            initialPosition={{ x: `${positions[key].x}%`, y: `${positions[key].y}%` }} // Responsive positions
+            externalPosition={{ x: `${positions[key].x}%`, y: `${positions[key].y}%` }} // Responsive positions
+            size={size} // Pass size props
             onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
           />
         ))}
