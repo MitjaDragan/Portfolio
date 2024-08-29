@@ -1,61 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalPosition }) => {
-  const [position, setPosition] = useState(initialPosition);
-  const [scaledSize, setScaledSize] = useState({ width: 100, height: 100 });  // Placeholder initial size
-  const draggingRef = useRef(false);
-  const dragOffset = useRef({ x: 0, y: 0 });
-  const imgRef = useRef(null);
+const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalPosition, size }) => {
+  const [position, setPosition] = useState(initialPosition); // State to trigger re-renders
+  const positionRef = useRef(initialPosition); // Ref to hold the latest position without causing re-renders
+  const [scaledSize, setScaledSize] = useState(size); // Use the provided size for scaling
+  const draggingRef = useRef(false); // Track dragging state
+  const dragOffset = useRef({ x: 0, y: 0 }); // Track mouse offset from image
+  const imgRef = useRef(null); // Reference to the image DOM element
 
-  const BASE_SCREEN_WIDTH = 1920;  // Base screen width for a 27" monitor
+  const BASE_SCREEN_WIDTH = 1920; // Base screen width for scaling reference
 
+  // Update position if externalPosition changes
   useEffect(() => {
-    if (externalPosition) {
-      setPosition(externalPosition); // Update the position when externalPosition changes
+    if (externalPosition && (externalPosition.x !== position.x || externalPosition.y !== position.y)) {
+      setPosition(externalPosition);
+      positionRef.current = externalPosition; // Update the ref as well
     }
   }, [externalPosition]);
 
-  // Set the scaled size based on the natural size of the image and scaling factor relative to screen size
+  // Scale the image size based on screen width
   useEffect(() => {
     const setImageSize = () => {
       if (imgRef.current) {
-        const originalWidth = imgRef.current.naturalWidth;  // Get the original width of the image
-        const originalHeight = imgRef.current.naturalHeight;  // Get the original height of the image
+        const originalWidth = imgRef.current.naturalWidth; // Get the original width of the image
+        const originalHeight = imgRef.current.naturalHeight; // Get the original height of the image
 
-        const currentScreenWidth = window.innerWidth;  // Get the current screen width
-        const scaleFactor = currentScreenWidth / BASE_SCREEN_WIDTH;  // Calculate the scaling factor
+        const currentScreenWidth = window.innerWidth; // Get the current screen width
+        const scaleFactor = currentScreenWidth / BASE_SCREEN_WIDTH; // Calculate the scaling factor
 
         // Calculate scaled width and height based on the scaling factor
         const scaledWidth = originalWidth * scaleFactor;
         const scaledHeight = originalHeight * scaleFactor;
 
-        setScaledSize({ width: scaledWidth, height: scaledHeight });  // Set scaled size
-        console.log(`Image ${alt} - Original Size: ${originalWidth}x${originalHeight}, Scaled Size: ${scaledWidth.toFixed(2)}x${scaledHeight.toFixed(2)}`);
+        setScaledSize({ width: scaledWidth, height: scaledHeight }); // Set scaled size
       }
     };
 
     if (imgRef.current && imgRef.current.complete) {
-      // If the image is already loaded
       setImageSize();
-    } else {
-      // If the image is not loaded yet
+    } else if (imgRef.current) {
       imgRef.current.onload = setImageSize;
     }
 
-    window.addEventListener('resize', setImageSize);  // Recalculate on window resize
+    window.addEventListener('resize', setImageSize);
 
     return () => {
       window.removeEventListener('resize', setImageSize);
     };
-  }, []);  // Empty dependency array because this effect does not depend on props or state
+  }, []); // Empty dependency array because this effect does not depend on props or state
 
   const handleMouseDown = (e) => {
     e.preventDefault();
 
-    const rect = imgRef.current.getBoundingClientRect();  // Get the img's position
+    const rect = imgRef.current.getBoundingClientRect(); // Get the img's position
     dragOffset.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: e.clientX - rect.left, // Calculate the offset between the cursor and the image's left edge
+      y: e.clientY - rect.top, // Calculate the offset between the cursor and the image's top edge
     };
 
     draggingRef.current = true;
@@ -67,10 +67,10 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
 
-    const rect = imgRef.current.getBoundingClientRect();  // Get the img's position
+    const rect = imgRef.current.getBoundingClientRect(); // Get the img's position
     dragOffset.current = {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top,
+      x: touch.clientX - rect.left, // Calculate the offset between the touch and the image's left edge
+      y: touch.clientY - rect.top, // Calculate the offset between the touch and the image's top edge
     };
 
     draggingRef.current = true;
@@ -82,16 +82,12 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   const handleMouseMove = (e) => {
     if (!draggingRef.current) return;
 
-    const parentRect = imgRef.current.closest('div').getBoundingClientRect();
+    const newX = e.clientX - dragOffset.current.x; // Calculate new X position relative to the initial click point
+    const newY = e.clientY - dragOffset.current.y; // Calculate new Y position relative to the initial click point
 
-    let newX = e.clientX - parentRect.left - dragOffset.current.x;
-    let newY = e.clientY - parentRect.top - dragOffset.current.y;
+    positionRef.current = { x: newX, y: newY }; // Update the ref immediately
 
-    newX = Math.max(0, Math.min(newX, parentRect.width - imgRef.current.clientWidth));
-    newY = Math.max(0, Math.min(newY, parentRect.height - imgRef.current.clientHeight));
-
-    setPosition({ x: newX, y: newY });
-
+    // Apply position changes directly to the DOM for smoother dragging experience
     requestAnimationFrame(() => {
       imgRef.current.style.left = `${newX}px`;
       imgRef.current.style.top = `${newY}px`;
@@ -102,16 +98,12 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     if (!draggingRef.current) return;
 
     const touch = e.touches[0];
-    const parentRect = imgRef.current.closest('div').getBoundingClientRect();
+    const newX = touch.clientX - dragOffset.current.x; // Calculate new X position relative to the initial touch point
+    const newY = touch.clientY - dragOffset.current.y; // Calculate new Y position relative to the initial touch point
 
-    let newX = touch.clientX - parentRect.left - dragOffset.current.x;
-    let newY = touch.clientY - parentRect.top - dragOffset.current.y;
+    positionRef.current = { x: newX, y: newY }; // Update the ref immediately
 
-    newX = Math.max(0, Math.min(newX, parentRect.width - imgRef.current.clientWidth));
-    newY = Math.max(0, Math.min(newY, parentRect.height - imgRef.current.clientHeight));
-
-    setPosition({ x: newX, y: newY });
-
+    // Apply position changes directly to the DOM for smoother dragging experience
     requestAnimationFrame(() => {
       imgRef.current.style.left = `${newX}px`;
       imgRef.current.style.top = `${newY}px`;
@@ -124,8 +116,11 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     document.removeEventListener('mouseup', handleMouseUp);
 
     if (onPositionChange) {
-      onPositionChange(position);  // Notify parent of the new position
+      onPositionChange(positionRef.current); // Send updated position from ref
     }
+
+    // Update state with the latest position from ref
+    setPosition(positionRef.current);
   };
 
   const handleTouchEnd = () => {
@@ -134,8 +129,11 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     document.removeEventListener('touchend', handleTouchEnd);
 
     if (onPositionChange) {
-      onPositionChange(position);  // Notify parent of the new position
+      onPositionChange(positionRef.current); // Send updated position from ref
     }
+
+    // Update state with the latest position from ref
+    setPosition(positionRef.current);
   };
 
   useEffect(() => {
@@ -150,17 +148,17 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
   return (
     <img
-      ref={imgRef}  // Reference for positioning
+      ref={imgRef} // Reference for positioning
       src={src}
       alt={alt}
-      onMouseDown={handleMouseDown}  // Attach event handlers to the img element
+      onMouseDown={handleMouseDown} // Attach event handlers to the img element
       onTouchStart={handleTouchStart}
       style={{
         position: 'absolute',
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: `${scaledSize.width}px`,  // Set scaled width
-        height: 'auto',  // Maintain aspect ratio relative to width
+        width: `${scaledSize.width}px`, // Set scaled width
+        height: 'auto', // Maintain aspect ratio relative to width
         cursor: draggingRef.current ? 'grabbing' : 'grab',
         userSelect: 'none',
         touchAction: 'none',
