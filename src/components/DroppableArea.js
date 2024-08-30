@@ -15,22 +15,22 @@ const images4x4 = importAll(require.context('../assets/images/4x4', false, /\.(p
 
 const levels = {
   easy: [
-    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 600, y: 100 }, size: { width: 20, height: 20 } },
-    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 676.1, y: 100 }, size: { width: 20, height: 20 } },
-    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 727.5, y: 102 }, size: { width: 20, height: 20 } },
-    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 831, y: 102 }, size: { width: 20, height: 20 } },
-    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 600, y: 150 }, size: { width: 20, height: 20 } },
-    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 651, y: 178 }, size: { width: 20, height: 20 } },
-    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 754.2, y: 151 }, size: { width: 20, height: 20 } },
-    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 805.3, y: 177 }, size: { width: 20, height: 20 } },
-    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 602, y: 255.5 }, size: { width: 20, height: 20 } },
-    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 677, y: 228.7 }, size: { width: 20, height: 20 } },
-    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 728, y: 254.7 }, size: { width: 20, height: 20 } },
-    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 830.5, y: 228 }, size: { width: 20, height: 20 } },
-    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 602, y: 305.5 }, size: { width: 20, height: 20 } },
-    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 651.5, y: 331 }, size: { width: 20, height: 20 } },
-    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 754.5, y: 305.6 }, size: { width: 20, height: 20 } },
-    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 805.1, y: 331 }, size: { width: 20, height: 20 } },
+    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 600, y: 100 }, size: { width: 106, height: 79 } },
+    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 675, y: 100 }, size: { width: 106, height: 79 } },
+    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 725, y: 102 }, size: { width: 106, height: 79 } },
+    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 827, y: 102 }, size: { width: 106, height: 79 } },
+    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 600, y: 148 }, size: { width: 106, height: 79 } },
+    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 649, y: 175 }, size: { width: 106, height: 79 } },
+    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 751, y: 149 }, size: { width: 106, height: 79 } },
+    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 800, y: 175 }, size: { width: 106, height: 79 } },
+    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 602, y: 250 }, size: { width: 106, height: 79 } },
+    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 676, y: 224 }, size: { width: 106, height: 79 } },
+    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 725, y: 250 }, size: { width: 106, height: 79 } },
+    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 827, y: 224 }, size: { width: 106, height: 79 } },
+    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 603, y: 299 }, size: { width: 106, height: 79 } },
+    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 649, y: 326 }, size: { width: 106, height: 79 } },
+    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 750, y: 299 }, size: { width: 106, height: 79 } },
+    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 800, y: 326 }, size: { width: 106, height: 79 } },
   ],
 };
 
@@ -68,9 +68,10 @@ const DroppableArea = () => {
   const [positions, setPositions] = useState({});
   const [imageSizes, setImageSizes] = useState({});
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const originalPositionsRef = useRef({});
 
   const calculateImageSizes = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Scale relative to screen width
     const sizes = {};
 
     levels[level].forEach(({ key, size }) => {
@@ -85,8 +86,7 @@ const DroppableArea = () => {
   };
 
   const calculateRelativePositions = () => {
-    const currentScreenWidth = window.innerWidth;
-    const scaleFactor = currentScreenWidth / BASE_SCREEN_WIDTH; // Use a uniform scale factor for both X and Y
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Scale relative to screen width
 
     const scaledImageMap = levels[level].map((image) => {
       const scaledX = image.correctPosition.x * scaleFactor;
@@ -118,6 +118,21 @@ const DroppableArea = () => {
       return acc;
     }, {});
     setPositions(newPositions);
+    originalPositionsRef.current = newPositions; // Save the original positions
+  };
+
+  const adjustPositionsOnResize = () => {
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Recalculate scale factor
+    const adjustedPositions = {};
+
+    Object.entries(originalPositionsRef.current).forEach(([key, originalPosition]) => {
+      adjustedPositions[key] = {
+        x: originalPosition.x * scaleFactor,
+        y: originalPosition.y * scaleFactor,
+      };
+    });
+
+    setPositions(adjustedPositions);
   };
 
   useEffect(() => {
@@ -128,6 +143,7 @@ const DroppableArea = () => {
     const handleResize = () => {
       calculateImageSizes();
       calculateRelativePositions();
+      adjustPositionsOnResize(); // Adjust positions proportionally
     };
 
     window.addEventListener('resize', handleResize);
@@ -135,42 +151,38 @@ const DroppableArea = () => {
   }, [level]);
 
   const handlePositionChange = (key, newPosition) => {
-    console.log(`Moved piece ${key} to new position:, newPosition`); // Log the new position
+    console.log(`Moved piece ${key} to new position:`, newPosition);
 
     setPositions((prevPositions) => {
       const newPositions = { ...prevPositions, [key]: newPosition };
+      originalPositionsRef.current[key] = newPosition; // Update the original positions
 
-      // Get neighbors from the neighborMap
       const neighbors = neighborMap[key] || [];
 
       neighbors.forEach((neighborKey) => {
         if (relativePositions[key] && relativePositions[key][neighborKey]) {
-          const relativePos = relativePositions[key][neighborKey]; // Get relative position of the moved piece to the neighbor
+          const relativePos = relativePositions[key][neighborKey];
 
-          // Calculate where the moved piece should be relative to the neighbor
-          const correctX = positions[neighborKey].x + relativePos.x;
-          const correctY = positions[neighborKey].y + relativePos.y;
+          const correctX = newPositions[neighborKey].x + relativePos.x;
+          const correctY = newPositions[neighborKey].y + relativePos.y;
 
-          console.log(`Relative correct position of ${key} to ${neighborKey}: x=${correctX}, y=${correctY}`); // Log correct relative positions
+          console.log(`Relative correct position of ${neighborKey} to ${key}: x=${correctX}, y=${correctY}`);
 
-          // Check if the distance to the correct position is within 30px
           const distanceX = Math.abs(correctX - newPosition.x);
           const distanceY = Math.abs(correctY - newPosition.y);
 
           console.log(`Distance X to correct position: ${distanceX}, Distance Y to correct position: ${distanceY}`);
 
           if (distanceX <= 30 && distanceY <= 30) {
-            console.log(`"Lock": Piece ${key} is close to its correct position relative to ${neighborKey}`); // Log "lock" if close enough
-
-            // Snap the moved piece to the correct position
-            newPositions[key] = { x: correctX, y: correctY }; // Snap to the correct position
-
-            console.log(`Snapped ${key} to new position: x=${correctX}, y=${correctY}`); // Log the snapped position
+            console.log(`"Lock": Piece ${key} is close to its correct position relative to ${neighborKey}`);
+            newPositions[key] = { x: correctX, y: correctY };
+            originalPositionsRef.current[key] = { x: correctX, y: correctY }; // Update the original positions
+            console.log(`Snapped ${key} to new position: x=${correctX}, y=${correctY}`);
           }
         }
       });
 
-      return newPositions; // Return the updated positions
+      return newPositions;
     });
   };
 
@@ -178,6 +190,7 @@ const DroppableArea = () => {
     setLevel(newLevel);
     setImageSizes({});
     setImagesLoaded(false);
+    initializePositions(); // Regenerate random positions on level change
   };
 
   return (
@@ -190,7 +203,7 @@ const DroppableArea = () => {
           alt={`Puzzle Piece ${key}`}
           initialPosition={{ x: scaledPosition.x, y: scaledPosition.y }}
           externalPosition={positions[key]}
-          size={imageSizes[key]} // Use the calculated image size
+          size={imageSizes[key]}
           onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
         />
       ))}
