@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useLayoutEffect, useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
 
@@ -15,26 +15,26 @@ const images4x4 = importAll(require.context('../assets/images/4x4', false, /\.(p
 
 const levels = {
   easy: [
-    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 600, y: 100 }, size: { width: 106, height: 79 } },
-    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 675, y: 100 }, size: { width: 106, height: 79 } },
-    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 725, y: 102 }, size: { width: 106, height: 79 } },
-    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 827, y: 102 }, size: { width: 106, height: 79 } },
-    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 600, y: 148 }, size: { width: 106, height: 79 } },
-    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 649, y: 175 }, size: { width: 106, height: 79 } },
-    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 751, y: 149 }, size: { width: 106, height: 79 } },
-    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 800, y: 175 }, size: { width: 106, height: 79 } },
-    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 602, y: 250 }, size: { width: 106, height: 79 } },
-    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 676, y: 224 }, size: { width: 106, height: 79 } },
-    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 725, y: 250 }, size: { width: 106, height: 79 } },
-    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 827, y: 224 }, size: { width: 106, height: 79 } },
-    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 603, y: 299 }, size: { width: 106, height: 79 } },
-    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 649, y: 326 }, size: { width: 106, height: 79 } },
-    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 750, y: 299 }, size: { width: 106, height: 79 } },
-    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 800, y: 326 }, size: { width: 106, height: 79 } },
-  ],
+    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 100, y: 100 }, size: { width: 106, height: 79 } },
+    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 175, y: 100 }, size: { width: 106, height: 79 } },
+    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 225, y: 102 }, size: { width: 106, height: 79 } },
+    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 327, y: 102 }, size: { width: 106, height: 79 } },
+    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 100, y: 148 }, size: { width: 106, height: 79 } },
+    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 149, y: 175 }, size: { width: 106, height: 79 } },
+    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 251, y: 149 }, size: { width: 106, height: 79 } },
+    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 300, y: 175 }, size: { width: 106, height: 79 } },
+    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 102, y: 250 }, size: { width: 106, height: 79 } },
+    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 176, y: 224 }, size: { width: 106, height: 79 } },
+    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 225, y: 250 }, size: { width: 106, height: 79 } },
+    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 327, y: 224 }, size: { width: 106, height: 79 } },
+    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 103, y: 299 }, size: { width: 106, height: 79 } },
+    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 149, y: 326 }, size: { width: 106, height: 79 } },
+    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 250, y: 299 }, size: { width: 106, height: 79 } },
+    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 300, y: 326 }, size: { width: 106, height: 79 } },
+  ],  
 };
 
-const BASE_SCREEN_WIDTH = 1920; // Base screen width for reference scaling
+const BASE_SCREEN_WIDTH = 1920;
 
 const neighborMap = {
   A1: ['A2', 'B1'],
@@ -56,8 +56,8 @@ const neighborMap = {
 };
 
 const getRandomPosition = () => {
-  const x = Math.floor(Math.random() * (window.innerWidth - 100));
-  const y = Math.floor(Math.random() * (window.innerHeight - 100));
+  const x = Math.floor(Math.random() * (BASE_SCREEN_WIDTH - 100));
+  const y = Math.floor(Math.random() * (400 - 150 + 1)) + 150;
   return { x, y };
 };
 
@@ -67,62 +67,87 @@ const DroppableArea = () => {
   const [relativePositions, setRelativePositions] = useState({});
   const [positions, setPositions] = useState({});
   const [imageSizes, setImageSizes] = useState({});
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const originalPositionsRef = useRef({});
+  const correctNeighborPositions = useRef({});
 
-  const calculateImageSizes = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Scale relative to screen width
+  const calculateImageSizesAndPositions = () => {
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
+
     const sizes = {};
-
-    levels[level].forEach(({ key, size }) => {
-      sizes[key] = {
-        width: size.width * scaleFactor,
-        height: size.height * scaleFactor,
+    const newScaledImageMap = levels[level].map((image) => {
+      sizes[image.key] = {
+        width: image.size.width * scaleFactor,
+        height: image.size.height * scaleFactor,
       };
-    });
 
-    setImageSizes(sizes);
-    setImagesLoaded(true);
-  };
-
-  const calculateRelativePositions = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Scale relative to screen width
-
-    const scaledImageMap = levels[level].map((image) => {
       const scaledX = image.correctPosition.x * scaleFactor;
       const scaledY = image.correctPosition.y * scaleFactor;
+
       return { ...image, scaledPosition: { x: scaledX, y: scaledY } };
     });
 
     const newRelativePositions = {};
-    scaledImageMap.forEach((img1) => {
+    newScaledImageMap.forEach((img1) => {
       newRelativePositions[img1.key] = {};
       neighborMap[img1.key].forEach((neighborKey) => {
-        const img2 = scaledImageMap.find((img) => img.key === neighborKey);
+        const img2 = newScaledImageMap.find((img) => img.key === neighborKey);
         if (img2) {
           newRelativePositions[img1.key][neighborKey] = {
-            x: img1.scaledPosition.x - img2.scaledPosition.x,
-            y: img1.scaledPosition.y - img2.scaledPosition.y,
+            x: img2.scaledPosition.x - img1.scaledPosition.x,
+            y: img2.scaledPosition.y - img1.scaledPosition.y,
           };
         }
       });
     });
 
-    setScaledImageMap(scaledImageMap);
+    setImageSizes(sizes);
+    setScaledImageMap(newScaledImageMap);
     setRelativePositions(newRelativePositions);
   };
 
   const initializePositions = () => {
-    const newPositions = levels[level].reduce((acc, img) => {
-      acc[img.key] = getRandomPosition();
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
+    const newUnscaledPositions = levels[level].reduce((acc, img) => {
+      const randomPosition = getRandomPosition();
+      acc[img.key] = {
+        x: randomPosition.x,
+        y: randomPosition.y,
+      };
       return acc;
     }, {});
-    setPositions(newPositions);
-    originalPositionsRef.current = newPositions; // Save the original positions
+
+    const newScaledPositions = {};
+    Object.entries(newUnscaledPositions).forEach(([key, position]) => {
+      newScaledPositions[key] = {
+        x: position.x * scaleFactor,
+        y: position.y * scaleFactor,
+      };
+    });
+
+    setPositions(newScaledPositions);
+    originalPositionsRef.current = newUnscaledPositions;
+  };
+
+  const calculateCorrectNeighborPositions = (movedPieceKey, newPosition) => {
+    const newCorrectPositions = {};
+    const neighbors = neighborMap[movedPieceKey] || [];
+
+    neighbors.forEach((neighborKey) => {
+      if (relativePositions[movedPieceKey] && relativePositions[movedPieceKey][neighborKey]) {
+        const relativePos = relativePositions[movedPieceKey][neighborKey];
+
+        const correctX = newPosition.x + relativePos.x;
+        const correctY = newPosition.y + relativePos.y;
+
+        newCorrectPositions[neighborKey] = { x: correctX, y: correctY };
+      }
+    });
+
+    correctNeighborPositions.current = { ...correctNeighborPositions.current, ...newCorrectPositions };
   };
 
   const adjustPositionsOnResize = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH; // Recalculate scale factor
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
     const adjustedPositions = {};
 
     Object.entries(originalPositionsRef.current).forEach(([key, originalPosition]) => {
@@ -130,67 +155,82 @@ const DroppableArea = () => {
         x: originalPosition.x * scaleFactor,
         y: originalPosition.y * scaleFactor,
       };
+
     });
 
     setPositions(adjustedPositions);
   };
 
-  useEffect(() => {
-    calculateImageSizes();
-    calculateRelativePositions();
+  useLayoutEffect(() => {
+    calculateImageSizesAndPositions();
     initializePositions();
 
     const handleResize = () => {
-      calculateImageSizes();
-      calculateRelativePositions();
-      adjustPositionsOnResize(); // Adjust positions proportionally
+      setTimeout(() => {
+        calculateImageSizesAndPositions();
+        adjustPositionsOnResize();
+      }, 100);
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
   }, [level]);
 
   const handlePositionChange = (key, newPosition) => {
-    console.log(`Moved piece ${key} to new position:`, newPosition);
-
     setPositions((prevPositions) => {
+      const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
       const newPositions = { ...prevPositions, [key]: newPosition };
-      originalPositionsRef.current[key] = newPosition; // Update the original positions
+  
+      const newUnscaledX = newPosition.x / scaleFactor;
+      const newUnscaledY = newPosition.y / scaleFactor;
+      originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
+  
+      console.log(`Moved piece ${key} to new position:`, newPosition);
 
+      calculateCorrectNeighborPositions(key, newPosition);
+  
       const neighbors = neighborMap[key] || [];
-
+      let didLock = false;
+  
       neighbors.forEach((neighborKey) => {
-        if (relativePositions[key] && relativePositions[key][neighborKey]) {
-          const relativePos = relativePositions[key][neighborKey];
-
-          const correctX = newPositions[neighborKey].x + relativePos.x;
-          const correctY = newPositions[neighborKey].y + relativePos.y;
-
-          console.log(`Relative correct position of ${neighborKey} to ${key}: x=${correctX}, y=${correctY}`);
-
+        const neighborPosition = prevPositions[neighborKey];
+        const relativePos = relativePositions[neighborKey]?.[key];
+        
+        if (relativePos) {
+          const correctX = neighborPosition.x + relativePos.x;
+          const correctY = neighborPosition.y + relativePos.y;
+  
           const distanceX = Math.abs(correctX - newPosition.x);
           const distanceY = Math.abs(correctY - newPosition.y);
-
-          console.log(`Distance X to correct position: ${distanceX}, Distance Y to correct position: ${distanceY}`);
-
-          if (distanceX <= 30 && distanceY <= 30) {
-            console.log(`"Lock": Piece ${key} is close to its correct position relative to ${neighborKey}`);
+  
+          console.log(
+            `${key} relative to ${neighborKey} - Correct position: x=${correctX}, y=${correctY} | Distances - X: ${distanceX.toFixed(2)}, Y: ${distanceY.toFixed(2)}`
+          );
+  
+          if (distanceX <= 30 && distanceY <= 30 && !didLock) {
+            console.log('lock');
             newPositions[key] = { x: correctX, y: correctY };
-            originalPositionsRef.current[key] = { x: correctX, y: correctY }; // Update the original positions
-            console.log(`Snapped ${key} to new position: x=${correctX}, y=${correctY}`);
+            didLock = true;
+  
+            originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
           }
         }
       });
-
+  
       return newPositions;
     });
   };
+  
 
   const handleLevelChange = (newLevel) => {
     setLevel(newLevel);
     setImageSizes({});
-    setImagesLoaded(false);
-    initializePositions(); // Regenerate random positions on level change
+    initializePositions();
   };
 
   return (

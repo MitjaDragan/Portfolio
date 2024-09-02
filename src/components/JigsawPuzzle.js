@@ -23,7 +23,6 @@ import D4 from '../assets/images/Level1/D4.png';
 function JigsawPuzzle() {
     return (
         <div className="jigsaw-puzzle">
-            <h1>Drag and Drop Puzzle Pieces</h1>
             <DroppableArea>
                 <DraggableImage src={A1} alt="A1" />
                 <DraggableImage src={A2} alt="A2" />
