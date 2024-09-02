@@ -62,17 +62,19 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   };
 
   const handleTouchStart = (e) => {
-    const touch = e.touches[0];
+    if (e.touches.length > 1) return; // Ensure only one touch is used
+    e.preventDefault();
 
+    const touch = e.touches[0];
     const rect = imgRef.current.getBoundingClientRect();
     dragOffset.current = {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top,
+      x: touch.pageX - rect.left, // Use pageX for accurate positioning
+      y: touch.pageY - rect.top,  // Use pageY for accurate positioning
     };
 
     draggingRef.current = true;
 
-    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false }); // Disable passive to prevent default
     document.addEventListener('touchend', handleTouchEnd);
   };
 
@@ -91,11 +93,12 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   };
 
   const handleTouchMove = (e) => {
-    if (!draggingRef.current) return;
+    if (!draggingRef.current || e.touches.length > 1) return; // Ensure only one touch is used
+    e.preventDefault(); // Prevent scrolling
 
     const touch = e.touches[0];
-    const newX = touch.clientX - dragOffset.current.x;
-    const newY = touch.clientY - dragOffset.current.y;
+    const newX = touch.pageX - dragOffset.current.x;
+    const newY = touch.pageY - dragOffset.current.y;
 
     positionRef.current = { x: newX, y: newY };
 
@@ -133,8 +136,8 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('touchmove', handleMouseMove);
+      document.removeEventListener('touchend', handleMouseUp);
     };
   }, []);
 
