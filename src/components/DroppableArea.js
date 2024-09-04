@@ -15,26 +15,26 @@ const images4x4 = importAll(require.context('../assets/images/4x4', false, /\.(p
 
 const levels = {
   easy: [
-    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 100, y: 100 }, size: { width: 106, height: 79 } },
-    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 175, y: 100 }, size: { width: 106, height: 79 } },
-    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 225, y: 102 }, size: { width: 106, height: 79 } },
-    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 327, y: 102 }, size: { width: 106, height: 79 } },
-    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 100, y: 148 }, size: { width: 106, height: 79 } },
-    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 149, y: 175 }, size: { width: 106, height: 79 } },
-    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 251, y: 149 }, size: { width: 106, height: 79 } },
-    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 300, y: 175 }, size: { width: 106, height: 79 } },
-    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 102, y: 250 }, size: { width: 106, height: 79 } },
-    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 176, y: 224 }, size: { width: 106, height: 79 } },
-    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 225, y: 250 }, size: { width: 106, height: 79 } },
-    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 327, y: 224 }, size: { width: 106, height: 79 } },
-    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 103, y: 299 }, size: { width: 106, height: 79 } },
-    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 149, y: 326 }, size: { width: 106, height: 79 } },
-    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 250, y: 299 }, size: { width: 106, height: 79 } },
-    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 300, y: 326 }, size: { width: 106, height: 79 } },
-  ],  
+    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 2434, y: 850 }, size: { width: 636, height: 474 } },
+    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 3176, y: 850 }, size: { width: 636, height: 474 } },
+    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 3662, y: 850 }, size: { width: 636, height: 474 } },
+    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 4676, y: 850 }, size: { width: 636, height: 474 } },
+    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 2434, y: 1328 }, size: { width: 636, height: 474 } },
+    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 2912, y: 1592 }, size: { width: 636, height: 474 } },
+    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 3934, y: 1328 }, size: { width: 636, height: 474 } },
+    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 4412, y: 1592 }, size: { width: 636, height: 474 } },
+    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 2434, y: 2342 }, size: { width: 636, height: 474 } },
+    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 3176, y: 2078 }, size: { width: 636, height: 474 } },
+    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 3662, y: 2342 }, size: { width: 636, height: 474 } },
+    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 4676, y: 2078 }, size: { width: 636, height: 474 } },
+    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 2434, y: 2828 }, size: { width: 636, height: 474 } },
+    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 2912, y: 3092 }, size: { width: 636, height: 474 } },
+    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 3926, y: 2828 }, size: { width: 636, height: 474 } },
+    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 4412, y: 3092 }, size: { width: 636, height: 474 } },
+  ],
 };
 
-const BASE_SCREEN_WIDTH = 1920;
+const BASE_SCREEN_WIDTH = 11520;
 
 const neighborMap = {
   A1: ['A2', 'B1'],
@@ -56,8 +56,8 @@ const neighborMap = {
 };
 
 const getRandomPosition = () => {
-  const x = Math.floor(Math.random() * (BASE_SCREEN_WIDTH - 100));
-  const y = Math.floor(Math.random() * (400 - 150 + 1)) + 150;
+  const x = Math.floor(Math.random() * BASE_SCREEN_WIDTH) - 200;
+  const y = Math.floor(Math.random() * window.height) + 100;
   return { x, y };
 };
 

@@ -8,7 +8,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   const dragOffset = useRef({ x: 0, y: 0 });
   const imgRef = useRef(null);
 
-  const BASE_SCREEN_WIDTH = 1920;
+  const BASE_SCREEN_WIDTH = 11520;
 
   useEffect(() => {
     if (externalPosition && (externalPosition.x !== position.x || externalPosition.y !== position.y)) {
@@ -156,7 +156,6 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
         height: 'auto',
         cursor: draggingRef.current ? 'grabbing' : 'grab',
         userSelect: 'none',
-        touchAction: 'none',
       }}
     />
   );
