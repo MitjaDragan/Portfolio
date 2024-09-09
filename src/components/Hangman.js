@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import './Hangman.css'; // Import the CSS file for styling
 
 const Hangman = () => {
   const [word, setWord] = useState(''); // The word to guess
   const [guessedLetters, setGuessedLetters] = useState([]); // Letters guessed by the user
   const [attemptsLeft, setAttemptsLeft] = useState(6); // Number of attempts left
   const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'lost'
+  const [inputLetter, setInputLetter] = useState(''); // Current input letter
 
   // Fetch a random word from the Free Dictionary API
   const fetchWord = async () => {
@@ -13,7 +15,10 @@ const Hangman = () => {
       const data = await response.json();
       const word = data[0].toLowerCase();
       setWord(word);
-    } catch (error) {a
+      setGuessedLetters([]);
+      setAttemptsLeft(6);
+      setGameStatus('playing');
+    } catch (error) {
       console.error('Error fetching word:', error);
     }
   };
@@ -23,14 +28,23 @@ const Hangman = () => {
     fetchWord();
   }, []);
 
+  // Function to handle a user's guess submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputLetter.length !== 1 || guessedLetters.includes(inputLetter) || gameStatus !== 'playing') return;
+
+    handleGuess(inputLetter);
+    setInputLetter(''); // Reset input after submission
+  };
+
   // Function to handle a user's guess
   const handleGuess = (letter) => {
-    if (guessedLetters.includes(letter) || gameStatus !== 'playing') return;
+    if (guessedLetters.includes(letter)) return;
 
-    setGuessedLetters([...guessedLetters, letter]);
+    setGuessedLetters((prevGuessedLetters) => [...prevGuessedLetters, letter]);
 
     if (!word.includes(letter)) {
-      setAttemptsLeft(attemptsLeft - 1);
+      setAttemptsLeft((prevAttemptsLeft) => prevAttemptsLeft - 1);
     }
 
     checkGameStatus(letter);
@@ -48,35 +62,46 @@ const Hangman = () => {
     }
   };
 
+  useEffect(() => {
+    checkGameStatus();
+  }, [guessedLetters, attemptsLeft]);
+
   // Render the word with underscores for unguessed letters
   const renderWord = () => {
-    return word.split('').map((letter, index) =>
-      guessedLetters.includes(letter) ? letter : '_'
-    ).join(' ');
+    return word
+      .split('')
+      .map((letter, index) =>
+        guessedLetters.includes(letter) ? letter : '_'
+      )
+      .join(' ');
   };
 
   return (
-    <div className="hangman">
-      <h1>Hangman Game</h1>
-      <p>Word: {renderWord()}</p>
-      <p>Attempts Left: {attemptsLeft}</p>
-      <p>Guessed Letters: {guessedLetters.join(', ')}</p>
+    <div className="hangman-container">
+      <h1 className="title">Hangman Game</h1>
+      <div className="hangman-drawing">
+        <p>{`Attempts Left: ${attemptsLeft}`}</p>
+      </div>
+      <p className="word">{renderWord()}</p>
+      <p className="guessed-letters">Guessed Letters: {guessedLetters.join(', ')}</p>
 
       {gameStatus === 'playing' && (
-        <div>
-          <p>Enter a letter:</p>
+        <form onSubmit={handleSubmit} className="guess-form">
           <input
             type="text"
             maxLength="1"
-            onChange={(e) => handleGuess(e.target.value.toLowerCase())}
+            value={inputLetter}
+            onChange={(e) => setInputLetter(e.target.value.toLowerCase())}
+            className="input-letter"
           />
-        </div>
+          <button type="submit" className="submit-button">Submit</button>
+        </form>
       )}
 
-      {gameStatus === 'won' && <p>Congratulations! You've won!</p>}
-      {gameStatus === 'lost' && <p>Game Over! The word was "{word}".</p>}
+      {gameStatus === 'won' && <p className="message win">Congratulations! You've won!</p>}
+      {gameStatus === 'lost' && <p className="message lose">Game Over! The word was "{word}".</p>}
 
-      <button onClick={fetchWord}>Reset Game</button>
+      <button onClick={fetchWord} className="reset-button">Reset Game</button>
     </div>
   );
 };
