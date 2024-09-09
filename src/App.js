@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import JigsawPuzzle from './components/JigsawPuzzle';
+import Hangman from './components/Hangman';
 import './App.css';
 
 function App() {
@@ -13,7 +14,9 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/puzzle" element={<JigsawPuzzle />} />
         <Route path="/projects" element={<JigsawPuzzle />} />
+        <Route path="/hangman" element={<Hangman />} />
       </Routes>
     </Router>
   );
