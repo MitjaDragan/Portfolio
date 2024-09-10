@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Hangman.css'; // Import the CSS file for styling
+import DrawingAnimation from './DrawingAnimation';
 
 const Hangman = () => {
   const [word, setWord] = useState(''); // The word to guess
@@ -78,6 +79,8 @@ const Hangman = () => {
 
   return (
     <div className="hangman-container">
+      {/* Pass the attemptsLeft to the DrawingAnimation component */}
+      <DrawingAnimation attemptsLeft={attemptsLeft} />
       <h1 className="title">Hangman Game</h1>
       <div className="hangman-drawing">
         <p>{`Attempts Left: ${attemptsLeft}`}</p>
