@@ -1,0 +1,12 @@
+.draw {
+    stroke-dasharray: 1000; /* Some large number */
+    stroke-dashoffset: 1000; /* Match stroke-dasharray */
+    animation: draw 5s forwards;
+  }
+  
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  
