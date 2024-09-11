@@ -5,9 +5,10 @@ import DrawingAnimation from './DrawingAnimation';
 const Hangman = () => {
   const [word, setWord] = useState(''); // The word to guess
   const [guessedLetters, setGuessedLetters] = useState([]); // Letters guessed by the user
-  const [attemptsLeft, setAttemptsLeft] = useState(6); // Number of attempts left
+  const [attemptsLeft, setAttemptsLeft] = useState(8); // Number of attempts left
   const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'lost'
   const [inputLetter, setInputLetter] = useState(''); // Current input letter
+  const [resetKey, setResetKey] = useState(0); // Key to reset the DrawingAnimation component
 
   // Fetch a random word from the Free Dictionary API
   const fetchWord = async () => {
@@ -17,8 +18,9 @@ const Hangman = () => {
       const word = data[0].toLowerCase();
       setWord(word);
       setGuessedLetters([]);
-      setAttemptsLeft(6);
+      setAttemptsLeft(8);
       setGameStatus('playing');
+      setResetKey((prevKey) => prevKey + 1); // Increment reset key to reset animation
     } catch (error) {
       console.error('Error fetching word:', error);
     }
@@ -79,8 +81,8 @@ const Hangman = () => {
 
   return (
     <div className="hangman-container">
-      {/* Pass the attemptsLeft to the DrawingAnimation component */}
-      <DrawingAnimation attemptsLeft={attemptsLeft} />
+      {/* Pass the attemptsLeft and resetKey to the DrawingAnimation component */}
+      <DrawingAnimation attemptsLeft={attemptsLeft} resetKey={resetKey} />
       <h1 className="title">Hangman Game</h1>
       <div className="hangman-drawing">
         <p>{`Attempts Left: ${attemptsLeft}`}</p>
