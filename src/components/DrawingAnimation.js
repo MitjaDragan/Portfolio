@@ -1,12 +1,11 @@
-// DrawingAnimation.jsx
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 
-const DrawingAnimation = ({ attemptsLeft }) => {
+const DrawingAnimation = ({ attemptsLeft, resetKey }) => {
   const parts = useRef([]);
 
-  useEffect(() => {
-    // Initialize all parts to be hidden using strokeDasharray and strokeDashoffset
+  // Initialize all parts to be hidden using strokeDasharray and strokeDashoffset
+  const initializeParts = () => {
     parts.current.forEach((part) => {
       if (part) {
         const length = part.getTotalLength();
@@ -14,11 +13,15 @@ const DrawingAnimation = ({ attemptsLeft }) => {
         part.style.strokeDashoffset = length;
       }
     });
-  }, []);
+  };
 
   useEffect(() => {
-    // Determine which part to draw based on the remaining attempts (6 total parts)
-    const wrongGuesses = 6 - attemptsLeft;
+    initializeParts(); // Run on mount and resetKey change
+  }, [resetKey]);
+
+  useEffect(() => {
+    // Determine which part to draw based on the remaining attempts (8 total parts)
+    const wrongGuesses = 8 - attemptsLeft;
 
     if (wrongGuesses > 0 && parts.current[wrongGuesses - 1]) {
       gsap.to(parts.current[wrongGuesses - 1], {
