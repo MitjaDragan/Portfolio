@@ -1,0 +1,34 @@
+/* src/styles/Certifications.css */
+
+.certifications {
+    padding: 20px;
+  }
+  
+  .certifications h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .certifications ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .certifications li {
+    margin-bottom: 15px;
+  }
+  
+  .certifications h3 {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .certifications p {
+    margin: 5px 0;
+  }
+  
+  .certifications a {
+    color: blue;
+    text-decoration: underline;
+  }
+  
