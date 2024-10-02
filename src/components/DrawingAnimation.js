@@ -21,7 +21,7 @@ const DrawingAnimation = ({ attemptsLeft, resetKey }) => {
 
   useEffect(() => {
     // Determine which part to draw based on the remaining attempts (8 total parts)
-    const wrongGuesses = 8 - attemptsLeft;
+    const wrongGuesses = 10 - attemptsLeft;
 
     if (wrongGuesses > 0 && parts.current[wrongGuesses - 1]) {
       gsap.to(parts.current[wrongGuesses - 1], {

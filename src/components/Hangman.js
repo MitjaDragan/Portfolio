@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import './Hangman.css'; // Import the CSS file for styling
+import './Hangman.css';
 import DrawingAnimation from './DrawingAnimation';
 
 const Hangman = () => {
-  const [word, setWord] = useState(''); // The word to guess
-  const [guessedLetters, setGuessedLetters] = useState([]); // Letters guessed by the user
-  const [attemptsLeft, setAttemptsLeft] = useState(8); // Number of attempts left
-  const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'lost'
-  const [inputLetter, setInputLetter] = useState(''); // Current input letter
-  const [resetKey, setResetKey] = useState(0); // Key to reset the DrawingAnimation component
+  const [word, setWord] = useState('');
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  const [attemptsLeft, setAttemptsLeft] = useState();
+  const [gameStatus, setGameStatus] = useState('playing');
+  const [inputLetter, setInputLetter] = useState('');
+  const [resetKey, setResetKey] = useState(0);
+
 
   // Fetch a random word from the Free Dictionary API
   const fetchWord = async () => {
     try {
       const response = await fetch('https://random-word-api.herokuapp.com/word');
       const data = await response.json();
-      const word = data[0].toLowerCase();
+      const word = data[0].toUpperCase();
       setWord(word);
       setGuessedLetters([]);
-      setAttemptsLeft(8);
+      setAttemptsLeft(9);
       setGameStatus('playing');
       setResetKey((prevKey) => prevKey + 1); // Increment reset key to reset animation
     } catch (error) {
@@ -60,7 +61,7 @@ const Hangman = () => {
 
     if ([...wordSet].every((letter) => guessedSet.has(letter))) {
       setGameStatus('won');
-    } else if (attemptsLeft <= 1) {
+    } else if (attemptsLeft < 1) {
       setGameStatus('lost');
     }
   };
@@ -79,36 +80,36 @@ const Hangman = () => {
       .join(' ');
   };
 
-  return (
-    <div className="hangman-container">
-      {/* Pass the attemptsLeft and resetKey to the DrawingAnimation component */}
-      <DrawingAnimation attemptsLeft={attemptsLeft} resetKey={resetKey} />
-      <h1 className="title">Hangman Game</h1>
-      <div className="hangman-drawing">
-        <p>{`Attempts Left: ${attemptsLeft}`}</p>
-      </div>
-      <p className="word">{renderWord()}</p>
-      <p className="guessed-letters">Guessed Letters: {guessedLetters.join(', ')}</p>
+return (
+  <div className="hangman-container">
 
-      {gameStatus === 'playing' && (
-        <form onSubmit={handleSubmit} className="guess-form">
-          <input
-            type="text"
-            maxLength="1"
-            value={inputLetter}
-            onChange={(e) => setInputLetter(e.target.value.toLowerCase())}
-            className="input-letter"
-          />
-          <button type="submit" className="submit-button">Submit</button>
-        </form>
-      )}
-
-      {gameStatus === 'won' && <p className="message win">Congratulations! You've won!</p>}
-      {gameStatus === 'lost' && <p className="message lose">Game Over! The word was "{word}".</p>}
-
-      <button onClick={fetchWord} className="reset-button">Reset Game</button>
+    <DrawingAnimation attemptsLeft={attemptsLeft} resetKey={resetKey} />
+    <h1 className="title">HANGMAN</h1>
+    <div className="hangman-drawing">
+      <p>{`Attempts Left: ${attemptsLeft}`}</p>
     </div>
-  );
+    <p className="word">{renderWord()}</p>
+    <p className="guessed-letters">Guessed Letters: {guessedLetters.join(', ')}</p>
+
+    {gameStatus === 'playing' && (
+      <form onSubmit={handleSubmit} className="guess-form">
+        <input
+          type="text"
+          maxLength="1"
+          value={inputLetter}
+          onChange={(e) => setInputLetter(e.target.value.toUpperCase())}
+          className="input-letter"
+        />
+        <button type="submit" className="hangman-button">Submit</button>
+      </form>
+    )}
+
+    {gameStatus === 'won' && <p className="message win">Congratulations! You've won!</p>}
+    {gameStatus === 'lost' && <p className="message lose">Game Over! The word was "{word}".</p>}
+
+    <button onClick={fetchWord} className="hangman-button">Reset Game</button>
+  </div>
+);
 };
 
 export default Hangman;
