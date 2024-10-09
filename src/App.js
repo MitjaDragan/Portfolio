@@ -7,6 +7,7 @@ import Home from './components/Home';
 import JigsawPuzzle from './components/JigsawPuzzle';
 import Hangman from './components/Hangman';
 import Certifications from './components/Certifications';
+import Sudoku from './components/Sudoku';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/projects" element={<JigsawPuzzle />} />
         <Route path="/hangman" element={<Hangman />} />
         <Route path="/certificates" element={<Certifications />} />
+        <Route path="/sudoku" element={<Sudoku />} />
       </Routes>
     </Router>
   );

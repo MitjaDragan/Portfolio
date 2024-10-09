@@ -61,7 +61,9 @@ const FlipBox = () => {
           <div className="flip-box-back">
             <h2>Box 3 Back</h2>
             <p>More information here</p>
-            <button onClick={() => window.location.href = '#'}>Coming Soon</button>
+            <Link to="/sudoku" className="navbar-brand">
+              <button>Go to Sudoku</button>
+            </Link>
           </div>
         </div>
       </div>
