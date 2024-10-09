@@ -1,0 +1,39 @@
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    width: 360px; /* Set a fixed width for the entire grid */
+    height: 360px; /* Set equal height to maintain a perfect square */
+    gap: 1px;
+    margin: 20px auto;
+    border: 3px solid #000;
+  }
+  
+  .sudoku-row {
+    display: contents;
+  }
+  
+  .sudoku-cell {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 24px; /* Slightly larger for clarity */
+    border: 1px solid #000;
+    box-sizing: border-box;
+    outline: none; /* Remove default outline for a cleaner look */
+  }
+  
+  .sudoku-cell:nth-child(3n) {
+    border-right: 2px solid #000;
+  }
+  
+  .sudoku-row:nth-child(3n) .sudoku-cell {
+    border-bottom: 2px solid #000;
+  }
+  
+  /* Ensure that the input fields don't resize on focus */
+  .sudoku-cell:focus {
+    outline: none;
+    border: 2px solid #007bff;
+  }
+  
