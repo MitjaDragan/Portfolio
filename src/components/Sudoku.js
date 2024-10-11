@@ -42,7 +42,7 @@ const Sudoku = () => {
                 maxLength="1"
                 value={cell || ''}
                 onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)}
-                disabled={cell !== null}
+                disabled={cell !== 0}
               />
             ))}
           </div>
