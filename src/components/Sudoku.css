@@ -1,39 +1,70 @@
 .sudoku-grid {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(9, 1fr);
-    width: 360px; /* Set a fixed width for the entire grid */
-    height: 360px; /* Set equal height to maintain a perfect square */
-    gap: 1px;
+    width: 360px; /* Set fixed width for the entire grid */
     margin: 20px auto;
-    border: 3px solid #000;
-  }
-  
-  .sudoku-row {
-    display: contents;
+    border: 3px solid var(--sudoku-border-color); /* Outer border */
+    gap: 1px; /* Small gap between cells */
+    transition: border-color 0.3s ease;
   }
   
   .sudoku-cell {
     width: 100%;
-    height: 100%;
+    height: auto;
+    position: relative;
     text-align: center;
-    font-size: 24px; /* Slightly larger for clarity */
-    border: 1px solid #000;
+    font-size: 24px;
+    border: 1px solid var(--sudoku-cell-border-color); /* Regular borders */
+    background-color: var(--sudoku-cell-bg); /* Theme-specific background */
+    color: var(--sudoku-cell-color); /* Theme-specific text color */
     box-sizing: border-box;
-    outline: none; /* Remove default outline for a cleaner look */
-  }
-  
-  .sudoku-cell:nth-child(3n) {
-    border-right: 2px solid #000;
-  }
-  
-  .sudoku-row:nth-child(3n) .sudoku-cell {
-    border-bottom: 2px solid #000;
-  }
-  
-  /* Ensure that the input fields don't resize on focus */
-  .sudoku-cell:focus {
     outline: none;
-    border: 2px solid #007bff;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .sudoku-cell:focus {
+    border: 2px solid var(--sudoku-focus-color); /* Focus color */
+  }
+  
+  /* Hover effect for editable cells */
+  .sudoku-cell:hover:not([disabled]) {
+    background-color: var(--sudoku-hover-bg); /* Theme-specific hover background */
+  }
+  
+  /* Apply thicker borders for the 3x3 subgrids */
+  .sudoku-cell:nth-child(3n) {
+    border-right: 2px solid var(--sudoku-cell-border-color); /* Bold border for every 3rd column */
+  }
+  
+  .sudoku-grid .sudoku-cell:nth-child(-n+27) {
+    border-bottom: 2px solid var(--sudoku-cell-border-color); /* Bold border for every 3rd row */
+  }
+  
+  .sudoku-cell:nth-child(27n) {
+    border-right: 2px solid var(--sudoku-cell-border-color);
+  }
+  
+  .sudoku-cell:nth-child(n+19) {
+    border-bottom: 2px solid var(--sudoku-cell-border-color); /* Bold border for bottom edge */
+  }
+  
+  /* Light Theme Variables */
+  body.light-theme {
+    --sudoku-border-color: #333;
+    --sudoku-cell-border-color: #aaa;
+    --sudoku-cell-bg: #fff;
+    --sudoku-cell-color: #333;
+    --sudoku-hover-bg: #f0f0f0;
+    --sudoku-focus-color: #40E0D0; /* Light theme focus color */
+  }
+  
+  /* Dark Theme Variables */
+  body.dark-theme {
+    --sudoku-border-color: #f5f5f5;
+    --sudoku-cell-border-color: #555;
+    --sudoku-cell-bg: #1c1c1c;
+    --sudoku-cell-color: #f5f5f5;
+    --sudoku-hover-bg: #333;
+    --sudoku-focus-color: #D3BC21; /* Dark theme focus color */
   }
   
