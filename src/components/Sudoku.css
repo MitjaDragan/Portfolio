@@ -1,24 +1,18 @@
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  width: 360px; /* Set fixed width for the entire grid */
+  width: 360px;
   margin: 20px auto;
   border: 3px solid var(--sudoku-border-color); /* Outer border */
-  gap: 0; /* No gap between cells */
-  transition: border-color 0.3s ease;
 }
 
 .sudoku-cell {
   width: 100%;
-  height: 40px; /* Set a fixed height */
+  height: 40px;
   text-align: center;
   font-size: 24px;
   border: 1px solid var(--sudoku-cell-border-color); /* Regular borders */
-  background-color: var(--sudoku-cell-bg); /* Theme-specific background */
-  color: var(--sudoku-cell-color); /* Theme-specific text color */
   box-sizing: border-box;
-  outline: none;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Focus and hover effects */
@@ -30,33 +24,14 @@
   background-color: var(--sudoku-hover-bg); /* Theme-specific hover background */
 }
 
-/* Thicker borders for 3x3 subgrids */
-/* Apply thicker borders to the right of every 3rd column */
-.sudoku-cell:nth-child(3n) {
-  border-right: 3px solid var(--sudoku-cell-border-color);
-}
 
-/* Apply thicker borders to the bottom of every 3rd row */
-.sudoku-grid > :nth-child(27n+1),
-.sudoku-grid > :nth-child(27n+2),
-.sudoku-grid > :nth-child(27n+3),
-.sudoku-grid > :nth-child(27n+4),
-.sudoku-grid > :nth-child(27n+5),
-.sudoku-grid > :nth-child(27n+6),
-.sudoku-grid > :nth-child(27n+7),
-.sudoku-grid > :nth-child(27n+8),
-.sudoku-grid > :nth-child(27n+9) {
+.sudoku-cell:nth-child(3n) {
   border-bottom: 3px solid var(--sudoku-cell-border-color);
 }
 
-/* Apply thicker borders to the top and left for the first row and first column */
-.sudoku-cell:nth-child(9n+1) {
-  border-left: 3px solid var(--sudoku-cell-border-color);
-}
-
-/* Ensure the top row has a thicker top border */
-.sudoku-cell:nth-child(-n+9) {
-  border-top: 3px solid var(--sudoku-cell-border-color);
+/* For every 3rd row, apply a thicker bottom border */
+.right-border {
+    border-right: 3px solid var(--sudoku-cell-border-color); /* Thicker bottom border for every third row */
 }
 
 /* Light Theme Variables */
