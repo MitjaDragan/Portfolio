@@ -36,14 +36,16 @@ const Sudoku = () => {
   };
 
   return (
-    <div class="container">
+    <div className="container">
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
           <div key={rowIndex} className="sudoku-row">
             {row.map((cell, colIndex) => (
               <input
                 key={`${rowIndex}-${colIndex}`}
-                className={`sudoku-cell ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''}`}
+                className={`sudoku-cell 
+                  ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
+                  ${(rowIndex + 1) % 3 === 0 ? 'right-border' : ''}`}
                 type="text"
                 maxLength="1"
                 value={cell || ''}
@@ -57,6 +59,8 @@ const Sudoku = () => {
       <button onClick={generateNewPuzzle}>New Puzzle</button>
     </div>
   );
+  
+  
 };
 
 export default Sudoku;
