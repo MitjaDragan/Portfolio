@@ -13,7 +13,14 @@
   font-size: 24px;
   border: 1px solid var(--sudoku-cell-border-color); /* Regular borders */
   box-sizing: border-box;
+  color: transparent;
+  text-shadow: 0 0 0 #2196f3;
+
+  &:focus {
+      outline: none;
+  }
 }
+
 
 /* Focus and hover effects */
 .sudoku-cell:focus {
@@ -22,6 +29,7 @@
 
 .sudoku-cell:hover:not([disabled]) {
   background-color: var(--sudoku-hover-bg); /* Theme-specific hover background */
+  cursor: pointer;
 }
 
 
