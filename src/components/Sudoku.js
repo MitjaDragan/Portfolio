@@ -10,54 +10,62 @@ const Sudoku = () => {
   const [puzzle, setPuzzle] = useState([]);
   const [lockedCells, setLockedCells] = useState([]);
   const [selectedNumber, setSelectedNumber] = useState(null);
+  const [selectedCell, setSelectedCell] = useState({ row: null, col: null });
 
   const generateNewPuzzle = () => {
     const sudoku = new SudokuGenerator(N, K);
     const generatedPuzzle = sudoku.fillValues();
     
-    // Create a lockedCells array to mark which cells are initially filled
     const initialLockedCells = generatedPuzzle.map(row => row.map(cell => cell !== 0));
     
     setPuzzle(generatedPuzzle);
-    setLockedCells(initialLockedCells); // Set the locked cells
-  };
-
+    setLockedCells(initialLockedCells);
+    setSelectedCell({ row: null, col: null }); // Reset the selected cell when generating a new puzzle
+  }  
+  
   useEffect(() => {
     generateNewPuzzle();
   }, []);
 
   const handleInputChange = (row, col, value) => {
-    const newPuzzle = [...puzzle];
-    if (/^[1-9]$/.test(value)) {
-      newPuzzle[row][col] = Number(value);
-      setSelectedNumber(Number(value));  // Set the selected number
-    } else {
-      newPuzzle[row][col] = null;
-      setSelectedNumber(null);  // Reset selected number if input is invalid
+    // Only allow changing unlocked cells
+    if (!lockedCells[row][col]) {
+      const newPuzzle = [...puzzle];
+      if (/^[1-9]$/.test(value)) {
+        newPuzzle[row][col] = Number(value);
+      } else {
+        newPuzzle[row][col] = null;
+      }
+      setPuzzle(newPuzzle);
     }
-    setPuzzle(newPuzzle);
   };
   
-
   return (
     <div className="container">
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
           <div key={rowIndex} className="sudoku-row">
-            {row.map((cell, colIndex) => (
-              <input
-                key={`${rowIndex}-${colIndex}`}
-                className={`sudoku-cell 
-                  ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
-                  ${(rowIndex + 1) % 3 === 0 ? 'right-border' : ''}
-                  ${cell === selectedNumber ? 'highlight' : ''}`}  // Add highlight class if selected
-                type="text"
-                maxLength="1"
-                value={cell || ''}
-                onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)}
-                disabled={lockedCells[rowIndex][colIndex]} // Disable only initially generated cells
-              />
-            ))}
+{row.map((cell, colIndex) => (
+  <input
+    key={`${rowIndex}-${colIndex}`}
+    className={`sudoku-cell 
+      ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
+      ${(rowIndex + 1) % 3 === 0 && (rowIndex + 1) !== 9 ? 'right-border' : ''}
+      ${(colIndex + 1) % 3 === 0 && (colIndex + 1) !== 9 ? 'bottom-border' : ''}
+      ${(selectedCell.row !== null && rowIndex === selectedCell.row && colIndex === selectedCell.col) ? 'selected-cell' : ''}
+      ${(selectedCell.row !== null && (rowIndex === selectedCell.row || colIndex === selectedCell.col)) ? 'highlight-row-col' : ''}
+      ${(selectedCell.row !== null && cell === puzzle[selectedCell.row][selectedCell.col] && cell !== 0) ? 'highlight-same-number' : ''}`}  // Highlight matching numbers
+    type="text"
+    maxLength="1"
+    value={cell || ''}
+    onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)} // Handle change for unlocked cells only
+    onClick={() => setSelectedCell({ row: rowIndex, col: colIndex })} // Allow any cell to be selected
+    readOnly={lockedCells[rowIndex][colIndex]}  // Use readOnly instead of disabled for locked cells
+  />
+))}
+
+
+
           </div>
         ))}
       </div>

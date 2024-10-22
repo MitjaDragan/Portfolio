@@ -3,7 +3,8 @@
   grid-template-columns: repeat(9, 1fr);
   width: 360px;
   margin: 20px auto;
-  border: 3px solid var(--sudoku-border-color); /* Outer border */
+  border: 3px solid var(--sudoku-border-color);
+  background-color: var(--sudoku-grid-bg);
 }
 
 .sudoku-cell {
@@ -11,79 +12,93 @@
   height: 40px;
   text-align: center;
   font-size: 24px;
-  border: 1px solid var(--sudoku-cell-border-color); /* Regular borders */
+  border: 1px solid var(--sudoku-cell-border-color);
   box-sizing: border-box;
-  color: transparent;
-  text-shadow: 0 0 0 #2196f3;
+  font-weight: bold;
+  color: var(--sudoku-cell-color);
+  background-color: var(--sudoku-cell-bg);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  cursor: default;
+  caret-color: transparent;
 
-  &:focus {
-      outline: none;
-  }
 }
 
-/* Focus and hover effects */
 .sudoku-cell:focus {
-  border: 2px solid var(--sudoku-focus-color); /* Focus color */
+  border: 2px solid var(--sudoku-focus-color);
 }
 
-.sudoku-cell:hover:not([disabled]) {
-  background-color: var(--sudoku-hover-bg); /* Theme-specific hover background */
+.sudoku-cell:hover:not([readonly]) {
+  background-color: var(--sudoku-hover-bg);
   cursor: pointer;
 }
 
-
-.sudoku-cell:nth-child(3n) {
-  border-bottom: 3px solid var(--sudoku-cell-border-color);
+.bottom-border {
+  border-bottom: 3px solid black;
 }
 
-/* For every 3rd row, apply a thicker bottom border */
 .right-border {
-    border-right: 3px solid var(--sudoku-cell-border-color); /* Thicker bottom border for every third row */
+  border-right: 3px solid black;
 }
 
-/* Styles for pre-generated (locked) cells */
 .locked-cell {
-  background-color: var(--sudoku-locked-cell-bg); /* Background color for locked cells */
-  color: var(--sudoku-locked-cell-color); /* Text color for locked cells */
-  font-weight: bold; /* Optional: Bold font for locked cells */
+  background-color: var(--sudoku-locked-cell-bg);
+  color: var(--sudoku-locked-cell-color);
+  font-weight: bold;
+  cursor: default;
 }
 
-/* Highlighted cells */
-.highlight {
-  background-color: var(--sudoku-highlight-bg); /* Adjust this for your theme */
-  border: 2px solid var(--sudoku-highlight-border-color); /* Optional: Add a border */
+.selected-cell {
+  background-color: var(--sudoku-selected-cell-bg);
+  border: 2px solid var(--sudoku-selected-cell-border);
+  box-shadow: 0 0 8px var(--sudoku-selected-cell-shadow);
 }
 
+.highlight-row-col {
+  background-color: var(--sudoku-highlight-row-col-bg);
+}
 
-/* Light Theme Locked Cell Variables */
+.highlight-same-number {
+  background-color: var(--sudoku-highlight-same-number-bg);
+  color: var(--sudoku-same-number-color);
+}
+
+.no-cursor {
+  cursor: default;
+  caret-color: transparent;
+}
+
 body.light-theme {
-  --sudoku-border-color: #333;
-  --sudoku-cell-border-color: #aaa;
+  --sudoku-border-color: #555;
+  --sudoku-grid-bg: #f8f8f8;
+  --sudoku-cell-border-color: #ddd;
   --sudoku-cell-bg: #fff;
-  --sudoku-cell-color: #333;
-  --sudoku-hover-bg: #f0f0f0;
-  --sudoku-focus-color: #40E0D0; /* Light theme focus color */
-
-  --sudoku-locked-cell-bg: #e0e0e0; /* Light grey for locked cells in light theme */
-  --sudoku-locked-cell-color: #000; /* Black text for locked cells in light theme */
-  --sudoku-highlight-bg: #ffffcc; /* Light yellow background for highlighted cells */
-  --sudoku-highlight-border-color: #ffd700; /* Optional: yellow border for highlighted cells */
+  --sudoku-cell-color: #000;
+  --sudoku-hover-bg: #eaeaea;
+  --sudoku-focus-color: #00bcd4;
+  --sudoku-selected-cell-bg: #c1e7ff;
+  --sudoku-selected-cell-border: #00bcd4;
+  --sudoku-selected-cell-shadow: rgba(0, 188, 212, 0.5);
+  --sudoku-highlight-row-col-bg: #e5f6ff;
+  --sudoku-highlight-same-number-bg: #c2d6ed;
+  --sudoku-same-number-color: #000;
+  --sudoku-locked-cell-bg: #eaeaea;
+  --sudoku-locked-cell-color: #555;
 }
 
-/* Dark Theme Locked Cell Variables */
 body.dark-theme {
-  --sudoku-border-color: #f5f5f5;
-  --sudoku-cell-border-color: #555;
-  --sudoku-cell-bg: #1c1c1c;
-  --sudoku-cell-color: #f5f5f5;
+  --sudoku-border-color: #777;
+  --sudoku-grid-bg: #222;
+  --sudoku-cell-border-color: #444;
+  --sudoku-cell-bg: #2b2b2b;
+  --sudoku-cell-color: #ddd;
   --sudoku-hover-bg: #333;
-  --sudoku-focus-color: #D3BC21; /* Dark theme focus color */
-
-  --sudoku-locked-cell-bg: #444; /* Darker background for locked cells in dark theme */
-  --sudoku-locked-cell-color: #fff; /* White text for locked cells in dark theme */
-  --sudoku-highlight-bg: #333300; /* Darker background for highlighted cells in dark theme */
-  --sudoku-highlight-border-color: #ffcc00; /* Optional: Yellowish border for highlighted cells */
+  --sudoku-focus-color: #ffcc00;
+  --sudoku-selected-cell-bg: #555555;
+  --sudoku-selected-cell-border: #ffcc00;
+  --sudoku-selected-cell-shadow: rgba(255, 204, 0, 0.5);
+  --sudoku-highlight-row-col-bg: #404040;
+  --sudoku-highlight-same-number-bg: #2f4f4f;
+  --sudoku-same-number-color: #fff;
+  --sudoku-locked-cell-bg: #3a3a3a;
+  --sudoku-locked-cell-color: #888;
 }
-
-
-
