@@ -9,6 +9,7 @@ const K = 40;
 const Sudoku = () => {
   const [puzzle, setPuzzle] = useState([]);
   const [lockedCells, setLockedCells] = useState([]);
+  const [selectedNumber, setSelectedNumber] = useState(null);
 
   const generateNewPuzzle = () => {
     const sudoku = new SudokuGenerator(N, K);
@@ -29,11 +30,14 @@ const Sudoku = () => {
     const newPuzzle = [...puzzle];
     if (/^[1-9]$/.test(value)) {
       newPuzzle[row][col] = Number(value);
+      setSelectedNumber(Number(value));  // Set the selected number
     } else {
       newPuzzle[row][col] = null;
+      setSelectedNumber(null);  // Reset selected number if input is invalid
     }
     setPuzzle(newPuzzle);
   };
+  
 
   return (
     <div className="container">
@@ -45,7 +49,8 @@ const Sudoku = () => {
                 key={`${rowIndex}-${colIndex}`}
                 className={`sudoku-cell 
                   ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
-                  ${(rowIndex + 1) % 3 === 0 ? 'right-border' : ''}`}
+                  ${(rowIndex + 1) % 3 === 0 ? 'right-border' : ''}
+                  ${cell === selectedNumber ? 'highlight' : ''}`}  // Add highlight class if selected
                 type="text"
                 maxLength="1"
                 value={cell || ''}
