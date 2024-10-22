@@ -21,7 +21,6 @@
   }
 }
 
-
 /* Focus and hover effects */
 .sudoku-cell:focus {
   border: 2px solid var(--sudoku-focus-color); /* Focus color */
@@ -42,26 +41,6 @@
     border-right: 3px solid var(--sudoku-cell-border-color); /* Thicker bottom border for every third row */
 }
 
-/* Light Theme Variables */
-body.light-theme {
-  --sudoku-border-color: #333;
-  --sudoku-cell-border-color: #aaa;
-  --sudoku-cell-bg: #fff;
-  --sudoku-cell-color: #333;
-  --sudoku-hover-bg: #f0f0f0;
-  --sudoku-focus-color: #40E0D0; /* Light theme focus color */
-}
-
-/* Dark Theme Variables */
-body.dark-theme {
-  --sudoku-border-color: #f5f5f5;
-  --sudoku-cell-border-color: #555;
-  --sudoku-cell-bg: #1c1c1c;
-  --sudoku-cell-color: #f5f5f5;
-  --sudoku-hover-bg: #333;
-  --sudoku-focus-color: #D3BC21; /* Dark theme focus color */
-}
-
 /* Styles for pre-generated (locked) cells */
 .locked-cell {
   background-color: var(--sudoku-locked-cell-bg); /* Background color for locked cells */
@@ -69,14 +48,42 @@ body.dark-theme {
   font-weight: bold; /* Optional: Bold font for locked cells */
 }
 
+/* Highlighted cells */
+.highlight {
+  background-color: var(--sudoku-highlight-bg); /* Adjust this for your theme */
+  border: 2px solid var(--sudoku-highlight-border-color); /* Optional: Add a border */
+}
+
+
 /* Light Theme Locked Cell Variables */
 body.light-theme {
+  --sudoku-border-color: #333;
+  --sudoku-cell-border-color: #aaa;
+  --sudoku-cell-bg: #fff;
+  --sudoku-cell-color: #333;
+  --sudoku-hover-bg: #f0f0f0;
+  --sudoku-focus-color: #40E0D0; /* Light theme focus color */
+
   --sudoku-locked-cell-bg: #e0e0e0; /* Light grey for locked cells in light theme */
   --sudoku-locked-cell-color: #000; /* Black text for locked cells in light theme */
+  --sudoku-highlight-bg: #ffffcc; /* Light yellow background for highlighted cells */
+  --sudoku-highlight-border-color: #ffd700; /* Optional: yellow border for highlighted cells */
 }
 
 /* Dark Theme Locked Cell Variables */
 body.dark-theme {
+  --sudoku-border-color: #f5f5f5;
+  --sudoku-cell-border-color: #555;
+  --sudoku-cell-bg: #1c1c1c;
+  --sudoku-cell-color: #f5f5f5;
+  --sudoku-hover-bg: #333;
+  --sudoku-focus-color: #D3BC21; /* Dark theme focus color */
+
   --sudoku-locked-cell-bg: #444; /* Darker background for locked cells in dark theme */
   --sudoku-locked-cell-color: #fff; /* White text for locked cells in dark theme */
+  --sudoku-highlight-bg: #333300; /* Darker background for highlighted cells in dark theme */
+  --sudoku-highlight-border-color: #ffcc00; /* Optional: Yellowish border for highlighted cells */
 }
+
+
+
