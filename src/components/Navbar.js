@@ -73,6 +73,9 @@ function Navbar() {
               <Link to="/projects" className="nav-link mx-2"><i className="fas fa-bell pe-2"></i>Projects</Link>
             </li>
             <li className="nav-item">
+              <Link to="/sudoku" className="nav-link mx-2"><i className="fas fa-bell pe-2"></i>Sudoku</Link>
+            </li>
+            <li className="nav-item">
               <Link to="/certificates" className="nav-link mx-2"><i className="fas fa-heart pe-2"></i>Certificates</Link>
             </li>
             <li className="nav-item ms-3">

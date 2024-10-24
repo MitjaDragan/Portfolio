@@ -1,18 +1,23 @@
 class SudokuGenerator {
-
     constructor(N, K) {
         this.N = N;
         this.K = K;
         const SRNd = Math.sqrt(N);
         this.SRN = Math.floor(SRNd);
         this.mat = Array.from({ length: N }, () => Array.from({ length: N }, () => 0));
+        this.solution = [];  // This will store the correct solution
     }
 
     fillValues() {
         this.fillDiagonal();
         this.fillRemaining(0, this.SRN);
+        this.solution = this.copyMatrix(this.mat);  // Save the complete grid as the solution
         this.removeKDigits();
         return this.mat;
+    }
+
+    copyMatrix(matrix) {
+        return matrix.map(row => [...row]);  // Deep copy of the matrix
     }
 
     fillDiagonal() {
