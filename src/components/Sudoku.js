@@ -10,35 +10,56 @@ const Sudoku = () => {
   const [puzzle, setPuzzle] = useState([]);
   const [lockedCells, setLockedCells] = useState([]);
   const [selectedCell, setSelectedCell] = useState({ row: null, col: null });
-  const [solution, setSolution] = useState([]); // Store the correct solution
-  const [incorrectCells, setIncorrectCells] = useState([]); // Track incorrect cells
-  const [errors, setErrors] = useState(0); // Track number of errors
-  const [gameOver, setGameOver] = useState(false); // Track game over state
-  const inputRefs = useRef([]); // Keep track of input refs for focusing
+  const [solution, setSolution] = useState([]);
+  const [incorrectCells, setIncorrectCells] = useState([]);
+  const [errors, setErrors] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // Track if device is mobile
 
-  const maxErrors = 3; // Max allowed errors before game over
+  const maxErrors = 3;
 
   const generateNewPuzzle = () => {
     const sudoku = new SudokuGenerator(N, K);
     const generatedPuzzle = sudoku.fillValues();
-    
     const initialLockedCells = generatedPuzzle.map(row => row.map(cell => cell !== 0));
     
     setPuzzle(generatedPuzzle);
     setLockedCells(initialLockedCells);
-    setSolution(sudoku.solution); // Save the correct solution
-    setIncorrectCells(Array(N).fill().map(() => Array(N).fill(false))); // Initialize incorrect cells tracking
-    setSelectedCell({ row: null, col: null }); // Reset selected cell
-    setErrors(0); // Reset error counter
-    setGameOver(false); // Reset game over state
-  };  
-  
+    setSolution(sudoku.solution);
+    setIncorrectCells(Array(N).fill().map(() => Array(N).fill(false)));
+    setSelectedCell({ row: null, col: null });
+    setErrors(0);
+    setGameOver(false);
+  };
+
   useEffect(() => {
     generateNewPuzzle();
+
+    // Check if the user is on a mobile device
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobileDevice = /android|iphone|ipad|ipod/i.test(userAgent.toLowerCase());
+    setIsMobile(isMobileDevice);
   }, []);
 
+  const checkVictory = (puzzle) => {
+    for (let row = 0; row < N; row++) {
+      for (let col = 0; col < N; col++) {
+        if (puzzle[row][col] !== solution[row][col]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const handleNumberClick = (number) => {
+    const { row, col } = selectedCell;
+    if (row !== null && col !== null && !lockedCells[row][col]) {
+      handleInputChange(row, col, number.toString());
+    }
+  };
+
   const handleInputChange = (row, col, value) => {
-    // Do nothing if the game is over or if the cell is locked
     if (gameOver || lockedCells[row][col]) return;
 
     const newPuzzle = [...puzzle];
@@ -47,48 +68,63 @@ const Sudoku = () => {
     if (/^[1-9]$/.test(value)) {
       newPuzzle[row][col] = Number(value);
       
-      // Validate against the correct solution
       if (Number(value) !== solution[row][col]) {
-        newIncorrectCells[row][col] = true; // Mark the cell as incorrect
+        newIncorrectCells[row][col] = true;
         const newErrors = errors + 1;
-        setErrors(newErrors); // Increment the error counter
+        setErrors(newErrors);
 
-        // Check if the game should be over
         if (newErrors >= maxErrors) {
           setGameOver(true);
           alert("Game Over! You made 3 mistakes.");
+          return;
         }
       } else {
-        newIncorrectCells[row][col] = false; // Clear the incorrect state if correct
+        newIncorrectCells[row][col] = false;
       }
-    } else {
-      newPuzzle[row][col] = null; // Clear the cell if the input is not valid
-      newIncorrectCells[row][col] = false; // Clear incorrect status when cleared
-    }
 
-    setPuzzle(newPuzzle);
-    setIncorrectCells(newIncorrectCells); // Update incorrect cells
+      setPuzzle(newPuzzle);
+      setIncorrectCells(newIncorrectCells);
+
+      if (checkVictory(newPuzzle)) {
+        setGameOver(true);
+        alert("Congratulations! You have won the game!");
+      }
+    }
   };
 
   const handleCellClick = (row, col) => {
-    if (gameOver) return; // Prevent further interaction if the game is over
-    setSelectedCell({ row, col }); // Select the clicked cell
-    if (inputRefs.current[`${row}-${col}`]) {
-      inputRefs.current[`${row}-${col}`].focus(); // Auto-focus the clicked cell
-    }
-  };
-
-  const handleCellKeyPress = (row, col, e) => {
-    // Only clear the cell when a new number is typed
-    if (!lockedCells[row][col] && /^[1-9]$/.test(e.key)) {
-      const newPuzzle = [...puzzle];
-      newPuzzle[row][col] = ''; // Clear the cell for new input
-      setPuzzle(newPuzzle);
-    }
+    if (gameOver) return;
+    setSelectedCell({ row, col });
   };
 
   return (
-    <div className="container">
+    <div className="sudoku-container">
+      <div className="sudoku-grid">
+        {puzzle.map((row, rowIndex) => (
+          <div key={rowIndex} className="sudoku-row">
+            {row.map((cell, colIndex) => (
+              <input
+                key={`${rowIndex}-${colIndex}`}
+                className={`sudoku-cell 
+                  ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
+                  ${incorrectCells[rowIndex][colIndex] ? 'incorrect-cell' : ''}
+                  ${(rowIndex + 1) % 3 === 0 && (rowIndex + 1) !== 9 ? 'right-border' : ''} 
+                  ${(colIndex + 1) % 3 === 0 && (colIndex + 1) !== 9 ? 'bottom-border' : ''} 
+                  ${selectedCell.row === rowIndex && selectedCell.col === colIndex ? 'selected-cell' : ''}
+                  ${selectedCell.row === rowIndex || selectedCell.col === colIndex ? 'highlight-row-col' : ''}
+                  ${cell === puzzle[selectedCell.row]?.[selectedCell.col] && cell !== 0 ? 'highlight-same-number' : ''}`}
+                type="text"
+                maxLength="1"
+                value={cell || ''}
+                readOnly={isMobile || lockedCells[rowIndex][colIndex]} // Set readOnly for mobile and locked cells
+                onClick={() => handleCellClick(rowIndex, colIndex)} 
+                onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)} // Allow direct input on non-mobile
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+      
       <div className="status-bar">
         <div className="error-container">
           <div className="error-progress">
@@ -97,31 +133,16 @@ const Sudoku = () => {
         </div>
         <button className="reset-button" onClick={generateNewPuzzle}>New Puzzle</button>
       </div>
-      <div className="sudoku-grid">
-        {puzzle.map((row, rowIndex) => (
-          <div key={rowIndex} className="sudoku-row">
-            {row.map((cell, colIndex) => (
-              <input
-                key={`${rowIndex}-${colIndex}`}
-                ref={(el) => inputRefs.current[`${rowIndex}-${colIndex}`] = el} // Save ref for auto-focus
-                className={`sudoku-cell 
-                  ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
-                  ${incorrectCells[rowIndex][colIndex] ? 'incorrect-cell' : ''}  // Highlight incorrect cells
-                  ${(rowIndex + 1) % 3 === 0 && (rowIndex + 1) !== 9 ? 'right-border' : ''}
-                  ${(colIndex + 1) % 3 === 0 && (colIndex + 1) !== 9 ? 'bottom-border' : ''}
-                  ${(selectedCell.row !== null && rowIndex === selectedCell.row && colIndex === selectedCell.col) ? 'selected-cell' : ''}
-                  ${(selectedCell.row !== null && (rowIndex === selectedCell.row || colIndex === selectedCell.col)) ? 'highlight-row-col' : ''}
-                  ${(selectedCell.row !== null && cell === puzzle[selectedCell.row][selectedCell.col] && cell !== 0) ? 'highlight-same-number' : ''}`}  // Highlight matching numbers
-                type="text"
-                maxLength="1"
-                value={cell || ''}
-                onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)} // Handle change for unlocked cells only
-                onClick={() => handleCellClick(rowIndex, colIndex)} // Allow any cell to be selected
-                onKeyDown={(e) => handleCellKeyPress(rowIndex, colIndex, e)} // Clear only when typing a valid number
-                disabled={gameOver} // Disable inputs if the game is over
-              />
-            ))}
-          </div>
+
+      <div className="number-selection">
+        {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
+          <button
+            key={num}
+            className="number-button"
+            onClick={() => handleNumberClick(num)}
+          >
+            {num}
+          </button>
         ))}
       </div>
     </div>

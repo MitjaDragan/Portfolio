@@ -13,8 +13,7 @@ function Navbar() {
   const [theme, setTheme] = useState('dark');
   const [transitioning, setTransitioning] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 420);
-  const [navbarHeight, setNavbarHeight] = useState(0); // Track navbar height
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
   const toggleTheme = () => {
     setTransitioning(true);
@@ -28,16 +27,14 @@ function Navbar() {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Dynamically calculate the navbar height and apply it to content
   useEffect(() => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-      setNavbarHeight(navbar.offsetHeight);
+      setNavbarHeight(navbar.offsetHeight); // Set initial navbar height
     }
 
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 420);
-      setNavbarHeight(navbar.offsetHeight);
+      setNavbarHeight(navbar.offsetHeight); // Update height on resize
     };
 
     window.addEventListener('resize', handleResize);
@@ -45,7 +42,7 @@ function Navbar() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme]);
+  }, [theme, isCollapsed]);
 
   useEffect(() => {
     document.body.className = theme + '-theme';
@@ -58,8 +55,8 @@ function Navbar() {
           <Link to="/" className="navbar-brand">
             <img
               src={theme === 'light'
-                ? (isSmallScreen ? LogoLightThemeSmall : LogoLightTheme)
-                : (isSmallScreen ? LogoDarkThemeSmall : LogoDarkTheme)}
+                ? (window.innerWidth <= 420 ? LogoLightThemeSmall : LogoLightTheme)
+                : (window.innerWidth <= 420 ? LogoDarkThemeSmall : LogoDarkTheme)}
               alt="Logo"
               draggable="false"
               height="60"
@@ -108,7 +105,8 @@ function Navbar() {
           </div>
         </div>
       </nav>
-      <div id="main-content">
+      <div id="main-content" style={{ paddingTop: `${navbarHeight + 20}px` }}>
+        {/* Page content */}
       </div>
     </>
   );
