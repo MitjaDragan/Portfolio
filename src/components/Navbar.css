@@ -49,6 +49,12 @@ body.dark-theme {
     align-items: center;
 }
 
+#main-content {
+    /* Ensure content has sufficient padding */
+    padding-top: 30px;
+    transition: padding-top 0.3s ease;
+  }
+
 .theme-toggle-btn img {
     transition: opacity 0.2s ease, transform 0.3s ease;
     opacity: 1;
