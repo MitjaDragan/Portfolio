@@ -3,7 +3,6 @@ import './Sudoku.css';
 import SudokuGenerator from './SudokuGenerator';
 
 const N = 9;
-const K = 40;
 
 const Sudoku = () => {
   const [puzzle, setPuzzle] = useState([]);
@@ -16,10 +15,30 @@ const Sudoku = () => {
   const [noteMode, setNoteMode] = useState(false);
   const [notes, setNotes] = useState(Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
   const [history, setHistory] = useState([]); // History for undo functionality
-
+  const [difficulty, setDifficulty] = useState('Medium'); // Default difficulty
+  const [timer, setTimer] = useState(0); // Timer state in seconds
+  const timerRef = useRef(null);
   const maxErrors = 3;
 
   const generateNewPuzzle = () => {
+    let K;
+
+    switch (difficulty) {
+      case 'Insane':
+        K = 60;
+        break;
+      case 'Hard':
+        K = 50;
+        break;
+      case 'Medium':
+        K = 40;
+        break;
+      case 'Easy':
+        K = 30;
+        break;
+      default:
+        K = 40;
+    }
     const sudoku = new SudokuGenerator(N, K);
     const generatedPuzzle = sudoku.fillValues();
     const initialLockedCells = generatedPuzzle.map(row => row.map(cell => cell !== 0));
@@ -33,11 +52,27 @@ const Sudoku = () => {
     setGameOver(false);
     setNotes(Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
     setHistory([]); // Clear history when generating a new puzzle
+    setTimer(0); // Reset timer
+    // Clear existing timer and start a new one
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => setTimer(prev => prev + 1), 1000);
   };
+
+  // Clear timer on component unmount
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
 
   useEffect(() => {
     generateNewPuzzle();
-  }, []);
+  }, [difficulty]);
+
+  // Timer display format
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
 
   const checkVictory = (puzzle) => {
     for (let row = 0; row < N; row++) {
@@ -71,47 +106,53 @@ const Sudoku = () => {
     setNotes(newNotes);
   };
 
+  const clearNotesForNumber = (row, col, number, currentNotes) => {
+    const newNotes = [...currentNotes];
+  
+    // Clear notes in the same row
+    for (let c = 0; c < N; c++) {
+      if (c !== col) {
+        newNotes[row][c].delete(number);
+      }
+    }
+  
+    // Clear notes in the same column
+    for (let r = 0; r < N; r++) {
+      if (r !== row) {
+        newNotes[r][col].delete(number);
+      }
+    }
+  
+    // Clear notes in the same 3x3 box
+    const boxRowStart = Math.floor(row / 3) * 3;
+    const boxColStart = Math.floor(col / 3) * 3;
+    for (let r = boxRowStart; r < boxRowStart + 3; r++) {
+      for (let c = boxColStart; c < boxColStart + 3; c++) {
+        if (r !== row || c !== col) {
+          newNotes[r][c].delete(number);
+        }
+      }
+    }
+  
+    return newNotes;
+  };
+
   const handleInputChange = (row, col, value) => {
     if (gameOver || lockedCells[row][col]) return;
   
-    // Save the current puzzle state for undo
     setHistory([...history, JSON.parse(JSON.stringify(puzzle))]);
   
     const newPuzzle = [...puzzle];
     const newIncorrectCells = [...incorrectCells];
-    const newNotes = [...notes];
+    let newNotes = [...notes];
   
     if (/^[1-9]$/.test(value)) {
-      newPuzzle[row][col] = Number(value);
+      const num = Number(value);
+      newPuzzle[row][col] = num;
       newNotes[row][col].clear(); // Clear notes on the selected cell
   
-      // Remove the entered number from the notes in the same row, column, and 3x3 box
-      const num = Number(value);
-  
-      // Clear notes in the same row
-      for (let c = 0; c < N; c++) {
-        if (c !== col) {
-          newNotes[row][c].delete(num);
-        }
-      }
-  
-      // Clear notes in the same column
-      for (let r = 0; r < N; r++) {
-        if (r !== row) {
-          newNotes[r][col].delete(num);
-        }
-      }
-  
-      // Clear notes in the same 3x3 box
-      const boxRowStart = Math.floor(row / 3) * 3;
-      const boxColStart = Math.floor(col / 3) * 3;
-      for (let r = boxRowStart; r < boxRowStart + 3; r++) {
-        for (let c = boxColStart; c < boxColStart + 3; c++) {
-          if (r !== row || c !== col) {
-            newNotes[r][c].delete(num);
-          }
-        }
-      }
+      // Clear notes in related cells using the new function
+      newNotes = clearNotesForNumber(row, col, num, newNotes);
   
       if (num !== solution[row][col]) {
         newIncorrectCells[row][col] = true;
@@ -120,6 +161,7 @@ const Sudoku = () => {
   
         if (newErrors >= maxErrors) {
           setGameOver(true);
+          clearInterval(timerRef.current);
           alert("Game Over! You made 3 mistakes.");
           return;
         }
@@ -129,14 +171,15 @@ const Sudoku = () => {
   
       setPuzzle(newPuzzle);
       setIncorrectCells(newIncorrectCells);
-      setNotes(newNotes); // Update the notes state
+      setNotes(newNotes);
   
       if (checkVictory(newPuzzle)) {
         setGameOver(true);
+        clearInterval(timerRef.current);
         alert("Congratulations! You have won the game!");
       }
     }
-  };  
+  };
 
   const handleCellClick = (row, col) => {
     if (gameOver) return;
@@ -172,19 +215,27 @@ const Sudoku = () => {
   const handleHint = () => {
     const { row, col } = selectedCell;
     if (row !== null && col !== null && !lockedCells[row][col]) {
-      // Save the current puzzle state for undo
       setHistory([...history, JSON.parse(JSON.stringify(puzzle))]);
-
+  
       const newPuzzle = [...puzzle];
-      newPuzzle[row][col] = solution[row][col]; // Set cell to correct solution value
+      let newNotes = [...notes];
+      const hintNumber = solution[row][col];
+  
+      newPuzzle[row][col] = hintNumber;
+      newNotes[row][col].clear(); // Clear notes in the hinted cell
+  
+      // Clear notes in related cells using the new function
+      newNotes = clearNotesForNumber(row, col, hintNumber, newNotes);
+  
       setPuzzle(newPuzzle);
+      setNotes(newNotes);
     }
   };
 
   const handleKeyDown = (e) => {
     const { row, col } = selectedCell;
     if (row === null || col === null || lockedCells[row][col]) return;
-
+  
     if (/^[1-9]$/.test(e.key)) {
       const number = parseInt(e.key, 10);
       if (noteMode) {
@@ -192,9 +243,11 @@ const Sudoku = () => {
       } else {
         handleInputChange(row, col, e.key);
       }
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleDelete();
     }
   };
-
+  
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -202,6 +255,14 @@ const Sudoku = () => {
 
   return (
     <div className="sudoku-container">
+      <div className="difficulty-selection">
+        {['Easy', 'Medium', 'Hard', 'Insane'].map(level => (
+          <button key={level} onClick={() => setDifficulty(level)} className={`difficulty-button ${difficulty === level ? 'active' : ''}`}>
+            {level}
+          </button>
+        ))}
+      <div className="timer">{formatTime(timer)}</div>
+      </div>
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
           <div key={rowIndex} className="sudoku-row">
@@ -239,6 +300,11 @@ const Sudoku = () => {
       </div>
 
       <div className="tool-bar">
+        <div className="error-container">
+          <div className="error-progress">
+            <div className="error-bar" style={{ width: `${(errors / maxErrors) * 100}%` }}></div>
+          </div>
+        </div>
         <button onClick={handleUndo} className="tool-button"><i className="fa fa-undo"></i></button>
         <button onClick={handleDelete} className="tool-button"><i className="fa fa-trash"></i></button>
         <button onClick={handleHint} className="tool-button"><i className="fa fa-lightbulb"></i></button>
@@ -259,14 +325,6 @@ const Sudoku = () => {
         ))}
       </div>
 
-      <div className="status-bar">
-        <div className="error-container">
-          <div className="error-progress">
-            <div className="error-bar" style={{ width: `${(errors / maxErrors) * 100}%` }}></div>
-          </div>
-        </div>
-        <button className="reset-button" onClick={generateNewPuzzle}>New Puzzle</button>
-      </div>
     </div>
   );
 };

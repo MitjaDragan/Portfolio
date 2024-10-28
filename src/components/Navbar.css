@@ -48,6 +48,7 @@ body {
     border: none;
     cursor: pointer;
     transition: transform 0.2s ease;
+    margin-top: 6px;
   }
   
   .theme-toggle-btn img {
