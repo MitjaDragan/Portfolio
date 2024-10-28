@@ -151,7 +151,6 @@
   width: 360px;
   display: flex;
   gap: 10px;
-  padding: 5px;
 }
 
 .difficulty-button {
@@ -177,7 +176,6 @@
 .number-button, .tool-button {
   width: 35px;
   height: 35px;
-  margin-right: 4px;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -197,7 +195,6 @@
   justify-content: center;
   width: 50px;
   height: 35px;
-  margin: 0 5px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;

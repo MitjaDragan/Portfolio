@@ -13,7 +13,7 @@ const Sudoku = () => {
   const [errors, setErrors] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [noteMode, setNoteMode] = useState(false);
-  const [notes, setNotes] = useState(Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
+  const [notes, setNotes] = useState(() => Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
   const [history, setHistory] = useState([]); // History for undo functionality
   const [difficulty, setDifficulty] = useState('Medium'); // Default difficulty
   const [timer, setTimer] = useState(0); // Timer state in seconds
@@ -50,7 +50,7 @@ const Sudoku = () => {
     setSelectedCell({ row: null, col: null });
     setErrors(0);
     setGameOver(false);
-    setNotes(Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
+    setNotes(Array(N).fill().map(() => Array(N).fill().map(() => new Set()))); // Reinitialize notes with Sets
     setHistory([]); // Clear history when generating a new puzzle
     setTimer(0); // Reset timer
     // Clear existing timer and start a new one
@@ -97,7 +97,7 @@ const Sudoku = () => {
   };
 
   const toggleNote = (row, col, number) => {
-    const newNotes = [...notes];
+    const newNotes = notes.map(row => row.map(cell => new Set(cell))); // Deep copy of notes with Sets
     if (newNotes[row][col].has(number)) {
       newNotes[row][col].delete(number);
     } else {
@@ -107,7 +107,7 @@ const Sudoku = () => {
   };
 
   const clearNotesForNumber = (row, col, number, currentNotes) => {
-    const newNotes = [...currentNotes];
+    const newNotes = currentNotes.map(row => row.map(cell => new Set(cell))); // Deep copy of notes with Sets
   
     // Clear notes in the same row
     for (let c = 0; c < N; c++) {
@@ -140,18 +140,22 @@ const Sudoku = () => {
   const handleInputChange = (row, col, value) => {
     if (gameOver || lockedCells[row][col]) return;
   
-    setHistory([...history, JSON.parse(JSON.stringify(puzzle))]);
+    // Save the current puzzle and notes states for undo, converting Sets to arrays for storage
+    setHistory([...history, { 
+      puzzle: JSON.parse(JSON.stringify(puzzle)), 
+      notes: notes.map(row => row.map(cell => Array.from(cell))) 
+    }]);
   
     const newPuzzle = [...puzzle];
     const newIncorrectCells = [...incorrectCells];
-    let newNotes = [...notes];
+    let newNotes = notes.map(row => row.map(cell => new Set(cell))); // Deep copy of notes with Sets
   
     if (/^[1-9]$/.test(value)) {
       const num = Number(value);
       newPuzzle[row][col] = num;
       newNotes[row][col].clear(); // Clear notes on the selected cell
   
-      // Clear notes in related cells using the new function
+      // Clear notes in related cells using the clearNotesForNumber function
       newNotes = clearNotesForNumber(row, col, num, newNotes);
   
       if (num !== solution[row][col]) {
@@ -189,7 +193,8 @@ const Sudoku = () => {
   const handleUndo = () => {
     if (history.length > 0) {
       const lastState = history[history.length - 1];
-      setPuzzle(lastState);
+      setPuzzle(lastState.puzzle); // Restore the previous puzzle state
+      setNotes(lastState.notes.map(row => row.map(cell => new Set(cell)))); // Convert arrays back to Sets for notes
       setHistory(history.slice(0, -1)); // Remove last state from history
     }
   };
@@ -197,15 +202,19 @@ const Sudoku = () => {
   const handleDelete = () => {
     const { row, col } = selectedCell;
     if (row !== null && col !== null && !lockedCells[row][col]) {
-      // Save the current puzzle state for undo
-      setHistory([...history, JSON.parse(JSON.stringify(puzzle))]);
+      // Save the current puzzle and notes states for undo
+      setHistory([...history, { puzzle: JSON.parse(JSON.stringify(puzzle)), notes: notes.map(row => row.map(cell => Array.from(cell))) }]);
 
       const newPuzzle = [...puzzle];
       const newIncorrectCells = [...incorrectCells];
+      const newNotes = notes.map(row => row.map(cell => new Set(cell))); // Deep copy of notes with Sets
       
       newPuzzle[row][col] = null;
       newIncorrectCells[row][col] = false;
-      notes[row][col].clear(); // Clear notes on delete
+      newNotes[row][col].clear(); // Clear notes on delete
+
+     
+
 
       setPuzzle(newPuzzle);
       setIncorrectCells(newIncorrectCells);
@@ -261,7 +270,6 @@ const Sudoku = () => {
             {level}
           </button>
         ))}
-      <div className="timer">{formatTime(timer)}</div>
       </div>
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
