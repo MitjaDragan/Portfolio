@@ -1,9 +1,15 @@
 /* General styling for larger screens */
+.sudoku-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   width: 360px;
-  margin: auto;
+  margin: 20px 0;
   border: 3px solid var(--sudoku-border-color);
   background-color: var(--sudoku-grid-bg);
 }
@@ -26,7 +32,7 @@
 
 .notes {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); 
+  grid-template-columns: repeat(3, 1fr);
   font-size: 10px;
   text-align: center;
   line-height: 1.2;
@@ -92,15 +98,6 @@
   color: red;
 }
 
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 360px;
-  margin: 10px auto;
-  padding: 1px;
-}
-
 .reset-button {
   padding: 8px 16px;
   font-size: 16px;
@@ -128,7 +125,7 @@
   background-color: var(--error-bg);
   border-radius: 4px;
   overflow: hidden;
-  margin-top: 5px;
+  margin-top: 13px;
 }
 
 .error-bar {
@@ -146,14 +143,41 @@
   width: 360px;
   margin: auto;
   display: flex;
-  justify-content: center;
-  margin-top: 15px;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.difficulty-selection {
+  width: 360px;
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+}
+
+.difficulty-button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+  transition: background-color 0.3s;
+}
+
+.difficulty-button.active {
+  background-color: var(--button-hover-bg);
+}
+
+.timer {
+  font-size: 1.2em;
+  margin-left: auto;
 }
 
 .number-button, .tool-button {
   width: 35px;
   height: 35px;
-  margin: 0 2px;
+  margin-right: 4px;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -240,59 +264,9 @@ body.dark-theme {
   --sudoku-active-note: #d4af37;
 }
 
-@media (max-width: 768px) {
-  .sudoku-grid {
-    width: 300px;
-  }
-
-  .sudoku-cell {
-    height: 35px;
-    font-size: 20px;
-  }
-
-  .status-bar {
-    width: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sudoku-grid {
-    width: 100%;
-    max-width: 280px;
-    grid-template-columns: repeat(9, 1fr);
-  }
-
-  .sudoku-cell {
-    height: 30px;
-    font-size: 18px;
-  }
-
-  .status-bar {
-    width: 280px;
-  }
-
-  .reset-button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 360px) {
-  .sudoku-grid {
-    max-width: 240px;
-  }
-
-  .sudoku-cell {
-    height: 25px;
-    font-size: 16px;
-  }
-
-  .status-bar {
-    width: 240px;
-  }
-
-  .reset-button {
-    padding: 5px 10px;
-    font-size: 12px;
-  }
+.sudoku-grid, .sudoku-grid * {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+/Edge */
+  user-select: none;         /* Standard */
 }
