@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Sudoku.css';
-
 import SudokuGenerator from './SudokuGenerator';
 
 const N = 9;
@@ -14,7 +13,11 @@ const Sudoku = () => {
   const [incorrectCells, setIncorrectCells] = useState([]);
   const [errors, setErrors] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // Track if device is mobile
+  const [isMobile, setIsMobile] = useState(false);
+  const [noteMode, setNoteMode] = useState(false);
+  const [notes, setNotes] = useState(
+    Array(N).fill().map(() => Array(N).fill().map(() => new Set()))
+  );
 
   const maxErrors = 3;
 
@@ -30,12 +33,12 @@ const Sudoku = () => {
     setSelectedCell({ row: null, col: null });
     setErrors(0);
     setGameOver(false);
+    setNotes(Array(N).fill().map(() => Array(N).fill().map(() => new Set())));
   };
 
   useEffect(() => {
     generateNewPuzzle();
 
-    // Check if the user is on a mobile device
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isMobileDevice = /android|iphone|ipad|ipod/i.test(userAgent.toLowerCase());
     setIsMobile(isMobileDevice);
@@ -55,8 +58,22 @@ const Sudoku = () => {
   const handleNumberClick = (number) => {
     const { row, col } = selectedCell;
     if (row !== null && col !== null && !lockedCells[row][col]) {
-      handleInputChange(row, col, number.toString());
+      if (noteMode) {
+        toggleNote(row, col, number);
+      } else {
+        handleInputChange(row, col, number.toString());
+      }
     }
+  };
+
+  const toggleNote = (row, col, number) => {
+    const newNotes = [...notes];
+    if (newNotes[row][col].has(number)) {
+      newNotes[row][col].delete(number);
+    } else {
+      newNotes[row][col].add(number);
+    }
+    setNotes(newNotes);
   };
 
   const handleInputChange = (row, col, value) => {
@@ -67,6 +84,7 @@ const Sudoku = () => {
 
     if (/^[1-9]$/.test(value)) {
       newPuzzle[row][col] = Number(value);
+      notes[row][col].clear();
       
       if (Number(value) !== solution[row][col]) {
         newIncorrectCells[row][col] = true;
@@ -97,13 +115,32 @@ const Sudoku = () => {
     setSelectedCell({ row, col });
   };
 
+  const handleKeyDown = (e) => {
+    const { row, col } = selectedCell;
+    if (row === null || col === null || lockedCells[row][col]) return;
+
+    if (/^[1-9]$/.test(e.key)) {
+      const number = parseInt(e.key, 10);
+      if (noteMode) {
+        toggleNote(row, col, number);
+      } else {
+        handleInputChange(row, col, e.key);
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCell, lockedCells, noteMode]);
+
   return (
     <div className="sudoku-container">
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
           <div key={rowIndex} className="sudoku-row">
             {row.map((cell, colIndex) => (
-              <input
+              <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`sudoku-cell 
                   ${lockedCells[rowIndex][colIndex] ? 'locked-cell' : ''} 
@@ -113,25 +150,35 @@ const Sudoku = () => {
                   ${selectedCell.row === rowIndex && selectedCell.col === colIndex ? 'selected-cell' : ''}
                   ${selectedCell.row === rowIndex || selectedCell.col === colIndex ? 'highlight-row-col' : ''}
                   ${cell === puzzle[selectedCell.row]?.[selectedCell.col] && cell !== 0 ? 'highlight-same-number' : ''}`}
-                type="text"
-                maxLength="1"
-                value={cell || ''}
-                readOnly={isMobile || lockedCells[rowIndex][colIndex]} // Set readOnly for mobile and locked cells
-                onClick={() => handleCellClick(rowIndex, colIndex)} 
-                onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)} // Allow direct input on non-mobile
-              />
+                onClick={() => handleCellClick(rowIndex, colIndex)}
+              >
+                {cell ? (
+                  <span>{cell}</span>
+                ) : (
+                  <div className="notes">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                      <span
+                        key={num}
+                        className={`note ${notes[rowIndex][colIndex].has(num) ? 'active-note' : ''}`}
+                      >
+                        {num}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         ))}
       </div>
-      
-      <div className="status-bar">
-        <div className="error-container">
-          <div className="error-progress">
-            <div className="error-bar" style={{ width: `${(errors / maxErrors) * 100}%` }}></div>
-          </div>
-        </div>
-        <button className="reset-button" onClick={generateNewPuzzle}>New Puzzle</button>
+
+      <div className="tool-bar">
+        <button className="tool-button"><i className="fa fa-undo"></i></button>
+        <button className="tool-button"><i className="fa fa-trash"></i></button>
+        <button className="tool-button"><i className="fa fa-lightbulb"></i></button>
+        <button onClick={() => setNoteMode(!noteMode)} className="tool-button">
+          <i className={`fa fa-pencil ${noteMode ? 'active' : ''}`}></i>
+        </button>
       </div>
 
       <div className="number-selection">
@@ -144,6 +191,15 @@ const Sudoku = () => {
             {num}
           </button>
         ))}
+      </div>
+
+      <div className="status-bar">
+        <div className="error-container">
+          <div className="error-progress">
+            <div className="error-bar" style={{ width: `${(errors / maxErrors) * 100}%` }}></div>
+          </div>
+        </div>
+        <button className="reset-button" onClick={generateNewPuzzle}>New Puzzle</button>
       </div>
     </div>
   );

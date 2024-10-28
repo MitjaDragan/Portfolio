@@ -21,7 +21,31 @@
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   cursor: default;
   caret-color: transparent;
-  outline: none; /* Remove default browser outline */
+  outline: none;
+}
+
+.notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.2;
+  font-weight: bold;
+  color: transparent;
+  opacity: 0.8;
+}
+
+.note.active-note {
+  color: var(--sudoku-active-note);
+}
+
+.note-toggle-button .fa-pencil {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.note-toggle-button .fa-pencil.active {
+  color: var(--sudoku-active-note); /* Color when note mode is on */
 }
 
 .sudoku-cell:focus {
@@ -118,7 +142,7 @@
   caret-color: transparent;
 }
 
-.number-selection {
+.number-selection, .tool-bar {
   width: 360px;
   margin: auto;
   display: flex;
@@ -126,7 +150,7 @@
   margin-top: 15px;
 }
 
-.number-button {
+.number-button, .tool-button {
   width: 35px;
   height: 35px;
   margin: 0 2px;
@@ -141,6 +165,30 @@
 
 .number-button:hover {
   background-color: var(--sudoku-hover-bg);
+}
+
+.tool-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 35px;
+  margin: 0 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid var(--sudoku-border-color);
+  background-color: var(--sudoku-cell-bg);
+  color: var(--sudoku-cell-color);
+  transition: background-color 0.2s ease;
+}
+
+.tool-button:hover {
+  background-color: var(--sudoku-hover-bg);
+}
+
+.tool-button .fa-pencil.active {
+  color: var(--sudoku-active-note); /* Toggle color when note mode is active */
 }
 
 /* Theme variables */
@@ -165,89 +213,86 @@ body.light-theme {
   --button-hover-bg: #0097a7;
   --error-bg: #ddd;
   --error-bar-color: #f44336;
+  --sudoku-active-note: #555;
 }
 
 body.dark-theme {
-  --sudoku-border-color: #888;                 /* Softer border color */
-  --sudoku-grid-bg: #2a2a2a;                   /* Lighter grid background */
-  --sudoku-cell-border-color: #555;            /* Softer cell borders */
-  --sudoku-cell-bg: #333;                      /* Lighter cell background */
-  --sudoku-cell-color: #f0f0f0;                /* Light font color for better readability */
-  --sudoku-hover-bg: #444;                     /* Hover background slightly lighter */
-  --sudoku-focus-color: #e1c16e;               /* Soft gold focus color */
-  --sudoku-selected-cell-bg: #3e3e3e;          /* Darker but visible selected cell background */
-  --sudoku-selected-cell-border: #d4af37;      /* Gold border for selected cell */
-  --sudoku-selected-cell-shadow: rgba(212, 175, 55, 0.6); /* Soft gold shadow for selected cell */
-  --sudoku-highlight-row-col-bg: #342d00;      /* Muted yellow shade for row/column highlight */
-  --sudoku-highlight-same-number-bg: #47402d;  /* Subtle goldish tint for same-number highlights */
-  --sudoku-same-number-color: #ffeb99;         /* Light gold text for same number */
-  --sudoku-locked-cell-bg: #404040;            /* Softer background for locked cells */
-  --sudoku-locked-cell-color: #b3b3b3;         /* Light gray font for locked cells */
-  --button-bg: #d4af37;                        /* Gold background for button */
-  --button-text-color: #222;                   /* Dark text color on gold button */
-  --button-hover-bg: #c49a2e;                  /* Slightly darker gold for hover effect */
-  --error-bg: #555;                            /* Softer error progress background */
-  --error-bar-color: #e57373;                  /* Light red for error progress bar */
+  --sudoku-border-color: #888;
+  --sudoku-grid-bg: #2a2a2a;
+  --sudoku-cell-border-color: #555;
+  --sudoku-cell-bg: #333;
+  --sudoku-cell-color: #f0f0f0;
+  --sudoku-hover-bg: #444;
+  --sudoku-focus-color: #e1c16e;
+  --sudoku-selected-cell-bg: #3e3e3e;
+  --sudoku-selected-cell-border: #d4af37;
+  --sudoku-selected-cell-shadow: rgba(212, 175, 55, 0.6);
+  --sudoku-highlight-row-col-bg: #342d00;
+  --sudoku-highlight-same-number-bg: #47402d;
+  --sudoku-same-number-color: #ffeb99;
+  --sudoku-locked-cell-bg: #404040;
+  --sudoku-locked-cell-color: #b3b3b3;
+  --button-bg: #d4af37;
+  --button-text-color: #222;
+  --button-hover-bg: #c49a2e;
+  --error-bg: #555;
+  --error-bar-color: #e57373;
+  --sudoku-active-note: #d4af37;
 }
 
-
-
-/* Responsive for tablets and smaller screens */
 @media (max-width: 768px) {
   .sudoku-grid {
-    width: 300px; /* Shrink the grid a bit for tablets */
+    width: 300px;
   }
 
   .sudoku-cell {
-    height: 35px; /* Adjust cell height */
-    font-size: 20px; /* Adjust font size for better readability */
+    height: 35px;
+    font-size: 20px;
   }
 
   .status-bar {
-    width: 300px; /* Adjust the width to match the grid */
+    width: 300px;
   }
 }
 
-/* Responsive for mobile phones */
 @media (max-width: 480px) {
   .sudoku-grid {
-    width: 100%; /* Take full width of the screen */
-    max-width: 280px; /* Limit maximum width */
-    grid-template-columns: repeat(9, 1fr); /* Maintain 9 columns */
+    width: 100%;
+    max-width: 280px;
+    grid-template-columns: repeat(9, 1fr);
   }
 
   .sudoku-cell {
-    height: 30px; /* Adjust cell height for small screens */
-    font-size: 18px; /* Smaller font size */
+    height: 30px;
+    font-size: 18px;
   }
 
   .status-bar {
-    width: 280px; /* Adjust the status bar to match the grid width */
+    width: 280px;
   }
 
   .reset-button {
-    padding: 6px 12px; /* Smaller padding for buttons */
-    font-size: 14px; /* Adjust font size for smaller screens */
+    padding: 6px 12px;
+    font-size: 14px;
   }
 }
 
-/* Adjust further for very small screens */
 @media (max-width: 360px) {
   .sudoku-grid {
-    max-width: 240px; /* Even smaller grid */
+    max-width: 240px;
   }
 
   .sudoku-cell {
-    height: 25px; /* Further decrease cell height */
-    font-size: 16px; /* Decrease font size to fit */
+    height: 25px;
+    font-size: 16px;
   }
 
   .status-bar {
-    width: 240px; /* Status bar matches grid width */
+    width: 240px;
   }
 
   .reset-button {
-    padding: 5px 10px; /* Reduce button padding */
-    font-size: 12px; /* Reduce button font size */
+    padding: 5px 10px;
+    font-size: 12px;
   }
 }
