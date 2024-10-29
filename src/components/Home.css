@@ -1,0 +1,79 @@
+.home-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 60px;
+    background-color: black;
+  }
+  
+  .home-left {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+  }
+  
+  .skills-list li {
+    background-color: #007acc;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+  }
+  
+  .contact-form-right {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .contact-form input, .contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    transition: border 0.3s;
+  }
+  
+  .contact-form input:focus, .contact-form textarea:focus {
+    border-color: #007acc;
+  }
+  
+  .contact-form button {
+    padding: 14px;
+    font-size: 18px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .contact-form button:hover {
+    background-color: #005a99;
+  }
+  
