@@ -1,53 +1,106 @@
-.home-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 60px;
-    background-color: black;
+:root {
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --card-background: #f5f5f5;
+    --button-color: #007acc;
   }
   
+  .dark-theme {
+    --background-color: #333333;
+    --text-color: #ffffff;
+    --card-background: #444444;
+    --button-color: #d7b816;
+  }
+  
+  .home-container {
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+    margin: 20px auto;
+    gap: 40px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
   .home-left {
-    flex: 1;
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
   }
   
   .profile-picture {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin-bottom: 20px;
+    width: 300px;
+    height: 100%;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+  }
+  
+  .bio-content {
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .bio-content h2 {
+    margin-top: 0;
+    font-size: 24px;
+    text-align: left;
+  }
+  
+  .bio-content p {
+    margin: 10px 0;
+    text-align: left;
   }
   
   .skills-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     list-style: none;
     padding: 0;
+    margin-top: auto; /* Pushes the skills section to the bottom */
   }
   
   .skills-list li {
-    background-color: #007acc;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
+    background-color: transparent;
+    color: var(--button-color);
+    padding: 4px 10px; /* Smaller padding for a compact look */
+    border: 1.5px solid var(--button-color); /* Thinner border */
+    border-radius: 16px; /* Slightly smaller radius */
+    font-size: 12px; /* Smaller font size */
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
   }
+  
+  .skills-list li:hover {
+    background-color: var(--button-color);
+    color: white;
+    cursor: pointer;
+  }  
   
   .contact-form-right {
     flex: 1;
-    background-color: white;
+    background-color: var(--card-background);
     border-radius: 8px;
-    padding: 40px;
+    padding: 20px 40px; /* Reduced top padding */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .contact-form-right h3 {
+    margin-top: 0; /* Removes extra margin from the heading */
+    margin-bottom: 20px; /* Adds a bit of space below the heading */
+    font-size: 24px;
   }
   
   .contact-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
+  }  
   
   .contact-form input, .contact-form textarea {
     width: 100%;
@@ -59,13 +112,13 @@
   }
   
   .contact-form input:focus, .contact-form textarea:focus {
-    border-color: #007acc;
+    border-color: var(--button-color);
   }
   
   .contact-form button {
     padding: 14px;
     font-size: 18px;
-    background-color: #007acc;
+    background-color: var(--button-color);
     color: white;
     border: none;
     border-radius: 6px;
@@ -74,6 +127,7 @@
   }
   
   .contact-form button:hover {
-    background-color: #005a99;
+    background-color: darken(var(--button-color), 10%);
   }
+  
   
