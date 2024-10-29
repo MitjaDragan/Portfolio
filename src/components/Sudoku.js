@@ -270,6 +270,7 @@ const Sudoku = () => {
             {level}
           </button>
         ))}
+        <div className="timer">{formatTime(timer)}</div>
       </div>
       <div className="sudoku-grid">
         {puzzle.map((row, rowIndex) => (
