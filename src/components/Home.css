@@ -2,14 +2,14 @@
     --background-color: #ffffff;
     --text-color: #333333;
     --card-background: #f5f5f5;
-    --button-color: #007acc;
+    --button-color: #007acc; /* Consistent blue color */
   }
   
   .dark-theme {
     --background-color: #333333;
     --text-color: #ffffff;
     --card-background: #444444;
-    --button-color: #d7b816;
+    --button-color: #d7b816; /* Consistent yellow color for dark theme */
   }
   
   .home-container {
@@ -80,24 +80,25 @@
     color: white;
     cursor: pointer;
   }  
+
   .contact-form-right {
     flex: 1;
-    background: linear-gradient(135deg, #444444, #333333); /* Gradient background */
+    background-color: var(--card-background); /* Uses dynamic background color */
     border-radius: 8px;
     padding: 40px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    color: white;
+    color: var(--text-color); /* Matches the theme text color */
   }
   
   .contact-form-right h3 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 24px;
-    color: var(--button-color); /* Accent color for the heading */
+    color: var(--button-color); /* Uses dynamic button color */
   }
-  
+    
   .contact-form {
     display: flex;
     flex-direction: column;
@@ -109,9 +110,9 @@
     padding: 12px 40px 12px 12px; /* Padding for icon spacing */
     font-size: 16px;
     border-radius: 6px;
-    border: 2px solid transparent;
-    background-color: #555555;
-    color: white;
+    background-color: var(--background-color); /* Match the form field background to the theme */
+    color: var(--text-color); /* Match text color to the theme */
+    border: 1px solid #ccc; /* Light border for better contrast */
     transition: all 0.3s;
     position: relative;
   }
@@ -134,20 +135,24 @@
   }
   
   .contact-form button {
+    background-color: var(--button-color); /* Starts with filled background */
+    color: white; /* White text color initially */
     padding: 14px;
     font-size: 18px;
-    background-color: var(--button-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
+    font-weight: bold;
+    border: 2px solid var(--button-color); /* Border color matches background */
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.3s ease, background 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
   }
   
   .contact-form button:hover {
-    background-color: darken(var(--button-color), 10%);
+    background-color: transparent; /* Background becomes transparent on hover */
+    color: var(--button-color); /* Text color changes to primary color */
     transform: scale(1.05); /* Slightly enlarges the button on hover */
+    box-shadow: 0px 0px 0px 1px var(--button-color) inset; /* Border effect with shadow */
   }
+  
 
   .projects-section {
     padding: 20px 0;
@@ -194,9 +199,75 @@
     text-decoration: underline;
     cursor: pointer;
   }
+
+/* Existing CSS from previous code */
+@media (min-width: 1024px) and (max-width: 1724px) {
+    .contact-form-right {
+        display: none;
+    }
+}
+/* Media Query for Tablet Screens */
+@media (min-width: 512px) and (max-width: 1024px) {
+    .home-container {
+      flex-direction: column;
+      width: 85%;
+      padding: 20px;
+      margin: -10px auto;
+    }
+  
+    .home-left, .contact-form-right {
+      width: 100%; /* Full width for both columns */
+    }
+  
+    .home-left {
+      flex-direction: row;
+    }
+  
+    .profile-picture {
+      width: 200px; /* Smaller size for tablet screens */
+      height: auto;
+    }
+
+    .bio-content {
+        margin-top: 10px;
+    }
+
+    .bio-content h2 {
+      font-size: 22px;
+    }
+  
+    .bio-content p {
+      font-size: 15px;
+    }
+  
+    .skills-list {
+      margin-top: 20px;
+    }
+  
+    .contact-form-right {
+      padding: 30px;
+      margin-top: 20px;
+    }
+  
+    .projects-section {
+      width: 90%;
+      margin: 20px auto;
+    }
+  
+    .project-card {
+      width: 90%; /* Slightly narrower for tablet */
+      margin: 20px auto;
+    }
+  
+    .left-aligned, .right-aligned {
+      text-align: center; /* Center-align content on tablet */
+      margin: 0 auto;
+    }
+  }
+  
   
   /* Media Queries for Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 512px) {
     .home-left {
         flex-direction: column;
     }

@@ -229,13 +229,14 @@ body.light-theme {
   --sudoku-same-number-color: #000;
   --sudoku-locked-cell-bg: #eaeaea;
   --sudoku-locked-cell-color: #555;
-  --button-bg: #00bcd4;
+  --button-bg: var(--button-color);
   --button-text-color: #fff;
   --button-hover-bg: #0097a7;
   --error-bg: #ddd;
   --error-bar-color: #f44336;
   --sudoku-active-note: #555;
 }
+
 
 body.dark-theme {
   --sudoku-border-color: #888;

@@ -78,7 +78,7 @@ function Navbar() {
                 <Link to="/" className="nav-link mx-2">About me</Link>
               </li>
               <li className="nav-item">
-                <Link to="/projects" className="nav-link mx-2">Projects</Link>
+                <Link to="/jigsaw" className="nav-link mx-2">Projects</Link>
               </li>
               <li className="nav-item">
                 <Link to="/certificates" className="nav-link mx-2">Certificates</Link>
