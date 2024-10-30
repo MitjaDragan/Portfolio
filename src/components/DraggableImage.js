@@ -80,33 +80,35 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
   const handleMouseMove = (e) => {
     if (!draggingRef.current) return;
-
-    const newX = e.clientX - dragOffset.current.x;
-    const newY = e.clientY - dragOffset.current.y;
-
+  
+    // Calculate new position with boundaries
+    const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, e.clientX - dragOffset.current.x));
+    const newY = Math.max(0, Math.min(window.innerHeight - scaledSize.height, e.clientY - dragOffset.current.y));
+  
     positionRef.current = { x: newX, y: newY };
-
+  
     requestAnimationFrame(() => {
       imgRef.current.style.left = `${newX}px`;
       imgRef.current.style.top = `${newY}px`;
     });
   };
-
+  
   const handleTouchMove = (e) => {
-    if (!draggingRef.current || e.touches.length > 1) return; // Ensure only one touch is used
-    e.preventDefault(); // Prevent scrolling
-
+    if (!draggingRef.current || e.touches.length > 1) return;
+    e.preventDefault();
+  
     const touch = e.touches[0];
-    const newX = touch.pageX - dragOffset.current.x;
-    const newY = touch.pageY - dragOffset.current.y;
-
+    const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, touch.pageX - dragOffset.current.x));
+    const newY = Math.max(0, Math.min(window.innerHeight - scaledSize.height, touch.pageY - dragOffset.current.y));
+  
     positionRef.current = { x: newX, y: newY };
-
+  
     requestAnimationFrame(() => {
       imgRef.current.style.left = `${newX}px`;
       imgRef.current.style.top = `${newY}px`;
     });
   };
+  
 
   const handleMouseUp = () => {
     draggingRef.current = false;

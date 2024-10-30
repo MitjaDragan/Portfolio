@@ -1,6 +1,7 @@
 import React, { useState, useLayoutEffect, useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
+import './DroppableArea.css'
 
 const importAll = (r) => {
   let images = {};
@@ -35,6 +36,7 @@ const levels = {
 };
 
 const BASE_SCREEN_WIDTH = 11520;
+const BASE_SCREEN_HEIGHT= 6480;
 
 const neighborMap = {
   A1: ['A2', 'B1'],
@@ -56,8 +58,13 @@ const neighborMap = {
 };
 
 const getRandomPosition = () => {
-  const x = Math.floor(Math.random() * BASE_SCREEN_WIDTH) - 200;
-  const y = Math.floor(Math.random() * window.height) + 100;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  const SCREEN_HEIGHT = screenHeight * (BASE_SCREEN_WIDTH / screenWidth);
+
+  const x = Math.floor(0.01 * BASE_SCREEN_WIDTH + Math.random() * 0.89 * (BASE_SCREEN_WIDTH));
+  const y = Math.floor(0.2 * SCREEN_HEIGHT + Math.random() * 0.5 * (SCREEN_HEIGHT));
   return { x, y };
 };
 
