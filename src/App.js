@@ -16,11 +16,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/puzzle" element={<JigsawPuzzle />} />
-        <Route path="/projects" element={<JigsawPuzzle />} />
+        <Route path="/jigsaw" element={<JigsawPuzzle />} />
         <Route path="/hangman" element={<Hangman />} />
-        <Route path="/certificates" element={<Certifications />} />
         <Route path="/sudoku" element={<Sudoku />} />
+        <Route path="/certificates" element={<Certifications />} />
       </Routes>
     </Router>
   );

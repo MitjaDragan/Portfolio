@@ -75,16 +75,13 @@ function Navbar() {
           <div className={`collapse navbar-collapse ${isCollapsed ? '' : 'show'}`} id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/" className="nav-link mx-2"><i className="fas fa-plus-circle pe-2"></i>About me</Link>
+                <Link to="/" className="nav-link mx-2">About me</Link>
               </li>
               <li className="nav-item">
-                <Link to="/projects" className="nav-link mx-2"><i className="fas fa-bell pe-2"></i>Projects</Link>
+                <Link to="/projects" className="nav-link mx-2">Projects</Link>
               </li>
               <li className="nav-item">
-                <Link to="/sudoku" className="nav-link mx-2"><i className="fas fa-bell pe-2"></i>Sudoku</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/certificates" className="nav-link mx-2"><i className="fas fa-heart pe-2"></i>Certificates</Link>
+                <Link to="/certificates" className="nav-link mx-2">Certificates</Link>
               </li>
               <li className="nav-item ms-3">
                 <button onClick={toggleTheme} className="theme-toggle-btn">
