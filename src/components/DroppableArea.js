@@ -1,3 +1,5 @@
+//Figured out that nobody has actually programmed a website that works as what I want to do so I realize my problem is bigger than me. I will not give up on it!
+
 import React, { useState, useLayoutEffect, useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
@@ -162,7 +164,6 @@ const DroppableArea = () => {
         x: originalPosition.x * scaleFactor,
         y: originalPosition.y * scaleFactor,
       };
-
     });
 
     setPositions(adjustedPositions);
@@ -188,51 +189,55 @@ const DroppableArea = () => {
     };
   }, [level]);
 
-  const handlePositionChange = (key, newPosition) => {
-    setPositions((prevPositions) => {
-      const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
-      const newPositions = { ...prevPositions, [key]: newPosition };
-  
-      const newUnscaledX = newPosition.x / scaleFactor;
-      const newUnscaledY = newPosition.y / scaleFactor;
-      originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
-  
-      console.log(`Moved piece ${key} to new position:`, newPosition);
+const handlePositionChange = (key, newPosition) => {
+  console.log('Original position:', newPosition);
+  console.log('Scroll offset:', window.scrollX, window.scrollY);
 
-      calculateCorrectNeighborPositions(key, newPosition);
-  
-      const neighbors = neighborMap[key] || [];
-      let didLock = false;
-  
-      neighbors.forEach((neighborKey) => {
-        const neighborPosition = prevPositions[neighborKey];
-        const relativePos = relativePositions[neighborKey]?.[key];
-        
-        if (relativePos) {
-          const correctX = neighborPosition.x + relativePos.x;
-          const correctY = neighborPosition.y + relativePos.y;
-  
-          const distanceX = Math.abs(correctX - newPosition.x);
-          const distanceY = Math.abs(correctY - newPosition.y);
-  
-          console.log(
-            `${key} relative to ${neighborKey} - Correct position: x=${correctX}, y=${correctY} | Distances - X: ${distanceX.toFixed(2)}, Y: ${distanceY.toFixed(2)}`
-          );
-  
-          if (distanceX <= 30 && distanceY <= 30 && !didLock) {
-            console.log('lock');
-            newPositions[key] = { x: correctX, y: correctY };
-            didLock = true;
-  
-            originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
-          }
+  setPositions((prevPositions) => {
+    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
+    const newPositions = { ...prevPositions, [key]: newPosition };
+
+    // Calculate unscaled positions considering the scroll offset
+    const newUnscaledX = (newPosition.x + window.scrollX) / scaleFactor;
+    const newUnscaledY = (newPosition.y + window.scrollY) / scaleFactor;
+    originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
+
+    console.log(`Moved piece ${key} to new position with scaling:`, newUnscaledX, newUnscaledY);
+
+    calculateCorrectNeighborPositions(key, newPosition);
+
+    const neighbors = neighborMap[key] || [];
+    let didLock = false;
+
+    neighbors.forEach((neighborKey) => {
+      const neighborPosition = prevPositions[neighborKey];
+      const relativePos = relativePositions[neighborKey]?.[key];
+
+      if (relativePos) {
+        const correctX = neighborPosition.x + relativePos.x;
+        const correctY = neighborPosition.y + relativePos.y;
+
+        const distanceX = Math.abs(correctX - newPosition.x);
+        const distanceY = Math.abs(correctY - newPosition.y);
+
+        console.log(
+          `${key} relative to ${neighborKey} - Correct position: x=${correctX}, y=${correctY} | Distances - X: ${distanceX.toFixed(2)}, Y: ${distanceY.toFixed(2)}`
+        );
+
+        if (distanceX <= 30 && distanceY <= 30 && !didLock) {
+          console.log('lock');
+          newPositions[key] = { x: correctX, y: correctY };
+          didLock = true;
+
+          originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
         }
-      });
-  
-      return newPositions;
+      }
     });
-  };
-  
+
+    return newPositions;
+  });
+};
+
 
   const handleLevelChange = (newLevel) => {
     setLevel(newLevel);
