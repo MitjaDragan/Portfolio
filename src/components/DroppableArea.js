@@ -1,183 +1,84 @@
-//Figured out that nobody has actually programmed a website that works as what I want to do so I realize my problem is bigger than me. I will not give up on it!
-
-import React, { useState, useLayoutEffect, useRef } from 'react';
+// src/components/DroppableArea.js
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
-import './DroppableArea.css'
-
-const importAll = (r) => {
-  let images = {};
-  r.keys().forEach((item) => {
-    const fileName = item.replace('./', '');
-    images[fileName] = r(item);
-  });
-  return images;
-};
-
-const images4x4 = importAll(require.context('../assets/images/4x4', false, /\.(png|jpe?g|svg)$/));
-
-const levels = {
-  easy: [
-    { key: 'A1', src: images4x4['A1.png'].default, correctPosition: { x: 2434, y: 850 }, size: { width: 636, height: 474 } },
-    { key: 'A2', src: images4x4['A2.png'].default, correctPosition: { x: 3176, y: 850 }, size: { width: 636, height: 474 } },
-    { key: 'A3', src: images4x4['A3.png'].default, correctPosition: { x: 3662, y: 850 }, size: { width: 636, height: 474 } },
-    { key: 'A4', src: images4x4['A4.png'].default, correctPosition: { x: 4676, y: 850 }, size: { width: 636, height: 474 } },
-    { key: 'B1', src: images4x4['B1.png'].default, correctPosition: { x: 2434, y: 1328 }, size: { width: 636, height: 474 } },
-    { key: 'B2', src: images4x4['B2.png'].default, correctPosition: { x: 2912, y: 1592 }, size: { width: 636, height: 474 } },
-    { key: 'B3', src: images4x4['B3.png'].default, correctPosition: { x: 3934, y: 1328 }, size: { width: 636, height: 474 } },
-    { key: 'B4', src: images4x4['B4.png'].default, correctPosition: { x: 4412, y: 1592 }, size: { width: 636, height: 474 } },
-    { key: 'C1', src: images4x4['C1.png'].default, correctPosition: { x: 2434, y: 2342 }, size: { width: 636, height: 474 } },
-    { key: 'C2', src: images4x4['C2.png'].default, correctPosition: { x: 3176, y: 2078 }, size: { width: 636, height: 474 } },
-    { key: 'C3', src: images4x4['C3.png'].default, correctPosition: { x: 3662, y: 2342 }, size: { width: 636, height: 474 } },
-    { key: 'C4', src: images4x4['C4.png'].default, correctPosition: { x: 4676, y: 2078 }, size: { width: 636, height: 474 } },
-    { key: 'D1', src: images4x4['D1.png'].default, correctPosition: { x: 2434, y: 2828 }, size: { width: 636, height: 474 } },
-    { key: 'D2', src: images4x4['D2.png'].default, correctPosition: { x: 2912, y: 3092 }, size: { width: 636, height: 474 } },
-    { key: 'D3', src: images4x4['D3.png'].default, correctPosition: { x: 3926, y: 2828 }, size: { width: 636, height: 474 } },
-    { key: 'D4', src: images4x4['D4.png'].default, correctPosition: { x: 4412, y: 3092 }, size: { width: 636, height: 474 } },
-  ],
-};
+import { ImageLoader } from './ImageLoader';
+import './DroppableArea.css';
 
 const BASE_SCREEN_WIDTH = 11520;
-const BASE_SCREEN_HEIGHT= 6480;
-
-const neighborMap = {
-  A1: ['A2', 'B1'],
-  A2: ['A1', 'A3', 'B2'],
-  A3: ['A2', 'A4', 'B3'],
-  A4: ['A3', 'B4'],
-  B1: ['A1', 'B2', 'C1'],
-  B2: ['A2', 'B1', 'B3', 'C2'],
-  B3: ['A3', 'B2', 'B4', 'C3'],
-  B4: ['A4', 'B3', 'C4'],
-  C1: ['B1', 'C2', 'D1'],
-  C2: ['B2', 'C1', 'C3', 'D2'],
-  C3: ['B3', 'C2', 'C4', 'D3'],
-  C4: ['B4', 'C3', 'D4'],
-  D1: ['C1', 'D2'],
-  D2: ['C2', 'D1', 'D3'],
-  D3: ['C3', 'D2', 'D4'],
-  D4: ['C4', 'D3'],
-};
 
 const getRandomPosition = () => {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
-
   const SCREEN_HEIGHT = screenHeight * (BASE_SCREEN_WIDTH / screenWidth);
 
-  const x = Math.floor(0.01 * BASE_SCREEN_WIDTH + Math.random() * 0.89 * (BASE_SCREEN_WIDTH));
-  const y = Math.floor(0.2 * SCREEN_HEIGHT + Math.random() * 0.5 * (SCREEN_HEIGHT));
+  const x = Math.floor(0.01 * BASE_SCREEN_WIDTH + Math.random() * 0.89 * BASE_SCREEN_WIDTH);
+  const y = Math.floor(0.2 * SCREEN_HEIGHT + Math.random() * 0.5 * SCREEN_HEIGHT);
   return { x, y };
 };
 
 const DroppableArea = () => {
   const [level, setLevel] = useState('easy');
-  const [scaledImageMap, setScaledImageMap] = useState([]);
-  const [relativePositions, setRelativePositions] = useState({});
+  const [images, setImages] = useState([]);
+  const [neighborMap, setNeighborMap] = useState({});
   const [positions, setPositions] = useState({});
-  const [imageSizes, setImageSizes] = useState({});
   const originalPositionsRef = useRef({});
-  const correctNeighborPositions = useRef({});
+  const [loaded, setLoaded] = useState(false); // Track if images have been loaded
 
-  const calculateImageSizesAndPositions = () => {
+  const handleImagesLoaded = (layout, loadedNeighborMap) => {
+    if (loaded) return; // Prevent reloading if already loaded
+
     const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
 
-    const sizes = {};
-    const newScaledImageMap = levels[level].map((image) => {
-      sizes[image.key] = {
-        width: image.size.width * scaleFactor,
-        height: image.size.height * scaleFactor,
-      };
+    setImages(layout.map(({ key, correctPosition, size, src }) => ({
+      key,
+      src,
+      correctPosition: {
+        x: correctPosition.x * scaleFactor,
+        y: correctPosition.y * scaleFactor,
+      },
+      size: {
+        width: size.width * scaleFactor,
+        height: size.height * scaleFactor,
+      },
+    })));
 
-      const scaledX = image.correctPosition.x * scaleFactor;
-      const scaledY = image.correctPosition.y * scaleFactor;
-
-      return { ...image, scaledPosition: { x: scaledX, y: scaledY } };
-    });
-
-    const newRelativePositions = {};
-    newScaledImageMap.forEach((img1) => {
-      newRelativePositions[img1.key] = {};
-      neighborMap[img1.key].forEach((neighborKey) => {
-        const img2 = newScaledImageMap.find((img) => img.key === neighborKey);
-        if (img2) {
-          newRelativePositions[img1.key][neighborKey] = {
-            x: img2.scaledPosition.x - img1.scaledPosition.x,
-            y: img2.scaledPosition.y - img1.scaledPosition.y,
-          };
-        }
-      });
-    });
-
-    setImageSizes(sizes);
-    setScaledImageMap(newScaledImageMap);
-    setRelativePositions(newRelativePositions);
+    setNeighborMap(loadedNeighborMap);
+    setLoaded(true); // Mark as loaded
   };
 
   const initializePositions = () => {
     const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
-    const newUnscaledPositions = levels[level].reduce((acc, img) => {
+    const newPositions = images.reduce((acc, img) => {
       const randomPosition = getRandomPosition();
       acc[img.key] = {
-        x: randomPosition.x,
-        y: randomPosition.y,
+        x: randomPosition.x * scaleFactor,
+        y: randomPosition.y * scaleFactor,
       };
       return acc;
     }, {});
 
-    const newScaledPositions = {};
-    Object.entries(newUnscaledPositions).forEach(([key, position]) => {
-      newScaledPositions[key] = {
-        x: position.x * scaleFactor,
-        y: position.y * scaleFactor,
-      };
-    });
-
-    setPositions(newScaledPositions);
-    originalPositionsRef.current = newUnscaledPositions;
+    setPositions(newPositions);
+    originalPositionsRef.current = newPositions;
   };
 
-  const calculateCorrectNeighborPositions = (movedPieceKey, newPosition) => {
-    const newCorrectPositions = {};
-    const neighbors = neighborMap[movedPieceKey] || [];
-
-    neighbors.forEach((neighborKey) => {
-      if (relativePositions[movedPieceKey] && relativePositions[movedPieceKey][neighborKey]) {
-        const relativePos = relativePositions[movedPieceKey][neighborKey];
-
-        const correctX = newPosition.x + relativePos.x;
-        const correctY = newPosition.y + relativePos.y;
-
-        newCorrectPositions[neighborKey] = { x: correctX, y: correctY };
-      }
-    });
-
-    correctNeighborPositions.current = { ...correctNeighborPositions.current, ...newCorrectPositions };
-  };
-
-  const adjustPositionsOnResize = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
-    const adjustedPositions = {};
-
-    Object.entries(originalPositionsRef.current).forEach(([key, originalPosition]) => {
-      adjustedPositions[key] = {
-        x: originalPosition.x * scaleFactor,
-        y: originalPosition.y * scaleFactor,
-      };
-    });
-
-    setPositions(adjustedPositions);
-  };
+  useEffect(() => {
+    if (images.length) initializePositions();
+  }, [images]); // Initialize positions when images change
 
   useLayoutEffect(() => {
-    calculateImageSizesAndPositions();
-    initializePositions();
-
     const handleResize = () => {
-      setTimeout(() => {
-        calculateImageSizesAndPositions();
-        adjustPositionsOnResize();
-      }, 100);
+      const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
+      setPositions((prevPositions) =>
+        Object.keys(prevPositions).reduce((acc, key) => {
+          const originalPosition = originalPositionsRef.current[key];
+          acc[key] = {
+            x: originalPosition.x * scaleFactor,
+            y: originalPosition.y * scaleFactor,
+          };
+          return acc;
+        }, {})
+      );
     };
 
     window.addEventListener('resize', handleResize);
@@ -187,75 +88,33 @@ const DroppableArea = () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
     };
-  }, [level]);
+  }, []);
 
-const handlePositionChange = (key, newPosition) => {
-  console.log('Original position:', newPosition);
-  console.log('Scroll offset:', window.scrollX, window.scrollY);
-
-  setPositions((prevPositions) => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
-    const newPositions = { ...prevPositions, [key]: newPosition };
-
-    // Calculate unscaled positions considering the scroll offset
-    const newUnscaledX = (newPosition.x + window.scrollX) / scaleFactor;
-    const newUnscaledY = (newPosition.y + window.scrollY) / scaleFactor;
-    originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
-
-    console.log(`Moved piece ${key} to new position with scaling:`, newUnscaledX, newUnscaledY);
-
-    calculateCorrectNeighborPositions(key, newPosition);
-
-    const neighbors = neighborMap[key] || [];
-    let didLock = false;
-
-    neighbors.forEach((neighborKey) => {
-      const neighborPosition = prevPositions[neighborKey];
-      const relativePos = relativePositions[neighborKey]?.[key];
-
-      if (relativePos) {
-        const correctX = neighborPosition.x + relativePos.x;
-        const correctY = neighborPosition.y + relativePos.y;
-
-        const distanceX = Math.abs(correctX - newPosition.x);
-        const distanceY = Math.abs(correctY - newPosition.y);
-
-        console.log(
-          `${key} relative to ${neighborKey} - Correct position: x=${correctX}, y=${correctY} | Distances - X: ${distanceX.toFixed(2)}, Y: ${distanceY.toFixed(2)}`
-        );
-
-        if (distanceX <= 30 && distanceY <= 30 && !didLock) {
-          console.log('lock');
-          newPositions[key] = { x: correctX, y: correctY };
-          didLock = true;
-
-          originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
-        }
-      }
+  const handlePositionChange = (key, newPosition) => {
+    setPositions((prevPositions) => {
+      const newPositions = { ...prevPositions, [key]: newPosition };
+      originalPositionsRef.current[key] = newPosition;
+      return newPositions;
     });
-
-    return newPositions;
-  });
-};
-
+  };
 
   const handleLevelChange = (newLevel) => {
     setLevel(newLevel);
-    setImageSizes({});
-    initializePositions();
+    setLoaded(false); // Reset loaded state when changing level
   };
 
   return (
     <div>
+      <ImageLoader level={level} onImagesLoaded={handleImagesLoaded} />
       <LevelSelector onSelectLevel={handleLevelChange} />
-      {scaledImageMap.map(({ key, src, scaledPosition }) => (
+      {images.map(({ key, src, correctPosition, size }) => (
         <DraggableImage
           key={key}
           src={src}
           alt={`Puzzle Piece ${key}`}
-          initialPosition={{ x: scaledPosition.x, y: scaledPosition.y }}
+          initialPosition={correctPosition}
           externalPosition={positions[key]}
-          size={imageSizes[key]}
+          size={size}
           onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
         />
       ))}
