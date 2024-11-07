@@ -6,7 +6,7 @@ import { ImageLoader } from './ImageLoader';
 import './DroppableArea.css';
 
 const BASE_SCREEN_WIDTH = 11520;
-const BASE_LOCK_THRESHOLD = 100;
+const BASE_LOCK_THRESHOLD = 50;
 
 const calculateScaleFactor = () => {
     return window.innerWidth / BASE_SCREEN_WIDTH;
@@ -23,7 +23,7 @@ const getRandomPosition = () => {
 };
 
 const DroppableArea = ({ testMode = false }) => {
-    const [level, setLevel] = useState('hard');
+    const [level, setLevel] = useState('easy');
     const [images, setImages] = useState([]);
     const [neighborMap, setNeighborMap] = useState({});
     const [positions, setPositions] = useState({});
