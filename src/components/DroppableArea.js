@@ -6,12 +6,10 @@ import { ImageLoader } from './ImageLoader';
 import './DroppableArea.css';
 
 const BASE_SCREEN_WIDTH = 11520;
-const BASE_LOCK_THRESHOLD = 30;
+const BASE_LOCK_THRESHOLD = 100;
 
 const calculateScaleFactor = () => {
-    const scaleFactor = window.innerWidth / BASE_SCREEN_WIDTH;
-    console.log("Calculated Scale Factor:", scaleFactor);
-    return scaleFactor;
+    return window.innerWidth / BASE_SCREEN_WIDTH;
 };
 
 const getRandomPosition = () => {
@@ -31,47 +29,56 @@ const DroppableArea = () => {
     const [positions, setPositions] = useState({});
     const [relativePositions, setRelativePositions] = useState({});
     const originalPositionsRef = useRef({});
+    const originalRelativePositionsRef = useRef({}); // Store unscaled relative positions
     const correctNeighborPositions = useRef({});
     const [loaded, setLoaded] = useState(false);
 
-    const calculateRelativePositions = (map, imagesData, scaleFactor) => {
+    const initializeRelativePositions = (map, imagesData) => {
+        // Calculate unscaled relative positions and store in originalRelativePositionsRef
         const relativePositions = imagesData.reduce((acc, img1) => {
             const neighbors = map[img1.key] || [];
             acc[img1.key] = neighbors.reduce((neighborAcc, neighborKey) => {
                 const img2 = imagesData.find((img) => img.key === neighborKey);
                 if (img2) {
-                    // Calculate the scaled relative position
-                    const relativeX = (img2.correctPosition.x - img1.correctPosition.x) * scaleFactor;
-                    const relativeY = (img2.correctPosition.y - img1.correctPosition.y) * scaleFactor;
+                    const relativeX = img2.correctPosition.x - img1.correctPosition.x;
+                    const relativeY = img2.correctPosition.y - img1.correctPosition.y;
                     neighborAcc[neighborKey] = { x: relativeX, y: relativeY };
-                    console.log(`Relative position from ${img1.key} to ${neighborKey}: X=${relativeX}, Y=${relativeY}`);
                 }
                 return neighborAcc;
             }, {});
             return acc;
         }, {});
+        originalRelativePositionsRef.current = relativePositions; // Store unscaled relative positions
+        updateRelativePositionsWithScale(calculateScaleFactor()); // Apply initial scaling
+    };
 
-        console.log("Calculated Relative Positions (scaled):", JSON.stringify(relativePositions, null, 2));
-        setRelativePositions(relativePositions);
+    const updateRelativePositionsWithScale = (scalingFactor) => {
+        // Scale each relative position based on the original unscaled values
+        const scaledRelativePositions = Object.keys(originalRelativePositionsRef.current).reduce((acc, key) => {
+            acc[key] = Object.keys(originalRelativePositionsRef.current[key]).reduce((neighborAcc, neighborKey) => {
+                const originalRelativePos = originalRelativePositionsRef.current[key][neighborKey];
+                neighborAcc[neighborKey] = {
+                    x: originalRelativePos.x * scalingFactor,
+                    y: originalRelativePos.y * scalingFactor,
+                };
+                return neighborAcc;
+            }, {});
+            return acc;
+        }, {});
+        setRelativePositions(scaledRelativePositions);
     };
 
     const calculateCorrectNeighborPositions = (movedPieceKey, newPosition) => {
         const newCorrectPositions = {};
         const neighbors = neighborMap[movedPieceKey] || [];
-
         neighbors.forEach((neighborKey) => {
             if (relativePositions[movedPieceKey] && relativePositions[movedPieceKey][neighborKey]) {
                 const relativePos = relativePositions[movedPieceKey][neighborKey];
                 const correctX = newPosition.x + relativePos.x;
                 const correctY = newPosition.y + relativePos.y;
-
                 newCorrectPositions[neighborKey] = { x: correctX, y: correctY };
-
-                console.log(`Target lock position for ${neighborKey} (relative to moved ${movedPieceKey} at ${newPosition.x}, ${newPosition.y}):`);
-                console.log(`Expected lock position for ${neighborKey} -> X: ${correctX}, Y: ${correctY}`);
             }
         });
-
         correctNeighborPositions.current = { ...correctNeighborPositions.current, ...newCorrectPositions };
     };
 
@@ -91,19 +98,16 @@ const DroppableArea = () => {
                 height: size.height * scaleFactor,
             },
         }));
-
-        console.log("Mapped Images with Scaling:", mappedImages);
-
         setImages(mappedImages);
         setNeighborMap(loadedNeighborMap);
         setLoaded(true);
 
-        calculateRelativePositions(loadedNeighborMap, layout, scaleFactor); // Apply scale here
+        initializeRelativePositions(loadedNeighborMap, layout);
+        initializePositions(mappedImages, scaleFactor);
     };
 
-    const initializePositions = () => {
-        const scaleFactor = calculateScaleFactor();
-        const unscaledPositions = images.reduce((acc, img) => {
+    const initializePositions = (mappedImages, scaleFactor) => {
+        const unscaledPositions = mappedImages.reduce((acc, img) => {
             acc[img.key] = getRandomPosition();
             return acc;
         }, {});
@@ -118,118 +122,89 @@ const DroppableArea = () => {
                 return acc;
             }, {})
         );
-
-        console.log("Initialized and Scaled Initial Positions:", positions);
     };
 
-    useEffect(() => {
-        if (images.length) initializePositions();
-    }, [images]);
-
     useLayoutEffect(() => {
-      const handleResize = () => {
-          const scaleFactor = calculateScaleFactor();
-  
-          // Recalculate scaled images and positions
-          const scaledImages = images.map(({ key, correctPosition, size, src }) => ({
-              key,
-              src,
-              correctPosition: {
-                  x: correctPosition.x / scaleFactor,
-                  y: correctPosition.y / scaleFactor,
-              },
-              size: {
-                  width: size.width / scaleFactor,
-                  height: size.height / scaleFactor,
-              },
-          }));
-          
-          // Update images with newly scaled values
-          setImages(scaledImages);
-          
-          // Recalculate initial and scaled positions
-          const updatedPositions = Object.keys(originalPositionsRef.current).reduce((acc, key) => {
-              acc[key] = {
-                  x: originalPositionsRef.current[key].x * scaleFactor,
-                  y: originalPositionsRef.current[key].y * scaleFactor,
-              };
-              return acc;
-          }, {});
-          setPositions(updatedPositions);
-  
-          // Recalculate relative positions based on the new scale
-          calculateRelativePositions(neighborMap, scaledImages, scaleFactor);
-  
-          // Recalculate correct neighbor positions for each piece
-          Object.keys(updatedPositions).forEach((key) => {
-              calculateCorrectNeighborPositions(key, updatedPositions[key]);
-          });
-  
-          console.log("Updated on Resize: Scaled Images, Positions, Relative Positions, and Correct Neighbor Positions");
-      };
-  
-      window.addEventListener('resize', handleResize);
-      window.addEventListener('orientationchange', handleResize);
-  
-      return () => {
-          window.removeEventListener('resize', handleResize);
-          window.removeEventListener('orientationchange', handleResize);
-      };
-  }, [images, neighborMap, relativePositions]);
-  
+        const handleResize = () => {
+            const scaleFactor = calculateScaleFactor();
+
+            // Update positions based on the new scale factor
+            const updatedPositions = Object.keys(originalPositionsRef.current).reduce((acc, key) => {
+                acc[key] = {
+                    x: originalPositionsRef.current[key].x * scaleFactor,
+                    y: originalPositionsRef.current[key].y * scaleFactor,
+                };
+                return acc;
+            }, {});
+            setPositions(updatedPositions);
+
+            // Update image sizes and correct positions based on new scale factor
+            const scaledImages = images.map(image => ({
+                ...image,
+                size: {
+                    width: image.size.width * scaleFactor,
+                    height: image.size.height * scaleFactor,
+                },
+                correctPosition: {
+                    x: image.correctPosition.x * scaleFactor,
+                    y: image.correctPosition.y * scaleFactor,
+                }
+            }));
+            setImages(scaledImages);
+
+            // Update relative positions and correct neighbor positions based on new scale
+            updateRelativePositionsWithScale(scaleFactor);
+            Object.keys(updatedPositions).forEach((key) => {
+                calculateCorrectNeighborPositions(key, updatedPositions[key]);
+            });
+        };
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+        };
+    }, [images, neighborMap]);
 
     const handlePositionChange = (key, newPosition) => {
-      console.log('Moved piece:', key, 'to:', newPosition);
-  
-      setPositions((prevPositions) => {
-          const newPositions = { ...prevPositions, [key]: newPosition };
-          const scaleFactor = calculateScaleFactor();
-  
-          // Calculate unscaled position
-          const newUnscaledX = Math.round(newPosition.x / scaleFactor);
-          const newUnscaledY = Math.round(newPosition.y / scaleFactor);
-          originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
-  
-          console.log(`Updated Unscaled Position for ${key}:`, originalPositionsRef.current[key]);
-  
-          // Recalculate correct positions for neighbors
-          calculateCorrectNeighborPositions(key, newPosition);
-  
-          const neighbors = neighborMap[key] || [];
-          let didLock = false;
-  
-          neighbors.forEach((neighborKey) => {
-            const neighborPosition = prevPositions[neighborKey];
-            const relativePos = relativePositions[neighborKey]?.[key];
+        setPositions((prevPositions) => {
+            const newPositions = { ...prevPositions, [key]: newPosition };
+            const scaleFactor = calculateScaleFactor();
+            const newUnscaledX = Math.round(newPosition.x / scaleFactor);
+            const newUnscaledY = Math.round(newPosition.y / scaleFactor);
+            originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
 
-            if (relativePos) {
-              const correctX = neighborPosition.x + relativePos.x;
-              const correctY = neighborPosition.y + relativePos.y;
-      
-              const distanceX = Math.abs(correctX - newPosition.x);
-              const distanceY = Math.abs(correctY - newPosition.y);
+            calculateCorrectNeighborPositions(key, newPosition);
 
-                console.log(`Distance from ${key} to target position of ${neighborKey}: X=${distanceX}, Y=${distanceY}`);
-                  // Check if distances are within lock threshold
-                  if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
-                      console.log(`Locking ${key} to ${neighborKey} at X=${correctX}, Y=${correctY}`);
-                      newPositions[key] = { x: correctX, y: correctY };
-                      didLock = true;
-                      console.log(`Piece ${key} locked to position:`, newPositions[key]);
-                      // Update unscaled positions for the locked piece
-                      originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
-                  }
-              }
-          });
+            const neighbors = neighborMap[key] || [];
+            let didLock = false;
 
-          return newPositions;
-      });
-  };
+            neighbors.forEach((neighborKey) => {
+                const neighborPosition = prevPositions[neighborKey];
+                const relativePos = relativePositions[neighborKey]?.[key];
+
+                if (relativePos) {
+                    const correctX = neighborPosition.x + relativePos.x;
+                    const correctY = neighborPosition.y + relativePos.y;
+                    const distanceX = Math.abs(correctX - newPosition.x);
+                    const distanceY = Math.abs(correctY - newPosition.y);
+
+                    if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
+                        newPositions[key] = { x: correctX, y: correctY };
+                        didLock = true;
+                        originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
+                    }
+                }
+            });
+            return newPositions;
+        });
+    };
 
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
         setLoaded(false);
-        console.log(`Level changed to: ${newLevel}`);
     };
 
     return (
