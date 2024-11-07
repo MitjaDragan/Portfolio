@@ -22,19 +22,18 @@ const getRandomPosition = () => {
     return { x, y };
 };
 
-const DroppableArea = () => {
-    const [level, setLevel] = useState('easy');
+const DroppableArea = ({ testMode = false }) => {
+    const [level, setLevel] = useState('hard');
     const [images, setImages] = useState([]);
     const [neighborMap, setNeighborMap] = useState({});
     const [positions, setPositions] = useState({});
     const [relativePositions, setRelativePositions] = useState({});
     const originalPositionsRef = useRef({});
-    const originalRelativePositionsRef = useRef({}); // Store unscaled relative positions
+    const originalRelativePositionsRef = useRef({});
     const correctNeighborPositions = useRef({});
     const [loaded, setLoaded] = useState(false);
 
     const initializeRelativePositions = (map, imagesData) => {
-        // Calculate unscaled relative positions and store in originalRelativePositionsRef
         const relativePositions = imagesData.reduce((acc, img1) => {
             const neighbors = map[img1.key] || [];
             acc[img1.key] = neighbors.reduce((neighborAcc, neighborKey) => {
@@ -48,12 +47,11 @@ const DroppableArea = () => {
             }, {});
             return acc;
         }, {});
-        originalRelativePositionsRef.current = relativePositions; // Store unscaled relative positions
-        updateRelativePositionsWithScale(calculateScaleFactor()); // Apply initial scaling
+        originalRelativePositionsRef.current = relativePositions;
+        updateRelativePositionsWithScale(calculateScaleFactor());
     };
 
     const updateRelativePositionsWithScale = (scalingFactor) => {
-        // Scale each relative position based on the original unscaled values
         const scaledRelativePositions = Object.keys(originalRelativePositionsRef.current).reduce((acc, key) => {
             acc[key] = Object.keys(originalRelativePositionsRef.current[key]).reduce((neighborAcc, neighborKey) => {
                 const originalRelativePos = originalRelativePositionsRef.current[key][neighborKey];
@@ -108,7 +106,9 @@ const DroppableArea = () => {
 
     const initializePositions = (mappedImages, scaleFactor) => {
         const unscaledPositions = mappedImages.reduce((acc, img) => {
-            acc[img.key] = getRandomPosition();
+            acc[img.key] = testMode
+                ? { x: img.correctPosition.x / scaleFactor, y: img.correctPosition.y / scaleFactor }
+                : getRandomPosition();
             return acc;
         }, {});
         originalPositionsRef.current = unscaledPositions;
@@ -128,7 +128,6 @@ const DroppableArea = () => {
         const handleResize = () => {
             const scaleFactor = calculateScaleFactor();
 
-            // Update positions based on the new scale factor
             const updatedPositions = Object.keys(originalPositionsRef.current).reduce((acc, key) => {
                 acc[key] = {
                     x: originalPositionsRef.current[key].x * scaleFactor,
@@ -138,7 +137,6 @@ const DroppableArea = () => {
             }, {});
             setPositions(updatedPositions);
 
-            // Update image sizes and correct positions based on new scale factor
             const scaledImages = images.map(image => ({
                 ...image,
                 size: {
@@ -152,7 +150,6 @@ const DroppableArea = () => {
             }));
             setImages(scaledImages);
 
-            // Update relative positions and correct neighbor positions based on new scale
             updateRelativePositionsWithScale(scaleFactor);
             Object.keys(updatedPositions).forEach((key) => {
                 calculateCorrectNeighborPositions(key, updatedPositions[key]);
