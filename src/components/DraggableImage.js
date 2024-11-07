@@ -95,7 +95,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   
   const handleTouchMove = (e) => {
     if (!draggingRef.current || e.touches.length > 1) return;
-    e.preventDefault();
+    e.preventDefault(); // Prevents page scrolling
   
     const touch = e.touches[0];
     const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, touch.pageX - dragOffset.current.x));
@@ -108,7 +108,6 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
       imgRef.current.style.top = `${newY}px`;
     });
   };
-  
 
   const handleMouseUp = () => {
     draggingRef.current = false;
@@ -138,8 +137,8 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleMouseMove);
-      document.removeEventListener('touchend', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
   }, []);
 
