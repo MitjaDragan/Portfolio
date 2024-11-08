@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+let zIndexCounter = 1; // Global counter to track the top z-index
+
 const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalPosition, size }) => {
   const [position, setPosition] = useState(initialPosition);
+  const [zIndex, setZIndex] = useState(1); // State to manage individual z-index
   const positionRef = useRef(initialPosition);
   const [scaledSize, setScaledSize] = useState(size);
   const draggingRef = useRef(false);
@@ -57,31 +60,38 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
     draggingRef.current = true;
 
+    // Bring the piece to the top
+    zIndexCounter += 1;
+    setZIndex(zIndexCounter);
+
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleTouchStart = (e) => {
-    if (e.touches.length > 1) return; // Ensure only one touch is used
+    if (e.touches.length > 1) return;
     e.preventDefault();
 
     const touch = e.touches[0];
     const rect = imgRef.current.getBoundingClientRect();
     dragOffset.current = {
-      x: touch.pageX - rect.left, // Use pageX for accurate positioning
-      y: touch.pageY - rect.top,  // Use pageY for accurate positioning
+      x: touch.pageX - rect.left,
+      y: touch.pageY - rect.top,
     };
 
     draggingRef.current = true;
 
-    document.addEventListener('touchmove', handleTouchMove, { passive: false }); // Disable passive to prevent default
+    // Bring the piece to the top
+    zIndexCounter += 1;
+    setZIndex(zIndexCounter);
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
   };
 
   const handleMouseMove = (e) => {
     if (!draggingRef.current) return;
   
-    // Calculate new position with boundaries
     const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, e.clientX - dragOffset.current.x));
     const newY = Math.max(0, Math.min(window.innerHeight - scaledSize.height, e.clientY - dragOffset.current.y));
   
@@ -95,7 +105,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
   
   const handleTouchMove = (e) => {
     if (!draggingRef.current || e.touches.length > 1) return;
-    e.preventDefault(); // Prevents page scrolling
+    e.preventDefault();
   
     const touch = e.touches[0];
     const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, touch.pageX - dragOffset.current.x));
@@ -157,6 +167,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
         height: 'auto',
         cursor: draggingRef.current ? 'grabbing' : 'grab',
         userSelect: 'none',
+        zIndex: zIndex, // Use the piece's own z-index value
       }}
     />
   );
