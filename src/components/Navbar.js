@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Modal from './Modal';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
@@ -14,6 +15,7 @@ function Navbar() {
   const [transitioning, setTransitioning] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [navbarHeight, setNavbarHeight] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleTheme = () => {
     setTransitioning(true);
@@ -94,14 +96,13 @@ function Navbar() {
                 </button>
               </li>
               <li className="nav-item ms-3">
-                <button className={`btn btn-rounded ${theme === 'dark' ? 'btn-dark-theme' : 'btn-light-theme'}`}>
-                  Hire me
-                </button>
+                <button className={`btn btn-rounded ${theme === 'dark' ? 'btn-dark-theme' : 'btn-light-theme'}`} onClick={() => setIsModalOpen(true)}>Hire Me</button>
               </li>
             </ul>
           </div>
         </div>
       </nav>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div id="main-content" style={{ paddingTop: `${navbarHeight + 20}px` }}>
         {/* Page content */}
       </div>
