@@ -3,6 +3,7 @@ import emailjs from 'emailjs-com';
 import './Home.css';
 import { Link } from 'react-router-dom';
 import mitjadragan from '../assets/images/mitjadragan.jpg';
+import testimage from '../assets/images/AvatarMaker.png'
 
 function Home() {
   const [statusMessage, setStatusMessage] = useState('');
@@ -29,7 +30,7 @@ function Home() {
       <div className="home-container">
         {/* Left Side: Image and Text */}
         <div className="home-left">
-          <img src={mitjadragan} alt="Mitja Dragan's Profile" className="profile-picture" />
+          <img src={testimage} alt="Mitja Dragan's Profile" className="profile-picture" />
           <div className="bio-content">
             <h2>Mitja Dragan</h2>
             <p>
