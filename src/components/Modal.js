@@ -18,7 +18,7 @@ function Modal({ isOpen, onClose }) {
         setStatusMessage("Message sent successfully!");
         setIsLoading(false);
         e.target.reset();
-        onClose(); // Close the modal on success
+        onClose();
       }, (error) => {
         setStatusMessage("Failed to send message. Please try again.");
         setIsLoading(false);

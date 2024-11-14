@@ -1,4 +1,3 @@
-// src/components/DroppableArea.js
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
