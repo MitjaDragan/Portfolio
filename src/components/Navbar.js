@@ -32,11 +32,11 @@ function Navbar() {
   useEffect(() => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-      setNavbarHeight(navbar.offsetHeight); // Set initial navbar height
+      setNavbarHeight(navbar.offsetHeight);
     }
 
     const handleResize = () => {
-      setNavbarHeight(navbar.offsetHeight); // Update height on resize
+      setNavbarHeight(navbar.offsetHeight);
     };
 
     window.addEventListener('resize', handleResize);

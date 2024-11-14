@@ -10,8 +10,6 @@ const Hangman = () => {
   const [inputLetter, setInputLetter] = useState('');
   const [resetKey, setResetKey] = useState(0);
 
-
-  // Fetch a random word from the Free Dictionary API
   const fetchWord = async () => {
     try {
       const response = await fetch('https://random-word-api.herokuapp.com/word');
@@ -21,27 +19,24 @@ const Hangman = () => {
       setGuessedLetters([]);
       setAttemptsLeft(9);
       setGameStatus('playing');
-      setResetKey((prevKey) => prevKey + 1); // Increment reset key to reset animation
+      setResetKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error('Error fetching word:', error);
     }
   };
 
-  // Initialize the game when the component mounts
   useEffect(() => {
     fetchWord();
   }, []);
 
-  // Function to handle a user's guess submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputLetter.length !== 1 || guessedLetters.includes(inputLetter) || gameStatus !== 'playing') return;
 
     handleGuess(inputLetter);
-    setInputLetter(''); // Reset input after submission
+    setInputLetter('');
   };
 
-  // Function to handle a user's guess
   const handleGuess = (letter) => {
     if (guessedLetters.includes(letter)) return;
 
@@ -54,7 +49,6 @@ const Hangman = () => {
     checkGameStatus(letter);
   };
 
-  // Check if the game is won or lost
   const checkGameStatus = () => {
     const wordSet = new Set(word.split(''));
     const guessedSet = new Set(guessedLetters);
@@ -70,7 +64,6 @@ const Hangman = () => {
     checkGameStatus();
   }, [guessedLetters, attemptsLeft]);
 
-  // Render the word with underscores for unguessed letters
   const renderWord = () => {
     return word
       .split('')

@@ -27,7 +27,6 @@ const certifications = [
     date: 'August 2024',
     url: 'https://www.codecademy.com/profiles/MDragan/certificates/a0ea6712a909402896de2c6772445311',
   },
-  // Add more certifications as needed
 ];
 
 const Certifications = () => {

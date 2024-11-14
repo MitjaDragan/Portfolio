@@ -7,20 +7,20 @@ import testimage from '../assets/images/AvatarMaker.png'
 
 function Home() {
   const [statusMessage, setStatusMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendEmail = (e) => {
     e.preventDefault();
-    setIsLoading(true); // Set loading to true when form is submitted
+    setIsLoading(true);
 
     emailjs.sendForm('service_csi7mwl', 'template_304ts7w', e.target, 'fS5fCp6NoEpBQG9pS')
       .then((result) => {
         setStatusMessage("Message sent successfully!");
-        setIsLoading(false); // Stop loading once email is sent
+        setIsLoading(false);
         e.target.reset();
       }, (error) => {
         setStatusMessage("Failed to send message. Please try again.");
-        setIsLoading(false); // Stop loading if there's an error
+        setIsLoading(false);
       });
   };
 
@@ -59,7 +59,7 @@ function Home() {
             <textarea name="message" placeholder="Your Message" required></textarea>
             <button type="submit" disabled={isLoading}>
               {isLoading ? (
-                <div className="spinner"></div> // Placeholder for a loading spinner
+                <div className="spinner"></div>
               ) : (
                 "Hire Me"
               )}

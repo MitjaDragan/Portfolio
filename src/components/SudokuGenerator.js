@@ -5,19 +5,19 @@ class SudokuGenerator {
         const SRNd = Math.sqrt(N);
         this.SRN = Math.floor(SRNd);
         this.mat = Array.from({ length: N }, () => Array.from({ length: N }, () => 0));
-        this.solution = [];  // This will store the correct solution
+        this.solution = [];
     }
 
     fillValues() {
         this.fillDiagonal();
         this.fillRemaining(0, this.SRN);
-        this.solution = this.copyMatrix(this.mat);  // Save the complete grid as the solution
+        this.solution = this.copyMatrix(this.mat);
         this.removeKDigits();
         return this.mat;
     }
 
     copyMatrix(matrix) {
-        return matrix.map(row => [...row]);  // Deep copy of the matrix
+        return matrix.map(row => [...row]);
     }
 
     fillDiagonal() {

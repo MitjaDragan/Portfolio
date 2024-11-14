@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-let zIndexCounter = 1; // Global counter to track the top z-index
+let zIndexCounter = 1;
 
 const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalPosition, size }) => {
   const [position, setPosition] = useState(initialPosition);
-  const [zIndex, setZIndex] = useState(1); // State to manage individual z-index
+  const [zIndex, setZIndex] = useState(1);
   const positionRef = useRef(initialPosition);
   const [scaledSize, setScaledSize] = useState(size);
   const draggingRef = useRef(false);
@@ -60,7 +60,6 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
     draggingRef.current = true;
 
-    // Bring the piece to the top
     zIndexCounter += 1;
     setZIndex(zIndexCounter);
 
@@ -81,7 +80,6 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
     draggingRef.current = true;
 
-    // Bring the piece to the top
     zIndexCounter += 1;
     setZIndex(zIndexCounter);
 
@@ -167,7 +165,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
         height: 'auto',
         cursor: draggingRef.current ? 'grabbing' : 'grab',
         userSelect: 'none',
-        zIndex: zIndex, // Use the piece's own z-index value
+        zIndex: zIndex,
       }}
     />
   );

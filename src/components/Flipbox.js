@@ -14,8 +14,8 @@ const FlipBox = () => {
             className="flip-box-front"
             style={{
               backgroundImage: `url(${jigsawImage})`,
-              backgroundPosition: 'center', // Centers the image
-              backgroundSize: 'cover' // Ensures the image covers the entire box
+              backgroundPosition: 'center',
+              backgroundSize: 'cover'
             }}
           >
           </div>
@@ -36,8 +36,8 @@ const FlipBox = () => {
             className="flip-box-front"
             style={{
               backgroundImage: `url(${hangmanImage})`,
-              backgroundPosition: 'center', // Centers the image
-              backgroundSize: 'cover' // Ensures the image covers the entire box
+              backgroundPosition: 'center',
+              backgroundSize: 'cover'
             }}
           >
           </div>
