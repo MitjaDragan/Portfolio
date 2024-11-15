@@ -75,10 +75,14 @@ function Home() {
         {/* Project 1: Sudoku */}
         <div className="project-card left-aligned">
           <h3>Sudoku</h3>
-          <p>An interactive Sudoku game built to challenge users with varying levels of difficulty.</p>
+          <p>    
+            Developing the Sudoku game required handling responsive layouts for the grid, 
+            implementing an intuitive number selection feature, and fine-tuning a light/dark 
+            theme toggle that adapts dynamically to user preferences.
+          </p>
           <div className="project-tags">
-            <span>JavaScript</span>
             <span>React</span>
+            <span>JavaScript</span>
             <span>CSS</span>
           </div>
           <Link to="/sudoku" className="view-project">View Project</Link>
@@ -87,10 +91,14 @@ function Home() {
         {/* Project 2: Jigsaw Puzzle */}
         <div className="project-card right-aligned">
           <h3>Jigsaw Puzzle</h3>
-          <p>A classic Jigsaw puzzle game that offers fun and improves spatial reasoning skills.</p>
+          <p>
+            The Jigsaw Puzzle game presented challenges such as ensuring draggable pieces
+            snapped correctly to their positions, scaling pieces for different screen sizes, 
+            and implementing logic for grouping connected pieces for joint movement.
+          </p>
           <div className="project-tags">
+            <span>React</span>
             <span>JavaScript</span>
-            <span>HTML5</span>
             <span>CSS</span>
           </div>
           <Link to="/jigsaw" className="view-project">View Project</Link>
@@ -99,11 +107,16 @@ function Home() {
         {/* Project 3: Hangman */}
         <div className="project-card left-aligned">
           <h3>Hangman</h3>
-          <p>A Hangman game built to test users' vocabulary and spelling skills.</p>
+          <p>
+            Building the Hangman game involved integrating an API to dynamically fetch 
+            words, designing a responsive UI for different screen sizes, and ensuring 
+            smooth interaction logic for a seamless user experience.
+          </p>
           <div className="project-tags">
             <span>JavaScript</span>
             <span>React</span>
             <span>CSS</span>
+            <span>API</span>
           </div>
           <Link to="/hangman" className="view-project">View Project</Link>
         </div>
