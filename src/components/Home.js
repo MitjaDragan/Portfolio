@@ -120,6 +120,22 @@ function Home() {
           </div>
           <Link to="/hangman" className="view-project">View Project</Link>
         </div>
+
+        {/* Project 4: Torqeedo */}
+        <div className="project-card right-aligned">
+          <h3>Torqeedo</h3>
+          <p>
+            Yamaha starts a partnership with Torqeedo. Building a multilingual website
+            on a VPS linux Server. Using Odoo 18, PSQL and NGINX published a website in
+            a span of 2 weeks.
+          </p>
+          <div className="project-tags">
+            <span>Odoo 18</span>
+            <span>NGINX</span>
+            <span>PSQL</span>
+          </div>
+          <Link to="https://torqeedo.si" className="view-project">View Project</Link>
+        </div>
       </div>
     </div>
   );
