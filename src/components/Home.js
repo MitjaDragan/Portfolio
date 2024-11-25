@@ -35,8 +35,8 @@ function Home() {
             <h2>Mitja Dragan</h2>
             <p>
               Full Stack Developer with a strong frontend focus, I prioritize family, loyalty, honesty, and self-improvement 
-              in both my professional and personal life. I’m passionate about building robust, trustworthy software systems 
-              and committed to learning and growth.
+              in both my professional and personal life. Currently employed as a IT Manager/FullStack Developer in Delta Team d.o.o. which is a Yamaha Motor dealership for the
+              entire balkan region.
             </p>
             <ul className="skills-list">
               <li>React</li>
