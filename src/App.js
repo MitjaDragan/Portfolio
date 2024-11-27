@@ -8,6 +8,7 @@ import JigsawPuzzle from './components/JigsawPuzzle';
 import Hangman from './components/Hangman';
 import Certifications from './components/Certifications';
 import Sudoku from './components/Sudoku';
+import Projects from './components/Projects';
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/hangman" element={<Hangman />} />
         <Route path="/sudoku" element={<Sudoku />} />
         <Route path="/certificates" element={<Certifications />} />
+        <Route path="/projects" element={<Projects />} />
       </Routes>
     </Router>
   );

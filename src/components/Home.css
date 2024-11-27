@@ -173,17 +173,7 @@
   .project-card:hover {
     transform: translateY(-5px);
   }
-  
-  .left-aligned {
-    text-align: left;
-    margin-left: auto;
-  }
-  
-  .right-aligned {
-    text-align: right;
-    margin-right: auto;
-  }
-  
+   
   .project-tags span {
     background-color: var(--button-color);
     color: white;
@@ -200,6 +190,23 @@
     cursor: pointer;
   }
 
+
+
+
+
+
+
+  
+  .left-aligned {
+    text-align: left;
+    margin-left: auto;
+  }
+  
+  .right-aligned {
+    text-align: right;
+    margin-right: auto;
+  }
+ 
   .spinner {
     width: 18px;
     height: 18px;
