@@ -31,21 +31,30 @@ const projects = [
 
 const Projects = () => {
   return (
-    <div className="projects-container">
-      <h2 className="projects-heading">Projects</h2>
-      <div className="card-stack">
+    <div className="projects-section">
+      <div className="projects-section__stack">
         {projects.map((project, index) => (
-          <div key={index} className="project-card">
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="project-tags">
+          <div
+            key={index}
+            className="projects-section__card"
+            style={{ '--card-index': index }}
+          >
+            <h3 className="projects-section__card-title">{project.title}</h3>
+            <p className="projects-section__card-description">{project.description}</p>
+            <div className="projects-section__card-tags">
               {project.tags.map((tag, tagIndex) => (
-                <span key={tagIndex} className="project-tag">
+                <span
+                  key={tagIndex}
+                  className="projects-section__card-tag"
+                >
                   {tag}
                 </span>
               ))}
             </div>
-            <Link to={project.link} className="project-link">
+            <Link
+              to={project.link}
+              className="projects-section__card-link"
+            >
               View Project
             </Link>
           </div>
