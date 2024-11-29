@@ -1,0 +1,17 @@
+[
+  {
+    "date": "2024-11-29",
+    "logs": [
+      {
+        "task": "Built the Work Diary component",
+        "category": "Development",
+        "completed": true
+      },
+      {
+        "task": "Updated project structure",
+        "category": "Refactoring",
+        "completed": true
+      }
+    ]
+  }
+]

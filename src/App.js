@@ -9,6 +9,7 @@ import Hangman from './components/Hangman';
 import Certifications from './components/Certifications';
 import Sudoku from './components/Sudoku';
 import Projects from './components/Projects';
+import WorkDiary from './components/WorkDiary';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/sudoku" element={<Sudoku />} />
         <Route path="/certificates" element={<Certifications />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/work-diary" component={<WorkDiary />} />
       </Routes>
     </Router>
   );

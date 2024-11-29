@@ -85,6 +85,9 @@ function Navbar() {
               <li className="nav-item">
                 <Link to="/certificates" className="nav-link mx-2">Certificates</Link>
               </li>
+              <li className="nav-item">
+                <Link to="/work-diary" className="nav-link mx-2">Work Diary</Link>
+              </li>
               <li className="nav-item ms-3">
                 <button onClick={toggleTheme} className="theme-toggle-btn">
                   <img
