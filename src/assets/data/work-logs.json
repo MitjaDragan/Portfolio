@@ -1,15 +1,10 @@
 [
   {
-    "date": "2024-11-29",
+    "date": "2024-12-01",
     "logs": [
       {
-        "task": "Built the Work Diary component",
+        "task": "Fix bug in WorkDiary component",
         "category": "Development",
-        "completed": true
-      },
-      {
-        "task": "Updated project structure",
-        "category": "Refactoring",
         "completed": true
       }
     ]

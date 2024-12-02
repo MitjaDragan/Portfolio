@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './WorkDiary.css';
+import Logs from '../assets/data/work-logs.json';
 
 const WorkDiary = () => {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    fetch('/assets/data/work-logs.json')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch logs');
-        }
-        return response.json();
-      })
-      .then((data) => setLogs(data))
-      .catch((error) => console.error('Error fetching logs:', error));
+    setLogs(Logs);
   }, []);
-  
 
   return (
     <div className="work-diary">
@@ -25,6 +17,7 @@ const WorkDiary = () => {
       ) : (
         logs.map((day, index) => (
           <div key={index} className="work-diary__day">
+            <p>Test</p>
             <h3>{day.date}</h3>
             {day.logs.map((log, logIndex) => (
               <div key={logIndex} className="work-diary__log">
