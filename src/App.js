@@ -23,7 +23,7 @@ function App() {
         <Route path="/sudoku" element={<Sudoku />} />
         <Route path="/certificates" element={<Certifications />} />
         <Route path="/projects" element={<Projects />} />
-        <Route path="/work-diary" component={<WorkDiary />} />
+        <Route path="/work-diary" element={<WorkDiary />} />
       </Routes>
     </Router>
   );
