@@ -7,10 +7,32 @@
   margin: 0 auto;
 }
 
-.work-diary__title {
-  font-size: 2rem;
-  text-align: center;
+.work-diary__navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.work-diary__navigation button {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.work-diary__navigation button:hover {
+  background-color: #0056b3;
+}
+
+.work-diary__navigation h2 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
 }
 
 .work-diary__weekdays {
@@ -45,7 +67,7 @@
 }
 
 .calendar-day--inactive {
-  opacity: 0.4;
+  opacity: 0.2;
 }
 
 .calendar-day:hover {
@@ -61,74 +83,3 @@
   font-size: 0.9rem;
   color: var(--text-color);
 }
-
-.work-diary__details {
-  margin-top: 20px;
-  background-color: var(--card-background-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.work-diary__details h3 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-.work-diary__logs {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.work-diary__log {
-  padding: 10px;
-  background-color: var(--secondary-background-color);
-  border-radius: 5px;
-}
-
-.work-diary__log h4 {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
-  color: var(--accent-color);
-}
-
-.work-diary__log p {
-  font-size: 1rem;
-}
-
-.work-diary__navigation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.work-diary__navigation button {
-  background-color: var(--accent-color);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s;
-  margin: 5px;
-}
-
-.work-diary__navigation button:hover {
-  background-color: #0056b3;
-}
-
-.work-diary__navigation h2 {
-  flex: 1;
-  text-align: center;
-  font-size: 1.5rem;
-}
-
-.calendar-weekday {
-  text-align: center;
-  font-weight: bold;
-}
-
