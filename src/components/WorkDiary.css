@@ -1,27 +1,134 @@
 .work-diary {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .work-diary__heading {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  .work-diary__day {
-    margin-bottom: 20px;
-  }
-  
-  .work-diary__log {
-    margin-left: 20px;
-  }
-  
-  .work-diary__log h4 {
-    font-size: 1.2rem;
-    margin: 5px 0;
-  }
-  
-  .work-diary__log p {
-    margin: 0;
-  }
-  
+  padding: 40px;
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.work-diary__title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.work-diary__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.calendar-weekday {
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.work-diary__calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-day {
+  width: 100%;
+  padding-top: 100%; /* Square ratio */
+  position: relative;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  text-align: center;
+}
+
+.calendar-day--inactive {
+  opacity: 0.4;
+}
+
+.calendar-day:hover {
+  transform: scale(1.1);
+}
+
+.calendar-day::after {
+  content: attr(title);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.work-diary__details {
+  margin-top: 20px;
+  background-color: var(--card-background-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.work-diary__details h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.work-diary__logs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.work-diary__log {
+  padding: 10px;
+  background-color: var(--secondary-background-color);
+  border-radius: 5px;
+}
+
+.work-diary__log h4 {
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+  color: var(--accent-color);
+}
+
+.work-diary__log p {
+  font-size: 1rem;
+}
+
+.work-diary__navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.work-diary__navigation button {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  margin: 5px;
+}
+
+.work-diary__navigation button:hover {
+  background-color: #0056b3;
+}
+
+.work-diary__navigation h2 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-weight: bold;
+}
+
