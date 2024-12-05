@@ -1,7 +1,7 @@
 import React from 'react';
 import './Projects.css';
 import { Link } from 'react-router-dom';
-import TorqeedoPreview from '../assets/images/torqeedo-preview.jpg'
+import TorqeedoPreview from '/src/assets/images/torqeedo-preview.jpg'
 
 const projects = [
   {
