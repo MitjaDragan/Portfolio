@@ -9,9 +9,9 @@ const importAll = (r) => {
   return images;
 };
 
-const images4x4 = importAll(require.context('../assets/images/4x4', false, /\.(png|jpe?g|svg)$/));
-const images6x6 = importAll(require.context('../assets/images/6x6', false, /\.(png|jpe?g|svg)$/));
-const images8x8 = importAll(require.context('../assets/images/8x8', false, /\.(png|jpe?g|svg)$/));
+const images4x4 = importAll(require.context('/src/assets/images/4x4', false, /\.(png|jpe?g|svg)$/));
+const images6x6 = importAll(require.context('/src/assets/images/6x6', false, /\.(png|jpe?g|svg)$/));
+const images8x8 = importAll(require.context('/src/assets/images/8x8', false, /\.(png|jpe?g|svg)$/));
 
 const levelConfigs = {
     easy: {

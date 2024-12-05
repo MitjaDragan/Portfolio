@@ -3,13 +3,13 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Navbar from './components/Navbar';
-import Home from './components/Home';
-import JigsawPuzzle from './components/JigsawPuzzle';
-import Hangman from './components/Hangman';
-import Certifications from './components/Certifications';
-import Sudoku from './components/Sudoku';
-import Projects from './components/Projects';
-import WorkDiary from './components/WorkDiary';
+import Home from './components/Homepage/Home';
+import JigsawPuzzle from './components/Jigsaw Puzzle/JigsawPuzzle';
+import Hangman from './components/Hangman/Hangman';
+import Certifications from './components/Certifications/Certifications';
+import Sudoku from './components/Sudoku/Sudoku';
+import Projects from './components/Projects/Projects';
+import WorkDiary from './components/WorkDiary/WorkDiary';
 import './App.css';
 
 function App() {

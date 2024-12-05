@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
 import './Home.css';
 import { Link } from 'react-router-dom';
-import mitjadragan from '../assets/images/mitjadragan.jpg';
-import testimage from '../assets/images/AvatarMaker.png'
+import mitjadragan from '/src/assets/images/mitjadragan.jpg';
+import testimage from '/src/assets/images/AvatarMaker.png'
 
 function Home() {
   const [statusMessage, setStatusMessage] = useState('');
