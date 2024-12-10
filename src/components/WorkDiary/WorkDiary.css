@@ -1,85 +1,82 @@
+
 .work-diary {
-  padding: 40px;
-  font-family: 'Roboto', Arial, sans-serif;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  max-width: 900px;
-  margin: 0 auto;
 }
 
-.work-diary__navigation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+h2 {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.work-diary__navigation button {
-  background-color: var(--accent-color);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s;
-}
-
-.work-diary__navigation button:hover {
-  background-color: #0056b3;
-}
-
-.work-diary__navigation h2 {
-  flex: 1;
-  text-align: center;
-  font-size: 1.5rem;
-}
-
-.work-diary__weekdays {
+.work-diary__heatmap {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  text-align: center;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
 }
 
-.calendar-weekday {
-  padding: 5px;
-  font-size: 1rem;
-}
-
-.work-diary__calendar {
+.work-diary__months {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(12, 1fr);
+  text-align: center;
+  font-size: 0.9rem;
 }
 
-.calendar-day {
-  width: 100%;
-  padding-top: 100%; /* Square ratio */
+.month-label {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.work-diary__weeks {
+  display: flex;
+  gap: 2px;
+}
+
+.work-diary__week {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: var(--day-default-color);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.day:hover {
+  transform: scale(1.2);
   position: relative;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  text-align: center;
+  z-index: 10;
 }
 
-.calendar-day--inactive {
-  opacity: 0.2;
-}
-
-.calendar-day:hover {
-  transform: scale(1.1);
-}
-
-.calendar-day::after {
+.day[title]:hover::after {
   content: attr(title);
   position: absolute;
-  top: 50%;
+  top: -25px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.9rem;
-  color: var(--text-color);
+  transform: translateX(-50%);
+  background-color: var(--text-color);
+  color: var(--background-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.day[title]:hover::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text-color);
 }
