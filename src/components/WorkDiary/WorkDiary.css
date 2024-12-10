@@ -1,7 +1,29 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #333;
+  --day-default-color: #ebedf0;
+
+  /* Blue tints for light theme */
+  --contribution-color-1: rgba(173, 216, 230, 0.25);
+  --contribution-color-2: rgba(173, 216, 230, 0.5);
+  --contribution-color-3: rgba(173, 216, 230, 0.75);
+  --contribution-color-4: rgba(173, 216, 230, 1);
+}
+
+body[data-theme='dark'] {
+  --background-color: #0d1117;
+  --text-color: #c9d1d9;
+  --day-default-color: #2d333b;
+
+  /* Gold tints for dark theme */
+  --contribution-color-1: rgba(255, 215, 0, 0.25);
+  --contribution-color-2: rgba(255, 215, 0, 0.5);
+  --contribution-color-3: rgba(255, 215, 0, 0.75);
+  --contribution-color-4: rgba(255, 215, 0, 1);
+}
 
 .work-diary {
-  padding: 20px;
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
   font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
@@ -21,25 +43,34 @@ h2 {
 
 .work-diary__months {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  text-align: center;
+  grid-template-columns: auto repeat(53, 1fr); /* 52 weeks + padding, with a column for day labels */
   font-size: 0.9rem;
 }
 
-.month-label {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--text-color);
+.work-diary__rows {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Day labels and heatmap */
+  gap: 10px;
 }
 
+.work-diary__day-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 2px;
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+
 .work-diary__weeks {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(53, 1fr); /* 52 weeks */
   gap: 2px;
 }
 
 .work-diary__week {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
   gap: 2px;
 }
 

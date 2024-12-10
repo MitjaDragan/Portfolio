@@ -13,26 +13,3 @@ body, html, #root, .App {
   overflow: hidden;
 }
 
-:root {
-  --background-color: #ffffff;
-  --text-color: #333;
-  --day-default-color: #ebedf0;
-
-  /* Blue tints for light theme */
-  --contribution-color-1: rgba(173, 216, 230, 0.25);
-  --contribution-color-2: rgba(173, 216, 230, 0.5);
-  --contribution-color-3: rgba(173, 216, 230, 0.75);
-  --contribution-color-4: rgba(173, 216, 230, 1);
-}
-
-body[data-theme='dark'] {
-  --background-color: #0d1117;
-  --text-color: #c9d1d9;
-  --day-default-color: #2d333b;
-
-  /* Gold tints for dark theme */
-  --contribution-color-1: rgba(255, 215, 0, 0.25);
-  --contribution-color-2: rgba(255, 215, 0, 0.5);
-  --contribution-color-3: rgba(255, 215, 0, 0.75);
-  --contribution-color-4: rgba(255, 215, 0, 1);
-}
