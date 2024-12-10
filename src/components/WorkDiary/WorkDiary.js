@@ -3,22 +3,25 @@ import { GraphQLClient } from 'graphql-request';
 import './WorkDiary.css';
 
 const GITHUB_API = 'https://api.github.com/graphql';
-const TOKEN = process.env.REACT_APP_WORKDIARY_TOKEN; // Replace with your token
+const TOKEN = process.env.REACT_APP_WORKDIARY_TOKEN;
 
-const WorkDiary = ({ theme }) => {
-  const [contributions, setContributions] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const username = 'MitjaDragan'; // Replace with your GitHub username
+const WorkDiary = () => {
+  const [contributions, setContributions] = useState(null);
+  const username = 'MitjaDragan';
 
   const fetchContributions = async () => {
-    const from = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString();
-    const to = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString();
+    const from = new Date(new Date().getFullYear(), 0, 1).toISOString();
+    const to = new Date(new Date().getFullYear(), 11, 31).toISOString();
 
     const query = `
       query($username: String!, $from: DateTime!, $to: DateTime!) {
         user(login: $username) {
           contributionsCollection(from: $from, to: $to) {
             contributionCalendar {
+              months {
+                name
+                firstDay
+              }
               weeks {
                 contributionDays {
                   date
@@ -31,7 +34,6 @@ const WorkDiary = ({ theme }) => {
       }
     `;
 
-    const variables = { username, from, to };
     const client = new GraphQLClient(GITHUB_API, {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -39,11 +41,9 @@ const WorkDiary = ({ theme }) => {
     });
 
     try {
-      const data = await client.request(query, variables);
-      const contributionDays = data.user.contributionsCollection.contributionCalendar.weeks.flatMap(
-        (week) => week.contributionDays
-      );
-      setContributions(contributionDays);
+      const data = await client.request(query, { username, from, to });
+      console.log('Contributions:', data.user.contributionsCollection.contributionCalendar);
+      setContributions(data.user.contributionsCollection.contributionCalendar);
     } catch (error) {
       console.error('Error fetching contributions:', error);
     }
@@ -51,72 +51,46 @@ const WorkDiary = ({ theme }) => {
 
   useEffect(() => {
     fetchContributions();
-  }, [currentDate]);
+  }, []);
 
-  const renderCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1);
-    const startDayOfWeek = firstDayOfMonth.getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const days = [];
+  if (!contributions) {
+    return <div>Loading...</div>;
+  }
 
-    // Fill blank days before the first of the month
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push({ date: null, count: 0 });
-    }
-
-    // Fill actual days of the month with contributions
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day).toISOString().split('T')[0];
-      const contribution = contributions.find((c) => c.date === date) || { contributionCount: 0 };
-      days.push({ date, count: contribution.contributionCount });
-    }
-
-    return days;
+  const renderHeatmap = () => {
+    const weeks = contributions.weeks.map((week) => week.contributionDays);
+    return weeks;
   };
-
-  const calendarDays = renderCalendar();
-
-  const handlePreviousMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  };
-
+  
+  const heatmap = renderHeatmap();
+  
   return (
     <div className="work-diary">
-      <div className="work-diary__navigation">
-        <button onClick={handlePreviousMonth}>&laquo; Previous Month</button>
-        <h2>
-          {currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}
-        </h2>
-        <button onClick={handleNextMonth}>Next Month &raquo;</button>
-      </div>
-      <div className="work-diary__weekdays">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className="calendar-weekday">
-            {day}
-          </div>
-        ))}
-      </div>
-      <div className="work-diary__calendar">
-        {calendarDays.map((day, index) => (
-          <div
-            key={index}
-            className={`calendar-day ${day.date ? '' : 'calendar-day--inactive'}`}
-            style={{
-              backgroundColor: day.count
-                ? `rgba(0, 128, 0, ${Math.min(day.count / 10, 1)})`
-                : 'transparent',
-            }}
-            title={day.date ? `${day.date}: ${day.count} contributions` : ''}
-          >
-            {day.date ? new Date(day.date).getDate() : ''}
-          </div>
-        ))}
+      <h2>{new Date().getFullYear()} Contribution Heatmap</h2>
+      <div className="work-diary__grid">
+        <div className="work-diary__months">
+          {contributions.months.map((month, index) => (
+            <div key={index} className="month-label">{month.name}</div>
+          ))}
+        </div>
+        <div className="work-diary__weeks">
+          {heatmap.map((week, weekIndex) => (
+            <div key={weekIndex} className="work-diary__week">
+              {week.map((day, dayIndex) => (
+                <div
+                  key={dayIndex}
+                  className="day"
+                  style={{
+                    backgroundColor: day.contributionCount
+                      ? `rgba(0, 128, 0, ${Math.min(day.contributionCount / 10, 1)})`
+                      : '#ebedf0',
+                  }}
+                  title={day.date ? `${day.date}: ${day.contributionCount} contributions` : ''}
+                ></div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
