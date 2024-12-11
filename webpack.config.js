@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: '/', // Correctly handles routing in SPA
   },
   module: {
     rules: [
@@ -42,5 +43,6 @@ module.exports = {
     },
     compress: true,
     port: 9000,
+    historyApiFallback: true, // Fallback to index.html for React Router
   },
 };
