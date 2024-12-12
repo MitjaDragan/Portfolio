@@ -10,29 +10,26 @@
   --contribution-color-4: rgba(173, 216, 230, 1);
 }
 
-body[data-theme='dark'] {
+body.dark-theme {
   --background-color: #0d1117;
   --text-color: #c9d1d9;
   --day-default-color: #2d333b;
 
   /* Gold tints for dark theme */
   --contribution-color-1: rgba(255, 215, 0, 0.25);
-  --contribution-color-2: rgba(255, 215, 0, 0.5);
-  --contribution-color-3: rgba(255, 215, 0, 0.75);
-  --contribution-color-4: rgba(255, 215, 0, 1);
+  --contribution-color-2: rgba(255, 215, 0.5);
+  --contribution-color-3: rgba(255, 215, 0.75);
+  --contribution-color-4: rgba(255, 215, 1);
 }
 
 .work-diary {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+  border-radius: 8px;
   background-color: var(--background-color);
   color: var(--text-color);
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .work-diary__heatmap {
@@ -43,29 +40,21 @@ h2 {
 
 .work-diary__months {
   display: grid;
-  grid-template-columns: auto repeat(53, 1fr); /* 52 weeks + padding, with a column for day labels */
+  grid-template-columns: repeat(53, 1fr);
   font-size: 0.9rem;
+  justify-content: center;
 }
 
-.work-diary__rows {
-  display: grid;
-  grid-template-columns: auto 1fr; /* Day labels and heatmap */
-  gap: 10px;
+.month-label {
+  text-align: center;
+  color: var(--text-color);
 }
-
-.work-diary__day-labels {
-  display: grid;
-  grid-template-rows: repeat(7, 1fr);
-  gap: 2px;
-  text-align: right;
-  font-size: 0.8rem;
-}
-
 
 .work-diary__weeks {
   display: grid;
-  grid-template-columns: repeat(53, 1fr); /* 52 weeks */
+  grid-template-columns: repeat(53, 1fr);
   gap: 2px;
+  justify-content: center;
 }
 
 .work-diary__week {
@@ -75,17 +64,15 @@ h2 {
 }
 
 .day {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
+  width: 15px;
+  height: 15px;
   background-color: var(--day-default-color);
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  border-radius: 2px;
 }
 
 .day:hover {
   transform: scale(1.2);
-  position: relative;
-  z-index: 10;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 .day[title]:hover::after {
@@ -94,20 +81,9 @@ h2 {
   top: -25px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--text-color);
-  color: var(--background-color);
   padding: 5px 10px;
-  border-radius: 4px;
   font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.day[title]:hover::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--text-color);
+  background: var(--text-color);
+  color: var(--background-color);
+  border-radius: 4px;
 }
