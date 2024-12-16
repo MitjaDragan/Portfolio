@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './Sudoku.css';
 import SudokuGenerator from './SudokuGenerator';
+
+import './Sudoku.css';
 
 const N = 9;
 

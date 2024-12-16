@@ -74,15 +74,18 @@ const WorkDiary = ({ theme }) => {
       <h2>2024 Contribution Heatmap</h2>
       <div className="work-diary__heatmap">
         <div className="work-diary__months">
-          {contributions.months.map((month, index) => (
-            <div
-              key={index}
-              className="month-label"
-              style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
-            >
-              {month.name}
-            </div>
-          ))}
+          {contributions.months.map((month, index) => {
+            if (month.name === "Dec" && index === 0) return null; // Skip the first "Dec"
+            return (
+              <div
+                key={index}
+                className="month-label"
+                style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
+              >
+                {month.name}
+              </div>
+            );
+          })}
         </div>
         <div className="work-diary__weeks">
           {heatmap.map((week, weekIndex) => (
