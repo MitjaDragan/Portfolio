@@ -71,7 +71,7 @@ const WorkDiary = ({ theme }) => {
 
   return (
     <div className={`work-diary ${theme}-theme`}>
-      <h2>2024 Contribution Heatmap</h2>
+      <h2>Work Diary</h2>
       <div className="work-diary__heatmap">
         <div className="work-diary__months">
           {contributions.months.map((month, index) => {
