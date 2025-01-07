@@ -10,9 +10,14 @@ const WorkDiary = ({ theme }) => {
   const username = 'MitjaDragan';
 
   const fetchContributions = async () => {
-    const from = new Date(2024, 0, 1).toISOString();
-    const to = new Date(2024, 11, 31).toISOString();
-
+    // Calculate 'from' date as one year ago
+    const toDate = new Date(); // Current date
+    const fromDate = new Date();
+    fromDate.setFullYear(toDate.getFullYear() - 1); // Subtract 1 year
+  
+    const from = fromDate.toISOString();
+    const to = toDate.toISOString();
+  
     const query = `
       query($username: String!, $from: DateTime!, $to: DateTime!) {
         user(login: $username) {
@@ -33,20 +38,20 @@ const WorkDiary = ({ theme }) => {
         }
       }
     `;
-
+  
     const client = new GraphQLClient(GITHUB_API, {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
       },
     });
-
+  
     try {
       const data = await client.request(query, { username, from, to });
       setContributions(data.user.contributionsCollection.contributionCalendar);
     } catch (error) {
       console.error('Error fetching contributions:', error);
     }
-  };
+  };  
 
   useEffect(() => {
     fetchContributions();
