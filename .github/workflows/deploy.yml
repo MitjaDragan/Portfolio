@@ -30,7 +30,7 @@ jobs:
 
       # Step 5: Build project
       - name: Inject Token at Runtime
-        run: echo "<script>window.REACT_APP_WORKDIARY_TOKEN='${{ secrets.REACT_APP_WORKDIARY_TOKEN }}';</script>" >> ./dist/index.html
+        run: echo "<script>window.REACT_APP_WORKDIARY_TOKEN='${{ secrets.REACT_APP_WORKDIARY_TOKEN }}';</script>" >> dist/index.html
 
       # Step 6: Debug environment variables (optional for debugging, remove in production)
       - name: Check .env
