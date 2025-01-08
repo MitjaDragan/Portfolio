@@ -9,7 +9,7 @@ const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
   const username = 'MitjaDragan';
 
-  console.log(TOKEN);
+  console.log('API Key:', TOKEN);
   const fetchContributions = async () => {
     // Calculate 'from' date as one year ago
     const toDate = new Date(); // Current date
