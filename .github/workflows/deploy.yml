@@ -30,7 +30,7 @@ jobs:
 
       # Step 5: Build project
       - name: Inject API Key
-        run: echo "REACT_APP_WORKDIARY_TOKEN=${{ secrets.REACT_APP_WORKDIARY_TOKEN }}" >> .env
+        run: echo "REACT_APP_WORKDIARY_TOKEN=${{ secrets.REACT_APP_WORKDIARY_TOKEN }}" >> ./dist/index.html
 
       # Step 6: Debug environment variables (optional for debugging, remove in production)
       - name: Check .env
