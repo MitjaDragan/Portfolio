@@ -3,7 +3,7 @@ import { GraphQLClient } from 'graphql-request';
 import './WorkDiary.css';
 
 const GITHUB_API = 'https://api.github.com/graphql';
-const TOKEN = window.REACT_APP_WORKDIARY_TOKEN;
+const TOKEN = process.env.REACT_APP_WORKDIARY_TOKEN;
 
 const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
