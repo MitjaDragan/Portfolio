@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: './', // Correctly handles routing in SPA
+    publicPath: './',
   },
   module: {
     rules: [
@@ -19,13 +19,16 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/i,  // This rule handles CSS files
+        test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(gif|svg|jpg|png)$/,
-        loader: "file-loader",
-      }
+        test: /\.(gif|svg|jpg|png)$/i, // Match image files
+        type: 'asset/resource', // Copy images to the output folder
+        generator: {
+          filename: 'assets/images/[name][ext]', // Preserve folder structure and save in 'assets/images'
+        },
+      },
     ],
   },
   resolve: {
@@ -35,7 +38,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
     }),
-    new Dotenv(), // Add this plugin
+    new Dotenv({
+      path: './.env',
+      systemvars: true,
+    }),
   ],
   devServer: {
     static: {
@@ -43,6 +49,6 @@ module.exports = {
     },
     compress: true,
     port: 9000,
-    historyApiFallback: true, // Fallback to index.html for React Router
+    historyApiFallback: true,
   },
 };
