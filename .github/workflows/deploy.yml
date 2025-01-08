@@ -24,20 +24,23 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Fetch Work Diary Data
-      - name: Fetch Work Diary Data
-        env:
-          GITHUB_TOKEN: ${{ secrets.REACT_APP_WORKDIARY_TOKEN }}
-        run: |
-          curl -H "Authorization: Bearer $GITHUB_TOKEN" \
-          -X POST -d '{"query":"{viewer {contributionsCollection {contributionCalendar {weeks {contributionDays {date contributionCount}}}}}}"}' \
-          https://api.github.com/graphql > ./src/work-diary-data.json
+      # Step 4: Clean build folder
+      - name: Clean build folder
+        run: rm -rf dist
 
       # Step 5: Build project
+      - name: Inject API Key
+        run: echo "REACT_APP_WORKDIARY_TOKEN=${{ secrets.REACT_APP_WORKDIARY_TOKEN }}" >> .env
+
+      # Step 6: Debug environment variables (optional for debugging, remove in production)
+      - name: Check .env
+        run: cat .env
+
+      # Step 7: Build project
       - name: Build project
         run: npm run build
 
-      # Step 6: Deploy to GitHub Pages
+      # Step 8: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
