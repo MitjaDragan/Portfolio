@@ -16,6 +16,9 @@ jobs:
 
       - name: Clean build folder
         run: rm -rf dist
+        
+      - name: Inject API Key
+        run: echo "REACT_APP_API_KEY=${{ secrets.REACT_APP_API_KEY }}" >> .env
 
       - name: Build project
         run: npm run build
