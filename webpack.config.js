@@ -24,9 +24,10 @@ module.exports = {
       },
       {
         test: /\.(gif|svg|jpg|png)$/i, // Match image files
-        type: 'asset/resource', // Copy images to the output folder
+        type: 'asset/resource', // Use Webpack's asset/resource type
         generator: {
-          filename: 'assets/images/[name][ext]', // Preserve folder structure and save in 'assets/images'
+          // Include subfolder structure in the output path
+          filename: 'assets/images/[path][name][ext]',
         },
       },
     ],
