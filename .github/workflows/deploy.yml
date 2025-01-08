@@ -28,17 +28,13 @@ jobs:
       - name: Clean build folder
         run: rm -rf dist
 
-      # Step 5: Build project
-      - name: Inject Token at Runtime
-        run: echo "<script>window.REACT_APP_WORKDIARY_TOKEN='${{ secrets.REACT_APP_WORKDIARY_TOKEN }}';</script>" >> dist/index.html
-
-      # Step 6: Debug environment variables (optional for debugging, remove in production)
-      - name: Check .env
-        run: cat .env
-
       # Step 7: Build project
       - name: Build project
         run: npm run build
+
+      # Step 5: Build project
+      - name: Inject Token at Runtime
+        run: echo "<script>window.REACT_APP_WORKDIARY_TOKEN='${{ secrets.REACT_APP_WORKDIARY_TOKEN }}';</script>" >> ./dist/index.html
 
       # Step 8: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
