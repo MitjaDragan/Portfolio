@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './WorkDiary.css';
 
 // Replace this with your actual backend URL
-const BACKEND_API = 'https://portfolio-mitjadragan-mitja-dragans-projects.vercel.app/api/workDiary';
+const BACKEND_API = 'https://portfolio-mitja-dragans-projects.vercel.app/api/workDiary';
 
 const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
