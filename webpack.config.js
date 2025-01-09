@@ -9,7 +9,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'), // Output directory
     filename: 'bundle.js', // Output file name
-    publicPath: '/', // Ensure proper URL resolution for SPA
+    publicPath: './', // Ensure proper URL resolution for SPA
   },
   module: {
     rules: [
