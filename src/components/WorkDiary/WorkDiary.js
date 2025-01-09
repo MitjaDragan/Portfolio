@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { GraphQLClient } from 'graphql-request';
 import './WorkDiary.css';
 
-const GITHUB_API = 'https://api.github.com/graphql';
-const TOKEN = 'ghp_TfNut486GHiNrpIu30Ud12LO9n0ekr32M0q';
+// Replace this with your actual backend URL
+const BACKEND_API = 'https://portfolio-5c42cldqp-mitja-dragans-projects.vercel.app/api/workDiary';
 
 const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
   const username = 'MitjaDragan';
 
-  console.log('API Key:', 'test');
   const fetchContributions = async () => {
-    // Calculate 'from' date as one year ago
-    const toDate = new Date(); // Current date
+    const toDate = new Date();
     const fromDate = new Date();
-    fromDate.setFullYear(toDate.getFullYear() - 1); // Subtract 1 year
-  
+    fromDate.setFullYear(toDate.getFullYear() - 1);
+
     const from = fromDate.toISOString();
     const to = toDate.toISOString();
-  
+
     const query = `
       query($username: String!, $from: DateTime!, $to: DateTime!) {
         user(login: $username) {
@@ -39,20 +36,24 @@ const WorkDiary = ({ theme }) => {
         }
       }
     `;
-  
-    const client = new GraphQLClient(GITHUB_API, {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-      },
-    });
-  
+
     try {
-      const data = await client.request(query, { username, from, to });
+      const response = await fetch(BACKEND_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { username, from, to } }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
       setContributions(data.user.contributionsCollection.contributionCalendar);
     } catch (error) {
       console.error('Error fetching contributions:', error);
     }
-  };  
+  };
 
   useEffect(() => {
     fetchContributions();
@@ -81,7 +82,7 @@ const WorkDiary = ({ theme }) => {
       <div className="work-diary__heatmap">
         <div className="work-diary__months">
           {contributions.months.map((month, index) => {
-            if (month.name === "Dec" && index === 0) return null; // Skip the first "Dec"
+            if (month.name === 'Dec' && index === 0) return null;
             return (
               <div
                 key={index}
