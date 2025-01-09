@@ -3,13 +3,13 @@ import { GraphQLClient } from 'graphql-request';
 import './WorkDiary.css';
 
 const GITHUB_API = 'https://api.github.com/graphql';
-const TOKEN = process.env.REACT_APP_WORKDIARY_TOKEN;
+const TOKEN = 'ghp_TfNut486GHiNrpIu30Ud12LO9n0ekr32M0q';
 
 const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
   const username = 'MitjaDragan';
 
-  console.log('API Key:', TOKEN);
+  console.log('API Key:', 'test');
   const fetchContributions = async () => {
     // Calculate 'from' date as one year ago
     const toDate = new Date(); // Current date

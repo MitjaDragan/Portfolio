@@ -28,14 +28,6 @@ jobs:
       - name: Clean build folder
         run: rm -rf dist
 
-      # Step 5: Build project
-      - name: Inject API Key
-        run: echo "REACT_APP_WORKDIARY_TOKEN=${{ secrets.REACT_APP_WORKDIARY_TOKEN }}" >> .env
-
-      # Step 6: Debug environment variables (optional for debugging, remove in production)
-      - name: Check .env
-        run: cat .env
-
       # Step 7: Build project
       - name: Build project
         run: npm run build
