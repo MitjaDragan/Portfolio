@@ -1,35 +1,39 @@
-const { GraphQLClient } = require('graphql-request');
+import { GraphQLClient } from 'graphql-request';
 
 export default async function handler(req, res) {
   const GITHUB_API = 'https://api.github.com/graphql';
-  const GITHUB_TOKEN = process.env.GITHUB_API_TOKEN; // Store this securely in Vercel's environment variables
+  const GITHUB_TOKEN = process.env.GITHUB_API_TOKEN; // Ensure this is set in Vercel
 
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any origin (replace '*' with your frontend domain for stricter control)
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); // Allow POST and OPTIONS methods
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow specific headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end(); // Handle CORS preflight
+    return res.status(200).end(); // Handle preflight
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
     const { query, variables } = req.body;
 
+    // Debugging logs
+    console.log('Query:', query);
+    console.log('Variables:', variables);
+
     const client = new GraphQLClient(GITHUB_API, {
       headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`, // Add the GitHub token securely
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
       },
     });
 
     const data = await client.request(query, variables);
     res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching data from GitHub:', error);
+    console.error('Error:', error.message);
     res.status(500).json({ error: error.message });
   }
 }
