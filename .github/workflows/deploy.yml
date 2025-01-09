@@ -28,11 +28,15 @@ jobs:
       - name: Clean build folder
         run: rm -rf dist
 
-      # Step 7: Build project
+      # Step 5: Build project
       - name: Build project
         run: npm run build
 
-      # Step 8: Deploy to GitHub Pages
+      # Step 6: Add CNAME file for custom domain
+      - name: Add CNAME file
+        run: echo "mitjadragan.com" > ./dist/CNAME
+
+      # Step 7: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
