@@ -29,6 +29,10 @@ function Navbar() {
     setIsCollapsed(!isCollapsed);
   };
 
+  const handleLinkClick = () => {
+    setIsCollapsed(true);
+  };
+
   useEffect(() => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
@@ -77,16 +81,16 @@ function Navbar() {
           <div className={`collapse navbar-collapse ${isCollapsed ? '' : 'show'}`} id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/" className="nav-link mx-2">About me</Link>
+                <Link to="/" className="nav-link mx-2" onClick={handleLinkClick}>About me</Link>
               </li>
               <li className="nav-item">
-                <Link to="/projects" className="nav-link mx-2">Projects</Link>
+                <Link to="/projects" className="nav-link mx-2" onClick={handleLinkClick}>Projects</Link>
               </li>
               <li className="nav-item">
-                <Link to="/certificates" className="nav-link mx-2">Certificates</Link>
+                <Link to="/certificates" className="nav-link mx-2" onClick={handleLinkClick}>Certificates</Link>
               </li>
               <li className="nav-item">
-                <Link to="/work-diary" className="nav-link mx-2">Work Diary</Link>
+                <Link to="/work-diary" className="nav-link mx-2" onClick={handleLinkClick}>Work Diary</Link>
               </li>
               <li className="nav-item ms-3">
                 <button onClick={toggleTheme} className="theme-toggle-btn">

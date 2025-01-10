@@ -1,23 +1,27 @@
 :root {
   --text-color: #333;
-  /* Blue tints for light theme */
+  /* Light theme colors */
   --contribution-color-1: rgba(173, 216, 230, 0.25);
   --contribution-color-2: rgba(173, 216, 230, 0.5);
   --contribution-color-3: rgba(173, 216, 230, 0.75);
   --contribution-color-4: rgba(173, 216, 230, 1);
+  --day-default-color: #f3f3f3;
+  --background-color: #fff;
 }
 
 body.dark-theme {
   --text-color: #c9d1d9;
-  /* Gold tints for dark theme */
-  --contribution-color-1: rgba(255, 215, 0, 0.25);
-  --contribution-color-2: rgba(255, 215, 0.5);
-  --contribution-color-3: rgba(255, 215, 0.75);
-  --contribution-color-4: rgba(255, 215, 1);
+  /* Rich Gold Tints for Dark Theme */
+  --contribution-color-1: rgba(255, 233, 0, 0.25); /* Lightest gold */
+  --contribution-color-2: rgba(255, 233, 0, 0.5); /* Light gold */
+  --contribution-color-3: rgba(255, 233, 0, 0.75);  /* Medium gold */
+  --contribution-color-4: rgba(255, 233, 0, 1);   /* Deep golden orange */
+  --day-default-color: #2d333b;
+  --background-color: #0d1117;
 }
 
 .work-diary {
-  max-width: 1000px;
+  max-width: 70%;
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
@@ -30,11 +34,12 @@ body.dark-theme {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 10px;
+  overflow: visible !important;
 }
 
 .work-diary__months {
   display: grid;
-  grid-template-columns: repeat(53, 1fr);
+  grid-template-columns: repeat(53, 1fr); /* Dynamically adjusts column width */
   font-size: 0.9rem;
   justify-content: center;
 }
@@ -46,23 +51,24 @@ body.dark-theme {
 
 .work-diary__weeks {
   display: grid;
-  grid-template-columns: repeat(53, 1fr);
+  grid-template-columns: repeat(53, 1fr); /* Columns adapt to the available space */
   gap: 2px;
   justify-content: center;
 }
 
 .work-diary__week {
   display: grid;
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr); /* Each row for a day */
   gap: 2px;
 }
 
 .day {
-  width: 15px;
-  height: 15px;
+  width: 100%; /* Dynamically adjusts width */
+  padding-top: 100%; /* Makes the cell a square */
   background-color: var(--day-default-color);
   border-radius: 2px;
   border: 1px solid #938c8f;
+  position: relative; /* Required for tooltip positioning */
 }
 
 .day:hover {
@@ -71,18 +77,42 @@ body.dark-theme {
 }
 
 .day[title]:hover::after {
-  content: attr(title);
-  position: absolute;
-  top: -30px; /* Adjust the vertical offset */
-  right: -10px; /* Adjust the horizontal offset */
-  padding: 5px 10px;
+  content: attr(title); /* Display tooltip content */
+  position: absolute; /* Attach to the .day element */
+  top: -40px; /* Position above the cell */
+  left: 50%; /* Center horizontally relative to the cell */
+  transform: translateX(-50%);
+  padding: 8px 12px;
   font-size: 0.8rem;
-  background: var(--text-color);
-  color: var(--background-color);
+  background: var(--text-color); /* Tooltip background */
+  color: var(--background-color); /* Tooltip text color */
   border-radius: 4px;
   white-space: nowrap;
-  pointer-events: none; /* Prevent tooltip from interfering with cursor */
-  z-index: 10;
+  pointer-events: none;
+  z-index: 9999; /* Ensure tooltip is on top */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 768px) {
+  .work-diary__months {
+    font-size: 0.8rem;
+  }
 
+  .day {
+    border: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .work-diary {
+    padding: 10px;
+  }
+
+  .work-diary__months {
+    font-size: 0.7rem;
+  }
+
+  .day {
+    border: none;
+  }
+}
