@@ -3,6 +3,9 @@ import './Projects.css';
 import { Link } from 'react-router-dom';
 import TorqeedoPreview from '/src/assets/images/torqeedo-preview.jpg'
 import SudokuPreview from '/src/assets/images/sudoku-preview.jpg'
+import JigsawPreview from '/src/assets/images/jigsaw-preview.jpg'
+import HangmanPreview from '/src/assets/images/hangman-preview.jpg'
+
 
 const projects = [
   {
@@ -17,14 +20,14 @@ const projects = [
     description: 'Challenges included draggable pieces, scaling for screens, and grouping connected pieces for joint movement.',
     tags: ['React', 'JavaScript', 'CSS'],
     link: '/jigsaw', // Internal link
-    image: SudokuPreview,
+    image: JigsawPreview,
   },
   {
     title: 'Hangman',
     description: 'Integrated an API to fetch words dynamically, designed a responsive UI, and ensured smooth interaction logic.',
     tags: ['JavaScript', 'React', 'CSS', 'API'],
     link: '/hangman', // Internal link
-    image: '/assets/images/hangman-preview.jpg',
+    image: HangmanPreview,
   },
   {
     title: 'Torqeedo',

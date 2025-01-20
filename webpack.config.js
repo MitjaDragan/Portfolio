@@ -9,7 +9,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/',
+    publicPath: '/', // Serve assets relative to root
   },
   module: {
     rules: [
@@ -25,10 +25,11 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(gif|svg|jpg|png|webp)$/i,
+        test: /\.(gif|svg|jpg|jpeg|png|webp)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'assets/images/[name][hash][ext]',
+          // Preserve the original folder structure inside 'src/assets/images/'
+          filename: 'assets/images/[path][name][ext]',
         },
       },
       {
@@ -59,13 +60,13 @@ module.exports = {
     },
     compress: true,
     port: 3000,
-    historyApiFallback: true,
+    historyApiFallback: true, // Handle SPA routing
     hot: true,
     open: true,
-    watchFiles: ['src/**/*'],
+    watchFiles: ['src/**/*'], // Watch for changes in 'src'
   },
   watchOptions: {
-    ignored: /node_modules/,
-    poll: 1000,
+    ignored: /node_modules/, // Ignore 'node_modules' for better performance
+    poll: 1000, // Poll every second for changes
   },
 };

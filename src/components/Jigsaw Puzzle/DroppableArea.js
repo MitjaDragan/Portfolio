@@ -95,6 +95,7 @@ const DroppableArea = ({ testMode = false }) => {
                 height: size.height * scaleFactor,
             },
         }));
+        console.log("Scaled images");
         setImages(mappedImages);
         setNeighborMap(loadedNeighborMap);
         setLoaded(true);
