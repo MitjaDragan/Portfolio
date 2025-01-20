@@ -12,18 +12,16 @@ const Hangman = () => {
 
   const fetchWord = async () => {
     try {
-      const response = await fetch('https://api.api-ninjas.com/v1/randomword', {
-        headers: { 'X-Api-Key': process.env.REACT_APP_HANGMAN_API_KEY },
-      });
+      const response = await fetch('/api/fetchWord');
   
       if (!response.ok) {
-        throw new Error(`API responded with status: ${response.status}`);
+        throw new Error(`Serverless function responded with status: ${response.status}`);
       }
   
       const data = await response.json();
-      console.log('API Response:', data); // Log the response for debugging
+      console.log('Serverless function response:', data);
   
-      // Extract the first word from the array and convert to uppercase
+      // Extract the first word from the response and convert to uppercase
       const word = data.word[0].toUpperCase();
   
       setWord(word);
@@ -35,7 +33,6 @@ const Hangman = () => {
       console.error('Error fetching word:', error);
     }
   };
-  
 
   useEffect(() => {
     fetchWord();
