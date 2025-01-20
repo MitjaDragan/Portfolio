@@ -2,6 +2,7 @@ import React from 'react';
 import './Projects.css';
 import { Link } from 'react-router-dom';
 import TorqeedoPreview from '/src/assets/images/torqeedo-preview.jpg'
+import SudokuPreview from '/src/assets/images/sudoku-preview.jpg'
 
 const projects = [
   {
@@ -9,14 +10,14 @@ const projects = [
     description: 'Developing the Sudoku game required handling responsive layouts, implementing a number selection feature, and fine-tuning themes.',
     tags: ['React', 'JavaScript', 'CSS'],
     link: '/sudoku', // Internal link
-    image: '/assets/images/sudoku-preview.jpg',
+    image: SudokuPreview,
   },
   {
     title: 'Jigsaw Puzzle',
     description: 'Challenges included draggable pieces, scaling for screens, and grouping connected pieces for joint movement.',
     tags: ['React', 'JavaScript', 'CSS'],
     link: '/jigsaw', // Internal link
-    image: '/assets/images/jigsaw-preview.jpg',
+    image: SudokuPreview,
   },
   {
     title: 'Hangman',

@@ -4,56 +4,68 @@ const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
 module.exports = {
-  mode: 'development', // Explicitly set the mode
-  entry: './src/index.js', // Entry point for your app
+  mode: 'development',
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'), // Output directory
-    filename: 'bundle.js', // Output file name
-    publicPath: './', // Ensure proper URL resolution for SPA
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+    publicPath: '/',
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/, // Handle JS/JSX files
-        exclude: /node_modules/, // Exclude node_modules
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
         },
       },
       {
-        test: /\.css$/i, // Handle CSS files
+        test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(gif|svg|jpg|png)$/i, // Handle image files
-        type: 'asset/resource', // Webpack 5 assets
+        test: /\.(gif|svg|jpg|png|webp)$/i,
+        type: 'asset/resource',
         generator: {
-          filename: 'assets/images/[path][name][ext]', // Output image paths
+          filename: 'assets/images/[name][hash][ext]',
+        },
+      },
+      {
+        test: /\.(ttf|woff|woff2|eot)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/fonts/[name][hash][ext]',
         },
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'], // Resolve these extensions
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html', // HTML template
+      template: './public/index.html',
     }),
     new Dotenv({
-      path: './.env', // Load environment variables from .env
-      systemvars: true, // Include system environment variables
+      path: './.env',
+      systemvars: true,
     }),
-    new webpack.HotModuleReplacementPlugin(), // Enable HMR
+    new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'), // Serve files from dist
+      directory: path.join(__dirname, 'dist'),
     },
-    compress: true, // Enable gzip compression
-    port: 9000, // Port for dev server
-    historyApiFallback: true, // Support SPA routing
-    hot: true, // Enable Hot Module Replacement
-    watchFiles: ['src/**/*'], // Watch for changes in src directory
+    compress: true,
+    port: 3000,
+    historyApiFallback: true,
+    hot: true,
+    open: true,
+    watchFiles: ['src/**/*'],
+  },
+  watchOptions: {
+    ignored: /node_modules/,
+    poll: 1000,
   },
 };
