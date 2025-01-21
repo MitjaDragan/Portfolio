@@ -186,7 +186,7 @@ const DroppableArea = ({ testMode = false }) => {
                         y: prevPositions[groupKey].y + deltaY,
                     };
     
-                    // Update the reference positions
+                    // Update reference positions
                     originalPositionsRef.current[groupKey] = {
                         x: Math.round(newPositions[groupKey].x / scaleFactor),
                         y: Math.round(newPositions[groupKey].y / scaleFactor),
@@ -202,7 +202,7 @@ const DroppableArea = ({ testMode = false }) => {
                     const neighbors = neighborMap[draggedKey] || [];
                     neighbors.forEach((neighborKey) => {
                         const neighborPosition = prevPositions[neighborKey];
-                        const relativePos = relativePositions[draggedKey]?.[neighborKey]; // Relative position from draggedKey to neighborKey
+                        const relativePos = relativePositions[neighborKey]?.[draggedKey]; // Relative position from neighbor to draggedKey
     
                         if (relativePos) {
                             const correctX = neighborPosition.x + relativePos.x;
@@ -214,15 +214,14 @@ const DroppableArea = ({ testMode = false }) => {
                                 // Align the dragged group to the neighbor group
                                 const neighborGroup =
                                     lockedGroups.find((group) => group.includes(neighborKey)) || [neighborKey];
-                                const lockingPiece = draggedKey; // Piece from dragged group that's locking
     
-                                // Calculate alignment offset based on locking pieces
+                                // Calculate the alignment offset
                                 const alignmentOffset = {
-                                    x: correctX - newPositions[lockingPiece].x,
-                                    y: correctY - newPositions[lockingPiece].y,
+                                    x: correctX - newPositions[draggedKey].x,
+                                    y: correctY - newPositions[draggedKey].y,
                                 };
     
-                                // Adjust positions of all pieces in the dragged group
+                                // Adjust positions of all members in the dragged group
                                 draggedGroup.forEach((groupMember) => {
                                     newPositions[groupMember] = {
                                         x: prevPositions[groupMember].x + alignmentOffset.x,
@@ -234,7 +233,7 @@ const DroppableArea = ({ testMode = false }) => {
                                     };
                                 });
     
-                                // Merge the dragged group and the neighbor group
+                                // Add all members of the neighbor group to the updated group
                                 neighborGroup.forEach((neighborMember) => updatedGroup.add(neighborMember));
     
                                 console.log(
