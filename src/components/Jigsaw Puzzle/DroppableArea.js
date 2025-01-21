@@ -174,8 +174,32 @@ const DroppableArea = ({ testMode = false }) => {
             const newUnscaledY = Math.round(newPosition.y / scaleFactor);
             originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
     
+            calculateCorrectNeighborPositions(key, newPosition);
+    
             const neighbors = neighborMap[key] || [];
             let didLock = false;
+    
+            // Track movement deltas
+            const deltaX = newPosition.x - prevPositions[key].x;
+            const deltaY = newPosition.y - prevPositions[key].y;
+    
+            // Move all pieces in the same locked group
+            const lockedGroup = lockedGroups.find((group) => group.includes(key));
+            if (lockedGroup) {
+                lockedGroup.forEach((groupKey) => {
+                    if (groupKey !== key) {
+                        newPositions[groupKey] = {
+                            x: prevPositions[groupKey].x + deltaX,
+                            y: prevPositions[groupKey].y + deltaY,
+                        };
+    
+                        originalPositionsRef.current[groupKey] = {
+                            x: Math.round(newPositions[groupKey].x / scaleFactor),
+                            y: Math.round(newPositions[groupKey].y / scaleFactor),
+                        };
+                    }
+                });
+            }
     
             // Check each neighbor for locking
             neighbors.forEach((neighborKey) => {
@@ -191,10 +215,26 @@ const DroppableArea = ({ testMode = false }) => {
                     if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
                         // Lock the neighbor to its correct position relative to the dragged piece
                         newPositions[neighborKey] = { x: correctX, y: correctY };
-                        originalPositionsRef.current[neighborKey] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
+                        originalPositionsRef.current[neighborKey] = {
+                            x: correctX / scaleFactor,
+                            y: correctY / scaleFactor,
+                        };
+    
                         didLock = true;
     
-                        // Optional: Log locking for debugging
+                        // Update locked groups
+                        setLockedGroups((prevGroups) => {
+                            const existingGroup = prevGroups.find((group) => group.includes(key) || group.includes(neighborKey));
+                            if (existingGroup) {
+                                return prevGroups.map((group) =>
+                                    group === existingGroup ? [...new Set([...group, key, neighborKey])] : group
+                                );
+                            } else {
+                                return [...prevGroups, [key, neighborKey]];
+                            }
+                        });
+    
+                        // Optional: Log for debugging
                         console.log(`Locked ${key} to ${neighborKey}`);
                     }
                 }
@@ -204,7 +244,6 @@ const DroppableArea = ({ testMode = false }) => {
         });
     };
     
-
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
         setLoaded(false);

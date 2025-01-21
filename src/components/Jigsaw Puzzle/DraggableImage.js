@@ -76,12 +76,30 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleMouseMove = (e) => handleDragMove(e.clientX, e.clientY);
+  const handleMouseMove = (e) => {
+    if (!draggingRef.current) return;
+
+    const newX = Math.max(0, Math.min(window.innerWidth - scaledSize.width, e.clientX - dragOffset.current.x));
+    const newY = Math.max(0, Math.min(window.innerHeight - scaledSize.height, e.clientY - dragOffset.current.y));
+
+    const newPosition = { x: newX, y: newY };
+    positionRef.current = newPosition;
+
+    // Notify parent with `isReleased = false`
+    if (onPositionChange) {
+        onPositionChange(newPosition, false);
+    }
+  };
 
   const handleMouseUp = () => {
     draggingRef.current = false;
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
+
+    // Notify parent with `isReleased = true`
+    if (onPositionChange) {
+        onPositionChange(positionRef.current, true);
+    }
   };
 
   const handleTouchStart = (e) => {
