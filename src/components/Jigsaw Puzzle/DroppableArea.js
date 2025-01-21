@@ -165,39 +165,25 @@ const DroppableArea = ({ testMode = false }) => {
         };
     }, [images, neighborMap]);
 
-    const handlePositionChange = (key, newPosition) => {
+    const handlePositionChange = (key, newPosition, offset) => {
         setPositions((prevPositions) => {
+            const currentPosition = prevPositions[key] || { x: 0, y: 0 }; // Fallback to default
             const newPositions = { ...prevPositions, [key]: newPosition };
-            const scaleFactor = calculateScaleFactor();
-            const newUnscaledX = Math.round(newPosition.x / scaleFactor);
-            const newUnscaledY = Math.round(newPosition.y / scaleFactor);
-            originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
-
-            calculateCorrectNeighborPositions(key, newPosition);
-
-            const neighbors = neighborMap[key] || [];
-            let didLock = false;
-
-            neighbors.forEach((neighborKey) => {
-                const neighborPosition = prevPositions[neighborKey];
-                const relativePos = relativePositions[neighborKey]?.[key];
-
-                if (relativePos) {
-                    const correctX = neighborPosition.x + relativePos.x;
-                    const correctY = neighborPosition.y + relativePos.y;
-                    const distanceX = Math.abs(correctX - newPosition.x);
-                    const distanceY = Math.abs(correctY - newPosition.y);
-
-                    if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
-                        newPositions[key] = { x: correctX, y: correctY };
-                        didLock = true;
-                        originalPositionsRef.current[key] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
-                    }
-                }
-            });
+    
+            // Ensure paired key handling is safe
+            const pairedKeys = { A1: 'A2', A2: 'A1' }; // Example
+            if (pairedKeys[key]) {
+                const pairedKey = pairedKeys[key];
+                const pairedPosition = prevPositions[pairedKey] || { x: 0, y: 0 };
+                newPositions[pairedKey] = {
+                    x: pairedPosition.x + (newPosition.x - currentPosition.x),
+                    y: pairedPosition.y + (newPosition.y - currentPosition.y),
+                };
+            }
             return newPositions;
         });
     };
+    
 
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
