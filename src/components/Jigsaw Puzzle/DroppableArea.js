@@ -166,83 +166,108 @@ const DroppableArea = ({ testMode = false }) => {
         };
     }, [images, neighborMap]);
 
-    const handlePositionChange = (key, newPosition) => {
+    const handlePositionChange = (key, newPosition, isReleased = false) => {
         setPositions((prevPositions) => {
             const newPositions = { ...prevPositions, [key]: newPosition };
             const scaleFactor = calculateScaleFactor();
-            const newUnscaledX = Math.round(newPosition.x / scaleFactor);
-            const newUnscaledY = Math.round(newPosition.y / scaleFactor);
-            originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
     
-            calculateCorrectNeighborPositions(key, newPosition);
+            // Find the group containing the dragged piece
+            const draggedGroup = lockedGroups.find((group) => group.includes(key)) || [key];
     
-            const neighbors = neighborMap[key] || [];
-            let didLock = false;
-    
-            // Track movement deltas
+            // Calculate the movement delta
             const deltaX = newPosition.x - prevPositions[key].x;
             const deltaY = newPosition.y - prevPositions[key].y;
     
-            // Move all pieces in the same locked group
-            const lockedGroup = lockedGroups.find((group) => group.includes(key));
-            if (lockedGroup) {
-                lockedGroup.forEach((groupKey) => {
-                    if (groupKey !== key) {
-                        newPositions[groupKey] = {
-                            x: prevPositions[groupKey].x + deltaX,
-                            y: prevPositions[groupKey].y + deltaY,
-                        };
+            // Move all pieces in the dragged group during dragging
+            draggedGroup.forEach((groupKey) => {
+                if (groupKey !== key) {
+                    newPositions[groupKey] = {
+                        x: prevPositions[groupKey].x + deltaX,
+                        y: prevPositions[groupKey].y + deltaY,
+                    };
     
-                        originalPositionsRef.current[groupKey] = {
-                            x: Math.round(newPositions[groupKey].x / scaleFactor),
-                            y: Math.round(newPositions[groupKey].y / scaleFactor),
-                        };
-                    }
-                });
-            }
-    
-            // Check each neighbor for locking
-            neighbors.forEach((neighborKey) => {
-                const neighborPosition = prevPositions[neighborKey];
-                const relativePos = relativePositions[key]?.[neighborKey]; // Relative position between key and neighbor
-    
-                if (relativePos) {
-                    const correctX = newPosition.x + relativePos.x;
-                    const correctY = newPosition.y + relativePos.y;
-                    const distanceX = Math.abs(correctX - neighborPosition.x);
-                    const distanceY = Math.abs(correctY - neighborPosition.y);
-    
-                    if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
-                        // Lock the neighbor to its correct position relative to the dragged piece
-                        newPositions[neighborKey] = { x: correctX, y: correctY };
-                        originalPositionsRef.current[neighborKey] = {
-                            x: correctX / scaleFactor,
-                            y: correctY / scaleFactor,
-                        };
-    
-                        didLock = true;
-    
-                        // Update locked groups
-                        setLockedGroups((prevGroups) => {
-                            const existingGroup = prevGroups.find((group) => group.includes(key) || group.includes(neighborKey));
-                            if (existingGroup) {
-                                return prevGroups.map((group) =>
-                                    group === existingGroup ? [...new Set([...group, key, neighborKey])] : group
-                                );
-                            } else {
-                                return [...prevGroups, [key, neighborKey]];
-                            }
-                        });
-    
-                        // Optional: Log for debugging
-                        console.log(`Locked ${key} to ${neighborKey}`);
-                    }
+                    // Update the reference positions
+                    originalPositionsRef.current[groupKey] = {
+                        x: Math.round(newPositions[groupKey].x / scaleFactor),
+                        y: Math.round(newPositions[groupKey].y / scaleFactor),
+                    };
                 }
             });
+    
+            if (isReleased) {
+                const updatedGroup = new Set(draggedGroup); // Use a set to avoid duplicates
+    
+                // Check all pieces in the dragged group for locking
+                draggedGroup.forEach((draggedKey) => {
+                    const neighbors = neighborMap[draggedKey] || [];
+                    neighbors.forEach((neighborKey) => {
+                        const neighborPosition = prevPositions[neighborKey];
+                        const relativePos = relativePositions[draggedKey]?.[neighborKey]; // Relative position from draggedKey to neighborKey
+    
+                        if (relativePos) {
+                            const correctX = neighborPosition.x + relativePos.x;
+                            const correctY = neighborPosition.y + relativePos.y;
+                            const distanceX = Math.abs(correctX - newPositions[draggedKey].x);
+                            const distanceY = Math.abs(correctY - newPositions[draggedKey].y);
+    
+                            if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD) {
+                                // Align the dragged group to the neighbor group
+                                const neighborGroup =
+                                    lockedGroups.find((group) => group.includes(neighborKey)) || [neighborKey];
+                                const lockingPiece = draggedKey; // Piece from dragged group that's locking
+    
+                                // Calculate alignment offset based on locking pieces
+                                const alignmentOffset = {
+                                    x: correctX - newPositions[lockingPiece].x,
+                                    y: correctY - newPositions[lockingPiece].y,
+                                };
+    
+                                // Adjust positions of all pieces in the dragged group
+                                draggedGroup.forEach((groupMember) => {
+                                    newPositions[groupMember] = {
+                                        x: prevPositions[groupMember].x + alignmentOffset.x,
+                                        y: prevPositions[groupMember].y + alignmentOffset.y,
+                                    };
+                                    originalPositionsRef.current[groupMember] = {
+                                        x: Math.round(newPositions[groupMember].x / scaleFactor),
+                                        y: Math.round(newPositions[groupMember].y / scaleFactor),
+                                    };
+                                });
+    
+                                // Merge the dragged group and the neighbor group
+                                neighborGroup.forEach((neighborMember) => updatedGroup.add(neighborMember));
+    
+                                console.log(
+                                    `Locked dragged piece (${draggedKey}) to neighbor (${neighborKey}). Groups merged.`
+                                );
+                            }
+                        }
+                    });
+                });
+    
+                // Update locked groups
+                setLockedGroups((prevGroups) => {
+                    const groupsToMerge = prevGroups.filter((group) =>
+                        group.some((member) => updatedGroup.has(member))
+                    );
+    
+                    const mergedGroup = groupsToMerge.reduce(
+                        (acc, group) => new Set([...acc, ...group]),
+                        updatedGroup
+                    );
+    
+                    // Remove merged groups and add the new merged group
+                    return [
+                        ...prevGroups.filter((group) => !groupsToMerge.includes(group)),
+                        Array.from(mergedGroup),
+                    ];
+                });
+            }
     
             return newPositions;
         });
     };
+    
     
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
@@ -261,7 +286,7 @@ const DroppableArea = ({ testMode = false }) => {
                     initialPosition={correctPosition}
                     externalPosition={positions[key]}
                     size={size}
-                    onPositionChange={(newPosition) => handlePositionChange(key, newPosition)}
+                    onPositionChange={(newPosition, isReleased) => handlePositionChange(key, newPosition, isReleased)}
                 />
             ))}
         </div>
