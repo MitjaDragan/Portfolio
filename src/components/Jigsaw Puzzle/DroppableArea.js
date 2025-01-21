@@ -5,7 +5,7 @@ import { ImageLoader } from './ImageLoader';
 import './DroppableArea.css';
 
 const BASE_SCREEN_WIDTH = 11520;
-const BASE_LOCK_THRESHOLD = 50;
+const BASE_LOCK_THRESHOLD = 30;
 
 const calculateScaleFactor = () => {
     return window.innerWidth / BASE_SCREEN_WIDTH;
@@ -31,6 +31,7 @@ const DroppableArea = ({ testMode = false }) => {
     const originalRelativePositionsRef = useRef({});
     const correctNeighborPositions = useRef({});
     const [loaded, setLoaded] = useState(false);
+    const [lockedGroups, setLockedGroups] = useState([]); // State to track locked groups
 
     const initializeRelativePositions = (map, imagesData) => {
         const relativePositions = imagesData.reduce((acc, img1) => {
@@ -165,21 +166,40 @@ const DroppableArea = ({ testMode = false }) => {
         };
     }, [images, neighborMap]);
 
-    const handlePositionChange = (key, newPosition, offset) => {
+    const handlePositionChange = (key, newPosition) => {
         setPositions((prevPositions) => {
-            const currentPosition = prevPositions[key] || { x: 0, y: 0 }; // Fallback to default
             const newPositions = { ...prevPositions, [key]: newPosition };
+            const scaleFactor = calculateScaleFactor();
+            const newUnscaledX = Math.round(newPosition.x / scaleFactor);
+            const newUnscaledY = Math.round(newPosition.y / scaleFactor);
+            originalPositionsRef.current[key] = { x: newUnscaledX, y: newUnscaledY };
     
-            // Ensure paired key handling is safe
-            const pairedKeys = { A1: 'A2', A2: 'A1' }; // Example
-            if (pairedKeys[key]) {
-                const pairedKey = pairedKeys[key];
-                const pairedPosition = prevPositions[pairedKey] || { x: 0, y: 0 };
-                newPositions[pairedKey] = {
-                    x: pairedPosition.x + (newPosition.x - currentPosition.x),
-                    y: pairedPosition.y + (newPosition.y - currentPosition.y),
-                };
-            }
+            const neighbors = neighborMap[key] || [];
+            let didLock = false;
+    
+            // Check each neighbor for locking
+            neighbors.forEach((neighborKey) => {
+                const neighborPosition = prevPositions[neighborKey];
+                const relativePos = relativePositions[key]?.[neighborKey]; // Relative position between key and neighbor
+    
+                if (relativePos) {
+                    const correctX = newPosition.x + relativePos.x;
+                    const correctY = newPosition.y + relativePos.y;
+                    const distanceX = Math.abs(correctX - neighborPosition.x);
+                    const distanceY = Math.abs(correctY - neighborPosition.y);
+    
+                    if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD && !didLock) {
+                        // Lock the neighbor to its correct position relative to the dragged piece
+                        newPositions[neighborKey] = { x: correctX, y: correctY };
+                        originalPositionsRef.current[neighborKey] = { x: correctX / scaleFactor, y: correctY / scaleFactor };
+                        didLock = true;
+    
+                        // Optional: Log locking for debugging
+                        console.log(`Locked ${key} to ${neighborKey}`);
+                    }
+                }
+            });
+    
             return newPositions;
         });
     };
