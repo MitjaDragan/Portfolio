@@ -166,18 +166,30 @@ const DroppableArea = ({ testMode = false }) => {
         };
     }, [images, neighborMap]);
 
-    const handlePositionChange = (key, newPosition, isReleased = false) => {
+    const handlePositionChange = (key, newPosition, isReleased = false, isRightClick = false) => {
         setPositions((prevPositions) => {
             const newPositions = { ...prevPositions, [key]: newPosition };
             const scaleFactor = calculateScaleFactor();
-    
+
+            if (isRightClick) {
+                // Remove the piece from any locked groups
+                setLockedGroups((prevGroups) =>
+                    prevGroups
+                        .map((group) => group.filter((member) => member !== key)) // Remove the piece from its group
+                        .filter((group) => group.length > 0) // Remove empty groups
+                );
+
+                console.log(`Right-click dragged piece ${key}. Removed from groups.`);
+                return newPositions;
+            }
+
             // Find the group containing the dragged piece
             const draggedGroup = lockedGroups.find((group) => group.includes(key)) || [key];
-    
+
             // Calculate the movement delta
             const deltaX = newPosition.x - prevPositions[key].x;
             const deltaY = newPosition.y - prevPositions[key].y;
-    
+
             // Move all pieces in the dragged group during dragging
             draggedGroup.forEach((groupKey) => {
                 if (groupKey !== key) {
@@ -185,7 +197,7 @@ const DroppableArea = ({ testMode = false }) => {
                         x: prevPositions[groupKey].x + deltaX,
                         y: prevPositions[groupKey].y + deltaY,
                     };
-    
+
                     // Update reference positions
                     originalPositionsRef.current[groupKey] = {
                         x: Math.round(newPositions[groupKey].x / scaleFactor),
@@ -193,39 +205,41 @@ const DroppableArea = ({ testMode = false }) => {
                     };
                 }
             });
-    
+
             if (isReleased) {
                 const updatedGroup = new Set(draggedGroup); // Use a set to avoid duplicates
                 let lockedToNeighbor = false; // Flag to prevent multiple locks
-    
+
                 // Check all pieces in the dragged group for locking
                 draggedGroup.forEach((draggedKey) => {
                     if (lockedToNeighbor) return; // Skip further locking if already locked
-    
+
                     const neighbors = neighborMap[draggedKey] || [];
                     for (const neighborKey of neighbors) {
                         if (lockedToNeighbor) break; // Skip further neighbors if locked
-    
+
+                        if (draggedGroup.includes(neighborKey)) continue; // Skip if neighbor is already in the dragged group
+
                         const neighborPosition = prevPositions[neighborKey];
                         const relativePos = relativePositions[neighborKey]?.[draggedKey]; // Relative position from neighbor to draggedKey
-    
+
                         if (relativePos) {
                             const correctX = neighborPosition.x + relativePos.x;
                             const correctY = neighborPosition.y + relativePos.y;
                             const distanceX = Math.abs(correctX - newPositions[draggedKey].x);
                             const distanceY = Math.abs(correctY - newPositions[draggedKey].y);
-    
+
                             if (distanceX <= BASE_LOCK_THRESHOLD && distanceY <= BASE_LOCK_THRESHOLD) {
                                 // Align the dragged group to the neighbor group
                                 const neighborGroup =
                                     lockedGroups.find((group) => group.includes(neighborKey)) || [neighborKey];
-    
+
                                 // Calculate the alignment offset
                                 const alignmentOffset = {
                                     x: correctX - newPositions[draggedKey].x,
                                     y: correctY - newPositions[draggedKey].y,
                                 };
-    
+
                                 // Adjust positions of all members in the dragged group
                                 draggedGroup.forEach((groupMember) => {
                                     newPositions[groupMember] = {
@@ -237,32 +251,32 @@ const DroppableArea = ({ testMode = false }) => {
                                         y: Math.round(newPositions[groupMember].y / scaleFactor),
                                     };
                                 });
-    
+
                                 // Add all members of the neighbor group to the updated group
                                 neighborGroup.forEach((neighborMember) => updatedGroup.add(neighborMember));
-    
+
                                 console.log(
                                     `Locked dragged piece (${draggedKey}) to neighbor (${neighborKey}). Groups merged.`
                                 );
-    
+
                                 lockedToNeighbor = true; // Mark as locked
                                 break; // Stop checking other neighbors
                             }
                         }
                     }
                 });
-    
+
                 // Update locked groups
                 setLockedGroups((prevGroups) => {
                     const groupsToMerge = prevGroups.filter((group) =>
                         group.some((member) => updatedGroup.has(member))
                     );
-    
+
                     const mergedGroup = groupsToMerge.reduce(
                         (acc, group) => new Set([...acc, ...group]),
                         updatedGroup
                     );
-    
+
                     // Remove merged groups and add the new merged group
                     return [
                         ...prevGroups.filter((group) => !groupsToMerge.includes(group)),
@@ -270,12 +284,11 @@ const DroppableArea = ({ testMode = false }) => {
                     ];
                 });
             }
-    
+
             return newPositions;
         });
     };
-    
-    
+
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
         setLoaded(false);
@@ -294,7 +307,7 @@ const DroppableArea = ({ testMode = false }) => {
                     initialPosition={correctPosition}
                     externalPosition={positions[key]}
                     size={size}
-                    onPositionChange={(newPosition, isReleased) => handlePositionChange(key, newPosition, isReleased)}
+                    onPositionChange={(newPosition, isReleased, isRightClick) => handlePositionChange(key, newPosition, isReleased, isRightClick)}
                 />
             ))}
         </div>

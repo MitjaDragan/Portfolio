@@ -71,11 +71,20 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
 
   const handleMouseDown = (e) => {
     e.preventDefault();
-    handleDragStart(e.clientX, e.clientY);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
+    if (e.button === 2) {
+      // Right-click drag start
+      handleDragStart(e.clientX, e.clientY, true);
 
+      // Temporarily suppress default behavior during drag
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else if (e.button === 0) {
+      // Left-click drag start
+      handleDragStart(e.clientX, e.clientY, false);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+  };
   const handleMouseMove = (e) => {
     if (!draggingRef.current) return;
 
@@ -133,6 +142,10 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
     };
   }, []);
 
+  const handleContextMenu = (e) => {
+    e.preventDefault(); // Prevent the context menu from opening
+  };
+  
   return (
     <img
       ref={imgRef}
@@ -140,6 +153,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
       alt={alt}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      onContextMenu={handleContextMenu} // Suppress right-click menu
       style={{
         position: 'absolute',
         left: `${position.x}px`,
@@ -152,6 +166,7 @@ const DraggableImage = ({ src, alt, initialPosition, onPositionChange, externalP
       }}
     />
   );
+  
 };
 
 export default DraggableImage;
