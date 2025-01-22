@@ -166,22 +166,30 @@ const DroppableArea = ({ testMode = false }) => {
         };
     }, [images, neighborMap]);
 
-    const handlePositionChange = (key, newPosition, isReleased = false, isRightClick = false) => {
+    const handlePositionChange = (key, newPosition, isReleased = false, isRightClick) => {
         setPositions((prevPositions) => {
             const newPositions = { ...prevPositions, [key]: newPosition };
             const scaleFactor = calculateScaleFactor();
 
             if (isRightClick) {
-                // Remove the piece from any locked groups
+                // Remove the piece from any locked groups and only move the right-clicked piece
                 setLockedGroups((prevGroups) =>
                     prevGroups
                         .map((group) => group.filter((member) => member !== key)) // Remove the piece from its group
                         .filter((group) => group.length > 0) // Remove empty groups
                 );
-
+    
                 console.log(`Right-click dragged piece ${key}. Removed from groups.`);
+    
+                // Only update the position of the right-clicked piece
+                originalPositionsRef.current[key] = {
+                    x: Math.round(newPosition.x / scaleFactor),
+                    y: Math.round(newPosition.y / scaleFactor),
+                };
+    
                 return newPositions;
             }
+    
 
             // Find the group containing the dragged piece
             const draggedGroup = lockedGroups.find((group) => group.includes(key)) || [key];
