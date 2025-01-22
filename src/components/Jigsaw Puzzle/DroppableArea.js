@@ -196,11 +196,16 @@ const DroppableArea = ({ testMode = false }) => {
     
             if (isReleased) {
                 const updatedGroup = new Set(draggedGroup); // Use a set to avoid duplicates
+                let lockedToNeighbor = false; // Flag to prevent multiple locks
     
                 // Check all pieces in the dragged group for locking
                 draggedGroup.forEach((draggedKey) => {
+                    if (lockedToNeighbor) return; // Skip further locking if already locked
+    
                     const neighbors = neighborMap[draggedKey] || [];
-                    neighbors.forEach((neighborKey) => {
+                    for (const neighborKey of neighbors) {
+                        if (lockedToNeighbor) break; // Skip further neighbors if locked
+    
                         const neighborPosition = prevPositions[neighborKey];
                         const relativePos = relativePositions[neighborKey]?.[draggedKey]; // Relative position from neighbor to draggedKey
     
@@ -239,9 +244,12 @@ const DroppableArea = ({ testMode = false }) => {
                                 console.log(
                                     `Locked dragged piece (${draggedKey}) to neighbor (${neighborKey}). Groups merged.`
                                 );
+    
+                                lockedToNeighbor = true; // Mark as locked
+                                break; // Stop checking other neighbors
                             }
                         }
-                    });
+                    }
                 });
     
                 // Update locked groups
@@ -271,6 +279,7 @@ const DroppableArea = ({ testMode = false }) => {
     const handleLevelChange = (newLevel) => {
         setLevel(newLevel);
         setLoaded(false);
+        setLockedGroups([]);
     };
 
     return (
