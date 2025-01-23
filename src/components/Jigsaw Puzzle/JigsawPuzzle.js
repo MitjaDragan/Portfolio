@@ -1,6 +1,5 @@
 import React from 'react';
 import DroppableArea from './DroppableArea';
-import BezierCurveGrid from "./BezierCurveGrid";
 
 //<DroppableArea testMode={true} />
 

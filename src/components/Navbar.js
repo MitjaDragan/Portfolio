@@ -11,7 +11,7 @@ import SunIcon from '../assets/images/Sun.png';
 import MoonIcon from '../assets/images/Moon.png';
 
 function Navbar() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [transitioning, setTransitioning] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [navbarHeight, setNavbarHeight] = useState(0);
