@@ -3,6 +3,7 @@ import DraggableImage from './DraggableImage';
 import LevelSelector from './LevelSelector';
 import { ImageLoader } from './ImageLoader';
 import './DroppableArea.css';
+import { Link } from 'react-router-dom';
 
 const BASE_SCREEN_WIDTH = 11520;
 const BASE_LOCK_THRESHOLD = 30;
@@ -306,6 +307,7 @@ const DroppableArea = ({ testMode = false }) => {
     return (
         <div>
             <ImageLoader level={level} onImagesLoaded={handleImagesLoaded} />
+            <p><Link to="/testing">Algorithm Testing</Link></p>
             <LevelSelector onSelectLevel={handleLevelChange} />
             {images.map(({ key, src, correctPosition, size }) => (
                 <DraggableImage

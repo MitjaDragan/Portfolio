@@ -10,6 +10,7 @@ import Certifications from './components/Certifications/Certifications';
 import Sudoku from './components/Sudoku/Sudoku';
 import Projects from './components/Projects/Projects';
 import WorkDiary from './components/WorkDiary/WorkDiary';
+import BezierCurveGrid from './components/Jigsaw Puzzle/BezierCurveGrid'
 import './App.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/certificates" element={<Certifications />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/work-diary" element={<WorkDiary />} />
+        <Route path="/testing" element={<BezierCurveGrid />} />
       </Routes>
     </Router>
   );

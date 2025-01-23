@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A React portfolio project",
   "main": "src/index.js",
-  
   "scripts": {
     "start": "webpack serve --open --config webpack.config.js",
     "build": "webpack --config webpack.config.js --mode production"
@@ -14,18 +13,26 @@
   "dependencies": {
     "@react-three/drei": "^9.111.2",
     "@react-three/fiber": "^8.17.5",
+    "@svgdotjs/svg.js": "^3.2.4",
     "bootstrap": "^5.3.3",
+    "createjs-module": "^0.8.3",
+    "d3": "^7.9.0",
     "emailjs-com": "^3.2.0",
+    "fabric": "^6.5.4",
     "graphql-request": "^7.1.2",
     "gsap": "^3.12.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "konva": "^9.3.18",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-image-puzzle": "^0.1.0",
+    "react-jigsaw-puzzle": "^1.0.5",
+    "react-konva": "^19.0.2",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.26.1",
     "theme-toggles": "^4.10.1",
     "three": "^0.167.1",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1",
+    "use-image": "^1.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -1,13 +1,13 @@
 import React from 'react';
 import DroppableArea from './DroppableArea';
-import JigsawImageSplitter from './JigsawImageSplitter';
+import BezierCurveGrid from "./BezierCurveGrid";
 
 //<DroppableArea testMode={true} />
 
 function JigsawPuzzle() {
     return (
-        <div className="jigsaw-puzzle">
-            <JigsawImageSplitter />
+        <div>
+            <DroppableArea  />
         </div>
     );
 }
