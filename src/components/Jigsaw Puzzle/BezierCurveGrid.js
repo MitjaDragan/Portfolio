@@ -1,129 +1,114 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const edgeDistributions = (() => {
-  const randomBetween = (min, max) => Math.random() * (max - min) + min;
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
-  const baselineOffsets = {
-    xMin: 30,
-    xMax: 50,
-    yMin: -10, // Subtle curvature for baseline
-    yMax: 10,
-  };
+// Returns a path + points for a single "jigsaw edge"
+// based on your good reference curve, with small random perturbations.
+function generateEdge() {
+  const sign = Math.random() < 0.5 ? -1 : 1;
+  const p1 = [0, 0];
+  const p2Base = [0.763, -0.113];
+  const p3Base = [0.127, 0.35];
+  const p4Base = [0.438, 0.347];
+  const p5Base = [0.915, 0.342];
+  const p6Base = [0.064, -0.024];
+  const p7 = [1, 0];
 
-  const upperOffsets = {
-    xMin: 15,
-    xMax: 25,
-    yMin: 10, // Subtle curvature for upper control points
-    yMax: 20,
-  };
+  // Increase this for more variation
+  const d = 0.04;
 
-  const emphasizedOffsets = {
-    xMin: 45,
-    xMax: 55,
-    yMin: 20, // Emphasized curvature for P4
-    yMax: 40,
-  };
+  // Slightly randomize each control point
+  function perturb([x, y]) {
+    return [
+      x + randomBetween(-d, d),
+      y + sign * randomBetween(-d, d)
+    ];
+  }
 
-  return function () {
-    const point1 = [0, 0]; // Start point (curve passes through)
-    const point2 = [
-      randomBetween(baselineOffsets.xMin, baselineOffsets.xMax),
-      randomBetween(baselineOffsets.yMin, baselineOffsets.yMax),
-    ]; // Control point for first curve
-    const point3 = [
-      randomBetween(upperOffsets.xMin, upperOffsets.xMax),
-      randomBetween(upperOffsets.yMin, upperOffsets.yMax),
-    ]; // Control point for first curve
-    const point4 = [
-      randomBetween(emphasizedOffsets.xMin, emphasizedOffsets.xMax),
-      randomBetween(emphasizedOffsets.yMin, emphasizedOffsets.yMax),
-    ]; // Control point for second curve
-    const point5 = [
-      randomBetween(baselineOffsets.xMax, baselineOffsets.xMin + 10),
-      randomBetween(baselineOffsets.yMin, baselineOffsets.yMax),
-    ]; // Control point for second curve
-    const point6 = [100, 0]; // End point (curve passes through)
+  const p2 = perturb(p2Base);
+  const p3 = perturb(p3Base);
+  const p4 = perturb(p4Base);
+  const p5 = perturb(p5Base);
+  const p6 = perturb(p6Base);
 
-    return [point1, point2, point3, point4, point5, point6].map(([x, y]) => [
-      x / 100,
-      y / 100,
-    ]);
-  };
-})();
+  // Scale down so the curve is smaller
+  // so we can fit a 4x4 grid in a moderate size
+  const scale = 200;
 
-const SingleEdge = () => {
-  const [path, setPath] = useState("");
-  const [points, setPoints] = useState([]);
+  function sx([x, _y]) {
+    return (x * scale).toFixed(3);
+  }
+  function sy([_x, y]) {
+    return (y * scale).toFixed(3);
+  }
 
-  const generateEdge = () => {
-    const generatedPoints = edgeDistributions();
+  const path = `
+    M ${sx(p1)},${sy(p1)}
+    C ${sx(p2)},${sy(p2)} ${sx(p3)},${sy(p3)} ${sx(p4)},${sy(p4)}
+    C ${sx(p5)},${sy(p5)} ${sx(p6)},${sy(p6)} ${sx(p7)},${sy(p7)}
+  `;
 
-    if (!generatedPoints || generatedPoints.length < 6) {
-      console.error("Edge generation failed due to missing points.");
-      return;
+  const points = [p1, p2, p3, p4, p5, p6, p7].map(([x, y]) => [
+    x * scale,
+    y * scale
+  ]);
+
+  return { path, points };
+}
+
+const BezierCurveGrid = () => {
+  const [curves, setCurves] = useState([]);
+
+  // Create a 4x4 grid of edges
+  function drawCurveGrid() {
+    const rows = 4;
+    const cols = 4;
+
+    // Enough spacing so curves don’t overlap
+    const xSpacing = 250;
+    const ySpacing = 250;
+
+    const newCurves = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const { path, points } = generateEdge();
+        newCurves.push({
+          path,
+          points,
+          transform: `translate(${col * xSpacing}, ${row * ySpacing})`
+        });
+      }
     }
+    setCurves(newCurves);
+  }
 
-    // Construct the path using two `C` commands for two connected curves
-    const edgePath = `
-      M ${generatedPoints[0][0] * 500},${250 + generatedPoints[0][1] * 500}
-      C ${generatedPoints[1][0] * 500},${250 + generatedPoints[1][1] * 500}
-        ${generatedPoints[2][0] * 500},${250 + generatedPoints[2][1] * 500}
-        ${generatedPoints[3][0] * 500},${250 + generatedPoints[3][1] * 500}
-        ${generatedPoints[3][0] * 500},${250 + generatedPoints[3][1] * 500},
-        ${generatedPoints[4][0] * 500},${250 + generatedPoints[4][1] * 500},
-        ${generatedPoints[5][0] * 500},${250 + generatedPoints[5][1] * 500}
-    `;
-    setPath(edgePath);
-    setPoints(generatedPoints);
-  };
+  useEffect(() => {
+    drawCurveGrid();
+  }, []);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#f9f9f9",
-      }}
-    >
-      <button
-        onClick={generateEdge}
-        style={{
-          marginBottom: "20px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
-      >
-        Generate New Edge
-      </button>
-      <svg
-        width="600"
-        height="500"
-        style={{ border: "1px solid black", backgroundColor: "white" }}
-      >
-        {/* Render the path */}
-        <path d={path} fill="none" stroke="black" strokeWidth={2} />
-
-        {/* Render the control points as colored circles */}
-        {points.map((point, index) => (
-          <g key={index}>
-            <circle
-              cx={point[0] * 500}
-              cy={250 + point[1] * 500}
-              r={5}
-              fill={["red", "blue", "green", "orange", "purple", "brown"][index]}
+    <div>
+      <button onClick={drawCurveGrid}>Generate New Grid</button>
+      <svg width="1000" height="1000" style={{ background: "#f9f9f9" }}>
+        {curves.map((curve, i) => (
+          <g key={i} transform={curve.transform}>
+            <path
+              d={curve.path}
+              fill="none"
+              stroke="black"
+              strokeWidth={3}
             />
-            <text
-              x={point[0] * 500 + 10}
-              y={250 + point[1] * 500}
-              fontSize="12"
-              fill="black"
-            >
-              {`P${index + 1}`}
-            </text>
+            {curve.points.map((pt, j) => (
+              <circle
+                key={j}
+                cx={pt[0]}
+                cy={pt[1]}
+                r={5}
+                fill="red"
+              />
+            ))}
           </g>
         ))}
       </svg>
@@ -131,4 +116,4 @@ const SingleEdge = () => {
   );
 };
 
-export default SingleEdge;
+export default BezierCurveGrid;
