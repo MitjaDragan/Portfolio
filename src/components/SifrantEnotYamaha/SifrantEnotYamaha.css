@@ -1,67 +1,53 @@
 .menu-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-  }
-  
-  .menu-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .menu-list, .sub-menu, .product-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menu-item, .sub-menu-item, .product-item {
-    margin: 8px 0;
-  }
-  
-  .menu-header, .sub-menu-header, .product-header {
-    background: #004080;
-    color: white;
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .menu-header:hover, .sub-menu-header:hover, .product-header:hover {
-    background: #0055a5;
-  }
-  
-  .arrow {
-    font-size: 16px;
-    transition: transform 0.3s ease;
-  }
-  
-  .product-details {
-    background: #f1f1f1;
-    padding: 10px;
-    border-left: 4px solid #004080;
-    border-radius: 5px;
-    margin-top: 5px;
-  }
-  
-  .variant-list {
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-    margin-top: 5px;
-  }
-  
-  .variant-item {
-    padding: 5px 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .variant-item:last-child {
-    border-bottom: none;
-  }
-  
+  max-width: 600px;
+  margin: auto;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.menu-title {
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.product-list {
+  margin-top: 20px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-list h3 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.product-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.product-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.variant-sku {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
