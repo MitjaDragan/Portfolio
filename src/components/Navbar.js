@@ -81,6 +81,9 @@ function Navbar() {
           <div className={`collapse navbar-collapse ${isCollapsed ? '' : 'show'}`} id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
+                <Link to="/sifrant" className="nav-link mx-2" onClick={handleLinkClick}>Šifrant</Link>
+              </li>
+              <li className="nav-item">
                 <Link to="/" className="nav-link mx-2" onClick={handleLinkClick}>About me</Link>
               </li>
               <li className="nav-item">
