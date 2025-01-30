@@ -11,6 +11,7 @@ import Sudoku from './components/Sudoku/Sudoku';
 import Projects from './components/Projects/Projects';
 import WorkDiary from './components/WorkDiary/WorkDiary';
 import BezierCurveGrid from './components/Jigsaw Puzzle/BezierCurveGrid'
+import SifrantEnotYamaha from './components/SifrantEnotYamaha/SifrantEnotYamaha';
 import './App.css';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/work-diary" element={<WorkDiary />} />
         <Route path="/testing" element={<BezierCurveGrid />} />
+        <Route path="/sifrant" element={<SifrantEnotYamaha />} />
       </Routes>
     </Router>
   );
