@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import sifrantData from "/src/assets/data/Šifrant Enot Yamaha.json";
 import categoriesData from "/src/assets/data/Categories.json";
+import accessoriesData from "/src/assets/data/Accessories.json"; // <-- Import accessories
 import "./SifrantEnotYamaha.css"; // Import CSS file
 
 /**
@@ -21,22 +22,33 @@ const SifrantEnotYamaha = () => {
   const [categoryHierarchy, setCategoryHierarchy] = useState({});
   const [productHierarchy, setProductHierarchy] = useState({});
 
+  // We'll store accessories in a lookup map (key => accessory object).
+  const [accessoryMap, setAccessoryMap] = useState({});
+
   /**
-   * 1) Build productHierarchy:
-   *    - We'll treat the master variant's `archiveProduct` / `publishVariant`
-   *      as "overall product" status. If the master is archived or unpublished,
-   *      we skip the entire product.
-   *
-   *    - For each variant (including master), we only keep if:
-   *        archiveProduct === false
-   *        publishVariant === true
-   *
-   *    (Based on your JSON example: these booleans are in the attributes array)
+   * Build a map (object) from accessory key => entire accessory object
+   * for easy lookups in the product listing.
+   */
+  const buildAccessoryMap = (accessoriesArray) => {
+    const map = {};
+    accessoriesArray.forEach((acc) => {
+      if (acc && acc.key) {
+        map[acc.key] = acc;
+      }
+    });
+    return map;
+  };
+
+  /**
+   * Build product hierarchy by category => productGroup => year => [ { product, variant }, ... ]
+   * Filter out unpublished / archived items as needed.
    */
   const buildProductHierarchy = (products) => {
     const hierarchy = {};
 
     products.forEach((product) => {
+      if (!product.published) return; // Check if the product is published
+
       const master = product.masterVariant;
       if (!master) return;
 
@@ -84,7 +96,7 @@ const SifrantEnotYamaha = () => {
 
           hierarchy[categoryKey][productGroup][productYear].push({
             product,
-            variant
+            variant,
           });
         });
       });
@@ -126,7 +138,7 @@ const SifrantEnotYamaha = () => {
       categoryMap[category.key] = {
         name: category.name.en,
         parent: category.parent?.key || null,
-        subcategories: {}
+        subcategories: {},
       };
     });
 
@@ -183,7 +195,7 @@ const SifrantEnotYamaha = () => {
 
   // Load and prepare data on mount
   useEffect(() => {
-    // 1) Build productHierarchy (filtered by archive/publish in the master variant & child variants)
+    // 1) Build productHierarchy
     const builtProductHierarchy = buildProductHierarchy(sifrantData);
 
     // 2) Build the full category hierarchy
@@ -195,9 +207,13 @@ const SifrantEnotYamaha = () => {
       builtProductHierarchy
     );
 
+    // Build accessory map
+    const accMap = buildAccessoryMap(accessoriesData);
+
     // Store in state
     setProductHierarchy(builtProductHierarchy);
     setCategoryHierarchy(prunedHierarchy);
+    setAccessoryMap(accMap);
   }, []);
 
   // Handle category dropdown changes
@@ -251,6 +267,29 @@ const SifrantEnotYamaha = () => {
     productHierarchy[lastSelectedCategory][selectedProductGroup][selectedYear]
       ? productHierarchy[lastSelectedCategory][selectedProductGroup][selectedYear]
       : [];
+
+    const handleShowAccessories = (variant) => {
+      // "accessories" attribute is typically an array of keys
+      const variantAccessories = getAttributeValue(variant, "accessories") || [];
+    
+      // Map each accessory key to the accessory's masterVariant.sku (removing dashes)
+      const accessorySKUs = variantAccessories
+        .map((accKey) => {
+          const accessoryObj = accessoryMap[accKey];
+          const rawSku = accessoryObj?.masterVariant?.sku || null;
+          // Remove all dashes from the SKU string
+          return rawSku ? rawSku.replace(/-/g, "") : null;
+        })
+        .filter(Boolean); // remove nulls if an accessory is missing
+    
+      if (accessorySKUs.length === 0) {
+        alert("No accessories found for this variant.");
+        return;
+      }
+    
+      alert(`Accessories SKUs: ${accessorySKUs.join(", ")}`);
+    };
+      
 
   return (
     <div className="menu-container">
@@ -318,10 +357,6 @@ const SifrantEnotYamaha = () => {
           <h3>Variants</h3>
           <ul>
             {productList.map(({ product, variant }, idx) => {
-              // We can show extra debug info here to confirm archive/publish statuses
-              const varArchived = getAttributeValue(variant, "archiveProduct") === true;
-              const varPublished = getAttributeValue(variant, "publishVariant") === true;
-
               const color = getAttributeValue(variant, "colourName") || "Unknown Color";
 
               return (
@@ -330,11 +365,11 @@ const SifrantEnotYamaha = () => {
                     <strong>{product.name?.en || product.key}</strong> - {color}
                   </div>
                   <div className="variant-sku">SKU: {variant.sku || "N/A"}</div>
-                  <div style={{ marginLeft: "1.5rem", fontSize: "0.9rem" }}>
-                    <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-                      <li>Variant Archived? {String(varArchived)}</li>
-                      <li>Variant Published? {String(varPublished)}</li>
-                    </ul>
+                  <div                  >
+                    {/* Button to show accessory SKUs */}
+                    <button class="btn btn-primary" onClick={() => handleShowAccessories(variant)}>
+                      Show Accessories
+                    </button>
                   </div>
                 </li>
               );
