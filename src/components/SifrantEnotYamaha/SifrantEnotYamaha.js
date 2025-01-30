@@ -40,34 +40,20 @@ const SifrantEnotYamaha = () => {
   };
 
   /**
-   * Build product hierarchy by category => productGroup => year => [ { product, variant }, ... ]
-   * Filter out unpublished / archived items as needed.
+   * Build product hierarchy by:
+   *   category => productName => year => [ { product, variant }, ... ]
    */
   const buildProductHierarchy = (products) => {
     const hierarchy = {};
 
     products.forEach((product) => {
-      if (!product.published) return; // Check if the product is published
+      if (!product.published) return; // If not published, skip
 
       const master = product.masterVariant;
       if (!master) return;
 
-      // Check master variant for product-level status
-      const masterIsArchived = getAttributeValue(master, "archiveProduct") === true;
-      const masterIsPublished = getAttributeValue(master, "publishVariant") === true;
-
-      // If master variant is archived or not published => skip entire product
-      if (masterIsArchived || !masterIsPublished) return;
-
       // Combine masterVariant + child variants
       let allVariants = [master, ...(product.variants || [])];
-
-      // Filter out any variant that is archived or not published
-      allVariants = allVariants.filter((variant) => {
-        const varArchived = getAttributeValue(variant, "archiveProduct") === true;
-        const varPublished = getAttributeValue(variant, "publishVariant") === true;
-        return !varArchived && varPublished;
-      });
 
       // If no variants remain after filtering, skip
       if (allVariants.length === 0) return;
@@ -83,18 +69,21 @@ const SifrantEnotYamaha = () => {
         }
 
         allVariants.forEach((variant) => {
-          // For grouping by productPCMCode / productYear
-          const productGroup = getAttributeValue(variant, "productPCMCode") || "Unknown Group";
-          const productYear = getAttributeValue(variant, "productYear") || "Unknown Year";
+          // 1) Use product.name?.en to form the "group" key:
+          const productName = product.name?.en || "Unknown Name";
 
-          if (!hierarchy[categoryKey][productGroup]) {
-            hierarchy[categoryKey][productGroup] = {};
+          // 2) Keep the same year grouping:
+          const productYear =
+            getAttributeValue(variant, "productYear") || "Unknown Year";
+
+          if (!hierarchy[categoryKey][productName]) {
+            hierarchy[categoryKey][productName] = {};
           }
-          if (!hierarchy[categoryKey][productGroup][productYear]) {
-            hierarchy[categoryKey][productGroup][productYear] = [];
+          if (!hierarchy[categoryKey][productName][productYear]) {
+            hierarchy[categoryKey][productName][productYear] = [];
           }
 
-          hierarchy[categoryKey][productGroup][productYear].push({
+          hierarchy[categoryKey][productName][productYear].push({
             product,
             variant,
           });
@@ -128,7 +117,7 @@ const SifrantEnotYamaha = () => {
   };
 
   /**
-   * 2) Build the hierarchical category structure from categoriesData.
+   * Build the hierarchical category structure from categoriesData.
    */
   const buildCategoryHierarchy = () => {
     const hierarchy = {};
@@ -164,7 +153,7 @@ const SifrantEnotYamaha = () => {
   };
 
   /**
-   * 3) Prune categoryHierarchy so that only categories with valid products remain.
+   * Prune categoryHierarchy so that only categories with valid products remain.
    */
   const pruneCategoryHierarchy = (hierarchy, productHierarchy) => {
     const hasProductsRecursively = (nodeKey, nodeObj) => {
@@ -243,6 +232,7 @@ const SifrantEnotYamaha = () => {
       ? selectedCategories[selectedCategories.length - 1]
       : null;
 
+  // productGroups are now product names
   const productGroups =
     lastSelectedCategory && productHierarchy[lastSelectedCategory]
       ? Object.keys(productHierarchy[lastSelectedCategory])
@@ -268,28 +258,30 @@ const SifrantEnotYamaha = () => {
       ? productHierarchy[lastSelectedCategory][selectedProductGroup][selectedYear]
       : [];
 
-    const handleShowAccessories = (variant) => {
-      // "accessories" attribute is typically an array of keys
-      const variantAccessories = getAttributeValue(variant, "accessories") || [];
-    
-      // Map each accessory key to the accessory's masterVariant.sku (removing dashes)
-      const accessorySKUs = variantAccessories
-        .map((accKey) => {
-          const accessoryObj = accessoryMap[accKey];
-          const rawSku = accessoryObj?.masterVariant?.sku || null;
-          // Remove all dashes from the SKU string
-          return rawSku ? rawSku.replace(/-/g, "") : null;
-        })
-        .filter(Boolean); // remove nulls if an accessory is missing
-    
-      if (accessorySKUs.length === 0) {
-        alert("No accessories found for this variant.");
-        return;
-      }
-    
-      alert(`Accessories SKUs: ${accessorySKUs.join(", ")}`);
-    };
-      
+  /**
+   * Example: minimal "Show Accessories" button for each variant
+   */
+  const handleShowAccessories = (variant) => {
+    // "accessories" attribute is typically an array of accessory keys
+    const variantAccessories = getAttributeValue(variant, "accessories") || [];
+
+    // Map each accessory key to the accessory's masterVariant.sku (removing dashes)
+    const accessorySKUs = variantAccessories
+      .map((accKey) => {
+        const accessoryObj = accessoryMap[accKey];
+        const rawSku = accessoryObj?.masterVariant?.sku || null;
+        // Remove all dashes from the SKU string
+        return rawSku ? rawSku.replace(/-/g, "") : null;
+      })
+      .filter(Boolean); // remove nulls if an accessory is missing
+
+    if (accessorySKUs.length === 0) {
+      alert("No accessories found for this variant.");
+      return;
+    }
+
+    alert(`Accessories SKUs: ${accessorySKUs.join(", ")}`);
+  };
 
   return (
     <div className="menu-container">
@@ -319,14 +311,14 @@ const SifrantEnotYamaha = () => {
         );
       })}
 
-      {/* Product Group */}
+      {/* Product Group (now really the product's name) */}
       {productGroups.length > 0 && (
         <select
           className="dropdown"
           value={selectedProductGroup}
           onChange={(e) => setSelectedProductGroup(e.target.value)}
         >
-          <option value="">Select Product Group</option>
+          <option value="">Select Product Name</option>
           {productGroups.map((group) => (
             <option key={group} value={group}>
               {group}
@@ -358,16 +350,44 @@ const SifrantEnotYamaha = () => {
           <ul>
             {productList.map(({ product, variant }, idx) => {
               const color = getAttributeValue(variant, "colourName") || "Unknown Color";
+              const pcmCode = getAttributeValue(variant, "productPCMCode") || "N/A";
+              const pscRaw = getAttributeValue(variant, "productMPLCodes") || "N/A";
+              const productMPLCodes = Array.isArray(pscRaw) ? pscRaw.join(", ") : pscRaw;
+              const productSlug = product.slug?.en || "N/A";
 
               return (
                 <li key={`${product.key}-${idx}`}>
                   <div>
-                    <strong>{product.name?.en || product.key}</strong> - {color}
+                    {/* Display product name and variant color */}
+                    <strong>{product.name?.en || product.key}</strong> – {color}
                   </div>
-                  <div className="variant-sku">SKU: {variant.sku || "N/A"}</div>
-                  <div                  >
-                    {/* Button to show accessory SKUs */}
-                    <button class="btn btn-primary" onClick={() => handleShowAccessories(variant)}>
+
+                  {/* SKU */}
+                  <div className="variant-sku">
+                    SKU: {variant.sku || "N/A"}
+                  </div>
+
+                  {/* PCM code (still displayed if you want) */}
+                  <div className="variant-PCM">
+                    PCM: {pcmCode}
+                  </div>
+
+                  {/* Product service codes */}
+                  <div className="variant-MPL">
+                    MPL: {productMPLCodes}
+                  </div>
+
+                  {/* Slug */}
+                  <div className="variant-slug">
+                    Slug: {productSlug}
+                  </div>
+
+                  {/* Button to show accessory SKUs */}
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleShowAccessories(variant)}
+                    >
                       Show Accessories
                     </button>
                   </div>
