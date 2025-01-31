@@ -52,16 +52,20 @@ const SifrantEnotYamaha = () => {
       const master = product.masterVariant;
       if (!master) return;
 
-      // Combine masterVariant + child variants
+      const masterIsPublished = getAttributeValue(master, "publishVariant") === true;
+      if (!masterIsPublished) return;
+
       let allVariants = [master, ...(product.variants || [])];
 
-      // If no variants remain after filtering, skip
       if (allVariants.length === 0) return;
 
-      // If the product has no categories, skip
+      allVariants = allVariants.filter((variant) => {
+        const varPublished = getAttributeValue(variant, "publishVariant") === true;
+        return varPublished;
+      });
+
       if (!product.categories || product.categories.length === 0) return;
 
-      // Insert valid variants into the hierarchy
       product.categories.forEach((category) => {
         const categoryKey = category.key;
         if (!hierarchy[categoryKey]) {
@@ -69,12 +73,8 @@ const SifrantEnotYamaha = () => {
         }
 
         allVariants.forEach((variant) => {
-          // 1) Use product.name?.en to form the "group" key:
           const productName = product.name?.en || "Unknown Name";
-
-          // 2) Keep the same year grouping:
-          const productYear =
-            getAttributeValue(variant, "productYear") || "Unknown Year";
+          const productYear = getAttributeValue(variant, "productYear") || "Unknown Year";
 
           if (!hierarchy[categoryKey][productName]) {
             hierarchy[categoryKey][productName] = {};
@@ -91,28 +91,6 @@ const SifrantEnotYamaha = () => {
       });
     });
 
-    // Sort year keys descending if numeric, with "Unknown" at the end
-    Object.keys(hierarchy).forEach((categoryKey) => {
-      Object.keys(hierarchy[categoryKey]).forEach((group) => {
-        const yearsMap = hierarchy[categoryKey][group];
-
-        const sortedYears = Object.keys(yearsMap).sort((a, b) => {
-          const numA = parseInt(a, 10);
-          const numB = parseInt(b, 10);
-          if (!isNaN(numA) && !isNaN(numB)) {
-            return numB - numA; // descending numeric
-          }
-          if (isNaN(numA) && !isNaN(numB)) return 1;
-          if (!isNaN(numA) && isNaN(numB)) return -1;
-          return 0;
-        });
-
-        hierarchy[categoryKey][group] = Object.fromEntries(
-          sortedYears.map((year) => [year, yearsMap[year]])
-        );
-      });
-    });
-
     return hierarchy;
   };
 
@@ -125,13 +103,12 @@ const SifrantEnotYamaha = () => {
 
     categoriesData.forEach((category) => {
       categoryMap[category.key] = {
-        name: category.name.en,
+        name: category.name["sl-SI"] || category.name["en"], // Use translated names
         parent: category.parent?.key || null,
         subcategories: {},
       };
     });
 
-    // Recursively assign subcategories
     const assignSubcategories = (parentKey, parentObj) => {
       Object.entries(categoryMap).forEach(([key, cat]) => {
         if (cat.parent === parentKey) {
@@ -141,7 +118,6 @@ const SifrantEnotYamaha = () => {
       });
     };
 
-    // Build top-level categories
     Object.entries(categoryMap).forEach(([key, category]) => {
       if (!category.parent) {
         hierarchy[key] = category;
@@ -151,7 +127,6 @@ const SifrantEnotYamaha = () => {
 
     return hierarchy;
   };
-
   /**
    * Prune categoryHierarchy so that only categories with valid products remain.
    */

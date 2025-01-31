@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Navbar from './components/Navbar';
@@ -10,7 +10,7 @@ import Certifications from './components/Certifications/Certifications';
 import Sudoku from './components/Sudoku/Sudoku';
 import Projects from './components/Projects/Projects';
 import WorkDiary from './components/WorkDiary/WorkDiary';
-import BezierCurveGrid from './components/Jigsaw Puzzle/BezierCurveGrid'
+import BezierCurveGrid from './components/Jigsaw Puzzle/BezierCurveGrid';
 import SifrantEnotYamaha from './components/SifrantEnotYamaha/SifrantEnotYamaha';
 import './App.css';
 
