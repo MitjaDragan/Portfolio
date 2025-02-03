@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import sifrantData from "/src/assets/data/Šifrant Enot Yamaha.json";
 import categoriesData from "/src/assets/data/Categories.json";
-import accessoriesData from "/src/assets/data/Accessories.json"; // <-- Import accessories
-import "./SifrantEnotYamaha.css"; // Import CSS file
+import accessoriesData from "/src/assets/data/Accessories.json";
+import "./SifrantEnotYamaha.css";
 
-/**
- * Helper to read an attribute value from a variant's attributes array.
- * If not found, returns undefined.
- */
 function getAttributeValue(variant, attrName) {
   if (!variant || !variant.attributes) return undefined;
   const attr = variant.attributes.find((a) => a.name === attrName);
@@ -18,17 +14,10 @@ const SifrantEnotYamaha = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProductGroup, setSelectedProductGroup] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-
   const [categoryHierarchy, setCategoryHierarchy] = useState({});
   const [productHierarchy, setProductHierarchy] = useState({});
-
-  // We'll store accessories in a lookup map (key => accessory object).
   const [accessoryMap, setAccessoryMap] = useState({});
 
-  /**
-   * Build a map (object) from accessory key => entire accessory object
-   * for easy lookups in the product listing.
-   */
   const buildAccessoryMap = (accessoriesArray) => {
     const map = {};
     accessoriesArray.forEach((acc) => {
@@ -39,31 +28,18 @@ const SifrantEnotYamaha = () => {
     return map;
   };
 
-  /**
-   * Build product hierarchy by:
-   *   category => productName => year => [ { product, variant }, ... ]
-   */
   const buildProductHierarchy = (products) => {
     const hierarchy = {};
-
     products.forEach((product) => {
-      if (!product.published) return; // If not published, skip
-
+      if (!product.published) return;
       const master = product.masterVariant;
       if (!master) return;
-
       const masterIsPublished = getAttributeValue(master, "publishVariant") === true;
       if (!masterIsPublished) return;
 
-      let allVariants = [master, ...(product.variants || [])];
-
-      if (allVariants.length === 0) return;
-
-      allVariants = allVariants.filter((variant) => {
-        const varPublished = getAttributeValue(variant, "publishVariant") === true;
-        return varPublished;
-      });
-
+      let allVariants = [master, ...(product.variants || [])].filter(
+        (variant) => getAttributeValue(variant, "publishVariant") === true
+      );
       if (!product.categories || product.categories.length === 0) return;
 
       product.categories.forEach((category) => {
@@ -90,20 +66,43 @@ const SifrantEnotYamaha = () => {
         });
       });
     });
+    return hierarchy;
+  };
+
+  const pruneCategoryHierarchy = (hierarchy, productHierarchy) => {
+    const hasProductsRecursively = (nodeKey, nodeObj) => {
+      Object.entries(nodeObj.subcategories).forEach(([subKey, subCategory]) => {
+        const keep = hasProductsRecursively(subKey, subCategory);
+        if (!keep) {
+          delete nodeObj.subcategories[subKey];
+        }
+      });
+
+      const directHasProducts = !!productHierarchy[nodeKey];
+      const hasSubcategories = Object.keys(nodeObj.subcategories).length > 0;
+      return directHasProducts || hasSubcategories;
+    };
+
+    Object.entries(hierarchy).forEach(([key, category]) => {
+      const keep = hasProductsRecursively(key, category);
+      if (!keep) {
+        delete hierarchy[key];
+      }
+    });
 
     return hierarchy;
   };
 
-  /**
-   * Build the hierarchical category structure from categoriesData.
-   */
   const buildCategoryHierarchy = () => {
     const hierarchy = {};
     const categoryMap = {};
 
     categoriesData.forEach((category) => {
+      const isPublished = category.custom?.fields?.published;
+      if (!isPublished) return;
+
       categoryMap[category.key] = {
-        name: category.name["sl-SI"] || category.name["en"], // Use translated names
+        name: category.name["sl-SI"] || category.name["en"],
         parent: category.parent?.key || null,
         subcategories: {},
       };
@@ -124,59 +123,17 @@ const SifrantEnotYamaha = () => {
         assignSubcategories(key, category);
       }
     });
-
-    return hierarchy;
-  };
-  /**
-   * Prune categoryHierarchy so that only categories with valid products remain.
-   */
-  const pruneCategoryHierarchy = (hierarchy, productHierarchy) => {
-    const hasProductsRecursively = (nodeKey, nodeObj) => {
-      // Prune subcategories first
-      Object.entries(nodeObj.subcategories).forEach(([subKey, subCategory]) => {
-        const keep = hasProductsRecursively(subKey, subCategory);
-        if (!keep) {
-          delete nodeObj.subcategories[subKey];
-        }
-      });
-
-      // This category has direct products if it exists in productHierarchy
-      const directHasProducts = !!productHierarchy[nodeKey];
-      const hasSubcategories = Object.keys(nodeObj.subcategories).length > 0;
-
-      return directHasProducts || hasSubcategories;
-    };
-
-    Object.entries(hierarchy).forEach(([key, category]) => {
-      const keep = hasProductsRecursively(key, category);
-      if (!keep) {
-        delete hierarchy[key];
-      }
-    });
-
     return hierarchy;
   };
 
-  // Load and prepare data on mount
   useEffect(() => {
-    // 1) Build productHierarchy
     const builtProductHierarchy = buildProductHierarchy(sifrantData);
-
-    // 2) Build the full category hierarchy
-    const builtCategoryHierarchy = buildCategoryHierarchy();
-
-    // 3) Prune empty categories
-    const prunedHierarchy = pruneCategoryHierarchy(
-      builtCategoryHierarchy,
-      builtProductHierarchy
-    );
-
-    // Build accessory map
+    let builtCategoryHierarchy = buildCategoryHierarchy();
+    builtCategoryHierarchy = pruneCategoryHierarchy(builtCategoryHierarchy, builtProductHierarchy);
     const accMap = buildAccessoryMap(accessoriesData);
 
-    // Store in state
     setProductHierarchy(builtProductHierarchy);
-    setCategoryHierarchy(prunedHierarchy);
+    setCategoryHierarchy(builtCategoryHierarchy);
     setAccessoryMap(accMap);
   }, []);
 
