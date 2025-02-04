@@ -418,7 +418,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -449,7 +449,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -1397,7 +1397,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -1490,7 +1490,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -1811,7 +1811,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -6086,7 +6086,7 @@
     },
     "name": {
       "en": "Sport (Scooter)",
-      "sl-SI": "Sport (Scooter)"
+      "sl-SI": "Sport"
     },
     "description": {
       "en": "Sport (Scooter)",
@@ -8153,7 +8153,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -9081,7 +9081,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -9534,7 +9534,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -9845,7 +9845,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -10379,7 +10379,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -10761,7 +10761,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -11125,7 +11125,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -11727,7 +11727,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -12859,7 +12859,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -13164,7 +13164,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -13278,7 +13278,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -15889,7 +15889,7 @@
     },
     "name": {
       "en": "Portables (F25-F2.5)",
-      "sl-SI": "Portables (F25-F2.5)"
+      "sl-SI": "Portables (6 - 2,5KM)"
     },
     "description": {
       "en": "Portables (F25-F2.5)",
@@ -17166,7 +17166,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },
@@ -17686,7 +17686,7 @@
         "typeId": "type"
       },
       "fields": {
-        "published": true,
+        "published": false,
         "exportToINDG": false
       }
     },

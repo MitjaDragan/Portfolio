@@ -30,8 +30,22 @@ const SifrantEnotYamaha = () => {
 
   const buildProductHierarchy = (products) => {
     const hierarchy = {};
+    const groupedProductsMap = new Map();
+
     products.forEach((product) => {
-      if (!product.published) return;
+      const groupingProducts = getAttributeValue(product.masterVariant, "groupingProducts") || [];
+      groupingProducts.forEach((id) => {
+        groupedProductsMap.set(id, product);
+      });
+    });
+
+    products.forEach((product) => {
+      const isPublished = product.published;
+      const isArchived = getAttributeValue(product.masterVariant, "archiveProduct") === false;
+      const isGrouped = groupedProductsMap.has(product.key);
+      const isGroupedAndPublished = isGrouped && groupedProductsMap.get(product.key)?.published;
+
+      if ((!isPublished || !isArchived) && !isGroupedAndPublished) return;
       const master = product.masterVariant;
       if (!master) return;
       const masterIsPublished = getAttributeValue(master, "publishVariant") === true;
@@ -202,10 +216,9 @@ const SifrantEnotYamaha = () => {
       .map((accKey) => {
         const accessoryObj = accessoryMap[accKey];
         const rawSku = accessoryObj?.masterVariant?.sku || null;
-        // Remove all dashes from the SKU string
         return rawSku ? rawSku.replace(/-/g, "") : null;
       })
-      .filter(Boolean); // remove nulls if an accessory is missing
+      .filter(Boolean); 
 
     if (accessorySKUs.length === 0) {
       alert("No accessories found for this variant.");
