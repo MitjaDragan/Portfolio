@@ -80,6 +80,13 @@ const SifrantEnotYamaha = () => {
         });
       });
     });
+    // Sort product names alphabetically within each category
+    Object.keys(hierarchy).forEach((categoryKey) => {
+      hierarchy[categoryKey] = Object.fromEntries(
+        Object.entries(hierarchy[categoryKey]).sort((a, b) => a[0].localeCompare(b[0]))
+      );
+    });
+    
     return hierarchy;
   };
 
