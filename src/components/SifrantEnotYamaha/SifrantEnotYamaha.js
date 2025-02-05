@@ -4,6 +4,7 @@ import categoriesData from "/src/assets/data/Categories.json";
 import accessoriesData from "/src/assets/data/Accessories.json";
 import "./SifrantEnotYamaha.css";
 
+// Pridobitev pripadajočih artiklov
 function getAttributeValue(variant, attrName) {
   if (!variant || !variant.attributes) return undefined;
   const attr = variant.attributes.find((a) => a.name === attrName);
@@ -18,6 +19,7 @@ const SifrantEnotYamaha = () => {
   const [productHierarchy, setProductHierarchy] = useState({});
   const [accessoryMap, setAccessoryMap] = useState({});
 
+  // Priprava artiklov
   const buildAccessoryMap = (accessoriesArray) => {
     const map = {};
     accessoriesArray.forEach((acc) => {
@@ -28,10 +30,12 @@ const SifrantEnotYamaha = () => {
     return map;
   };
 
+  // Urejanje produktov glede na kategorije, modele ipd.
   const buildProductHierarchy = (products) => {
     const hierarchy = {};
     const groupedProductsMap = new Map();
 
+    // Povezovanje arhiviranih produktov z pripadajočimi objavljenimi produkti
     products.forEach((product) => {
       const groupingProducts = getAttributeValue(product.masterVariant, "groupingProducts") || [];
       groupingProducts.forEach((id) => {
@@ -39,6 +43,7 @@ const SifrantEnotYamaha = () => {
       });
     });
 
+    // Urejanje statusov produktov
     products.forEach((product) => {
       const isPublished = product.published;
       const isArchived = getAttributeValue(product.masterVariant, "archiveProduct") === false;
@@ -80,7 +85,8 @@ const SifrantEnotYamaha = () => {
         });
       });
     });
-    // Sort product names alphabetically within each category
+
+    // Urejanje produktov po abecedi
     Object.keys(hierarchy).forEach((categoryKey) => {
       hierarchy[categoryKey] = Object.fromEntries(
         Object.entries(hierarchy[categoryKey]).sort((a, b) => a[0].localeCompare(b[0]))
@@ -90,6 +96,7 @@ const SifrantEnotYamaha = () => {
     return hierarchy;
   };
 
+  //Skrivanje kategorij, ki ne vsebujejo objavljenih produktov
   const pruneCategoryHierarchy = (hierarchy, productHierarchy) => {
     const hasProductsRecursively = (nodeKey, nodeObj) => {
       Object.entries(nodeObj.subcategories).forEach(([subKey, subCategory]) => {
@@ -114,6 +121,7 @@ const SifrantEnotYamaha = () => {
     return hierarchy;
   };
 
+  // Kreiranje seznama kategorij
   const buildCategoryHierarchy = () => {
     const hierarchy = {};
     const categoryMap = {};
@@ -319,7 +327,7 @@ const SifrantEnotYamaha = () => {
                     SKU: {variant.sku || "N/A"}
                   </div>
 
-                  {/* PCM code (still displayed if you want) */}
+                  {/* PCM code */}
                   <div className="variant-PCM">
                     PCM: {pcmCode}
                   </div>
