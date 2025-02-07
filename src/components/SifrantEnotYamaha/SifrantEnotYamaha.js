@@ -4,6 +4,8 @@ import categoriesData from "/src/assets/data/Categories.json";
 import accessoriesData from "/src/assets/data/Accessories.json";
 import "./SifrantEnotYamaha.css";
 
+import AccessoryFinder from "./AccessoryFinder";
+
 // Pridobitev pripadajočih artiklov
 function getAttributeValue(variant, attrName) {
   if (!variant || !variant.attributes) return undefined;
@@ -357,6 +359,7 @@ const SifrantEnotYamaha = () => {
           </ul>
         </div>
       )}
+      <AccessoryFinder />
     </div>
   );
 };

@@ -1,0 +1,68 @@
+.accessory-finder-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #333;
+  }
+  
+  .input-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .input-field {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .search-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .results {
+    margin-top: 1.5rem;
+  }
+  
+  .result-item {
+    padding: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .result-item strong {
+    font-size: 1.1rem;
+    color: #007bff;
+  }
+  
+  .result-item div {
+    margin-top: 0.25rem;
+    color: #555;
+  }
+  
