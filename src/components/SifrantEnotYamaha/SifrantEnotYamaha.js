@@ -365,3 +365,9 @@ const SifrantEnotYamaha = () => {
 };
 
 export default SifrantEnotYamaha;
+
+// Starting transfer to an Odoo 18 custom module.
+//
+// To-Do list
+//
+//
