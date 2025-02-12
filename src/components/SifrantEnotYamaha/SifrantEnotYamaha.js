@@ -372,5 +372,6 @@ export default SifrantEnotYamaha;
 //
 // Create basic draft of a module *
 // Add categories and product logic *
-// Create a xml template
-//
+// Create an xml template *
+// Add a basic css design *
+// Fix filtering
