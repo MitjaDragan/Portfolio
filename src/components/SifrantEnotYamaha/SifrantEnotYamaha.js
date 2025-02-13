@@ -374,4 +374,9 @@ export default SifrantEnotYamaha;
 // Add categories and product logic *
 // Create an xml template *
 // Add a basic css design *
-// Fix filtering
+// Fix filtering *
+// 
+// Move JSON data to custom fields *
+// Fix variants not showing *
+// 
+// 
