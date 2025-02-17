@@ -379,4 +379,4 @@ export default SifrantEnotYamaha;
 // Move JSON data to custom fields *
 // Fix variants not showing *
 // 
-// 
+// Honestly just making this commit to say I made a python program for updating a bunch of pdf's at once. Saving about a weeks worth of time.
