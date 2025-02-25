@@ -69,31 +69,46 @@ const WorkDiary = ({ theme }) => {
 
   const calculateMonthAlignment = (firstDay) => {
     const firstDayDate = new Date(firstDay);
-    const startDate = new Date(2024, 0, 1);
-    const daysSinceStart = Math.floor((firstDayDate - startDate) / (1000 * 60 * 60 * 24));
-    return Math.floor(daysSinceStart / 7) + 1;
+    const startOfYear = new Date(firstDayDate.getFullYear(), 0, 1);
+    
+    // Find the index of the first full week that contains the month's first day
+    let weekIndex = contributions.weeks.findIndex(week =>
+      week.contributionDays.some(day => day.date === firstDay)
+    );
+  
+    // If not found, approximate based on days since start of year
+    if (weekIndex === -1) {
+      const dayOffset = Math.floor((firstDayDate - startOfYear) / (1000 * 60 * 60 * 24));
+      weekIndex = Math.floor(dayOffset / 7);
+    }
+  
+    return weekIndex + 1; // Align with the correct grid column
   };
-
+  
   const heatmap = renderHeatmap();
 
   return (
     <div className={`work-diary ${theme}-theme`}>
       <h2>Work Diary</h2>
       <div className="work-diary__heatmap">
-        <div className="work-diary__months">
-          {contributions.months.map((month, index) => {
-            if (month.name === 'Dec' && index === 0) return null;
-            return (
-              <div
-                key={index}
-                className="month-label"
-                style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
-              >
-                {month.name}
-              </div>
-            );
-          })}
-        </div>
+      <div className="work-diary__months">
+  {contributions.months.map((month, index) => {
+    if (index > 0 && month.name === contributions.months[index - 1].name) {
+      return null; // Prevent duplicate month labels
+    }
+
+    return (
+      <div
+        key={index}
+        className="month-label"
+        style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
+      >
+        {month.name}
+      </div>
+    );
+  })}
+</div>
+
         <div className="work-diary__weeks">
           {heatmap.map((week, weekIndex) => (
             <div key={weekIndex} className="work-diary__week">
