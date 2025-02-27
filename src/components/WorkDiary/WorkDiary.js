@@ -71,18 +71,16 @@ const WorkDiary = ({ theme }) => {
     const firstDayDate = new Date(firstDay);
     const startOfYear = new Date(firstDayDate.getFullYear(), 0, 1);
     
-    // Find the index of the first full week that contains the month's first day
     let weekIndex = contributions.weeks.findIndex(week =>
       week.contributionDays.some(day => day.date === firstDay)
     );
   
-    // If not found, approximate based on days since start of year
     if (weekIndex === -1) {
       const dayOffset = Math.floor((firstDayDate - startOfYear) / (1000 * 60 * 60 * 24));
       weekIndex = Math.floor(dayOffset / 7);
     }
   
-    return weekIndex + 1; // Align with the correct grid column
+    return weekIndex + 1;
   };
   
   const heatmap = renderHeatmap();
@@ -91,23 +89,17 @@ const WorkDiary = ({ theme }) => {
     <div className={`work-diary ${theme}-theme`}>
       <h2>Work Diary</h2>
       <div className="work-diary__heatmap">
-      <div className="work-diary__months">
-  {contributions.months.map((month, index) => {
-    if (index > 0 && month.name === contributions.months[index - 1].name) {
-      return null; // Prevent duplicate month labels
-    }
-
-    return (
-      <div
-        key={index}
-        className="month-label"
-        style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
-      >
-        {month.name}
-      </div>
-    );
-  })}
-</div>
+        <div className="work-diary__months">
+          {contributions.months.slice(1).map((month, index) => (
+            <div
+              key={index}
+              className="month-label"
+              style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
+            >
+              {month.name}
+            </div>
+          ))}
+        </div>
 
         <div className="work-diary__weeks">
           {heatmap.map((week, weekIndex) => (
