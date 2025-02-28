@@ -1,3 +1,4 @@
+/* Root variables for themes */
 :root {
   --text-color: #333;
   /* Light theme colors */
@@ -14,12 +15,13 @@ body.dark-theme {
   /* Rich Gold Tints for Dark Theme */
   --contribution-color-1: rgba(255, 233, 0, 0.25); /* Lightest gold */
   --contribution-color-2: rgba(255, 233, 0, 0.5); /* Light gold */
-  --contribution-color-3: rgba(255, 233, 0, 0.75);  /* Medium gold */
-  --contribution-color-4: rgba(255, 233, 0, 1);   /* Deep golden orange */
+  --contribution-color-3: rgba(255, 233, 0, 0.75); /* Medium gold */
+  --contribution-color-4: rgba(255, 233, 0, 1); /* Deep golden orange */
   --day-default-color: #2d333b;
   --background-color: #0d1117;
 }
 
+/* Work Diary Container */
 .work-diary {
   max-width: 70%;
   margin: 0 auto;
@@ -28,8 +30,12 @@ body.dark-theme {
   background-color: var(--background-color);
   color: var(--text-color);
   box-shadow: 1px 1px 4px 6px var(--contribution-color-1);
+  position: relative;
+  z-index: 1;
+  overflow: visible;
 }
 
+/* Heatmap Grid */
 .work-diary__heatmap {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -37,6 +43,7 @@ body.dark-theme {
   overflow: visible !important;
 }
 
+/* Months Label */
 .work-diary__months {
   display: grid;
   grid-template-columns: repeat(53, 1fr); /* Aligns with the weekly grid */
@@ -53,19 +60,24 @@ body.dark-theme {
   font-weight: bold;
 }
 
+/* Weeks Grid */
 .work-diary__weeks {
   display: grid;
   grid-template-columns: repeat(53, 1fr); /* Columns adapt to the available space */
   gap: 2px;
   justify-content: center;
+  position: relative;
+  z-index: 5;
 }
 
+/* Individual Week */
 .work-diary__week {
   display: grid;
   grid-template-rows: repeat(7, 1fr); /* Each row for a day */
   gap: 2px;
 }
 
+/* Individual Day */
 .day {
   width: 100%; /* Dynamically adjusts width */
   padding-top: 100%; /* Makes the cell a square */
@@ -73,28 +85,43 @@ body.dark-theme {
   border-radius: 2px;
   border: 1px solid #938c8f;
   position: relative; /* Required for tooltip positioning */
-}
-
-.day:hover {
-  transform: scale(1.2);
+  overflow: visible;
+  z-index: 10;
   transition: transform 0.2s, background-color 0.2s;
 }
 
-.day[title]:hover::after {
-  content: attr(title); /* Display tooltip content */
-  position: absolute; /* Attach to the .day element */
-  top: -40px; /* Position above the cell */
-  left: 50%; /* Center horizontally relative to the cell */
-  transform: translateX(-50%);
+/* Hover effect */
+.day:hover {
+  transform: scale(1.2);
+}
+
+/* Tooltip Styling */
+.tooltip {
+  position: fixed; /* Keep tooltip outside of grid to prevent clipping */
   padding: 8px 12px;
   font-size: 0.8rem;
-  background: var(--text-color); /* Tooltip background */
-  color: var(--background-color); /* Tooltip text color */
+  background: var(--text-color);
+  color: var(--background-color);
   border-radius: 4px;
   white-space: nowrap;
   pointer-events: none;
-  z-index: 9999; /* Ensure tooltip is on top */
+  z-index: 9999; /* Always on top */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  display: none; /* Initially hidden */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.tooltip.visible {
+  display: block;
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .work-diary {
+    max-width: 90%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -104,6 +131,10 @@ body.dark-theme {
 
   .day {
     border: none;
+  }
+
+  .tooltip {
+    font-size: 0.7rem;
   }
 }
 
@@ -118,5 +149,10 @@ body.dark-theme {
 
   .day {
     border: none;
+  }
+
+  .tooltip {
+    font-size: 0.6rem;
+    padding: 6px 8px;
   }
 }

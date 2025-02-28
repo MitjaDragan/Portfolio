@@ -6,6 +6,8 @@ const BACKEND_API = 'https://portfolio-mitja-dragans-projects.vercel.app/api/wor
 
 const WorkDiary = ({ theme }) => {
   const [contributions, setContributions] = useState(null);
+  const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
+
   const username = 'MitjaDragan';
 
   const fetchContributions = async () => {
@@ -70,20 +72,34 @@ const WorkDiary = ({ theme }) => {
   const calculateMonthAlignment = (firstDay) => {
     const firstDayDate = new Date(firstDay);
     const startOfYear = new Date(firstDayDate.getFullYear(), 0, 1);
-    
+
     let weekIndex = contributions.weeks.findIndex(week =>
       week.contributionDays.some(day => day.date === firstDay)
     );
-  
+
     if (weekIndex === -1) {
       const dayOffset = Math.floor((firstDayDate - startOfYear) / (1000 * 60 * 60 * 24));
       weekIndex = Math.floor(dayOffset / 7);
     }
-  
+
     return weekIndex + 1;
   };
-  
+
   const heatmap = renderHeatmap();
+
+  // Tooltip event handlers
+  const showTooltip = (event, text) => {
+    setTooltip({
+      visible: true,
+      text,
+      x: event.pageX + 10, // Offset to prevent overlap
+      y: event.pageY - 30,
+    });
+  };
+
+  const hideTooltip = () => {
+    setTooltip({ visible: false, text: '', x: 0, y: 0 });
+  };
 
   return (
     <div className={`work-diary ${theme}-theme`}>
@@ -113,13 +129,29 @@ const WorkDiary = ({ theme }) => {
                       ? `var(--contribution-color-${Math.min(day.contributionCount, 4)})`
                       : 'var(--day-default-color)',
                   }}
-                  title={day.date ? `${day.date}: ${day.contributionCount} contributions` : ''}
+                  onMouseEnter={(e) =>
+                    showTooltip(e, `${day.date}: ${day.contributionCount} contributions`)
+                  }
+                  onMouseMove={(e) =>
+                    setTooltip((prev) => ({ ...prev, x: e.pageX + 10, y: e.pageY - 30 }))
+                  }
+                  onMouseLeave={hideTooltip}
                 ></div>
               ))}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Global tooltip element */}
+      {tooltip.visible && (
+        <div
+          className="tooltip visible"
+          style={{ top: tooltip.y, left: tooltip.x }}
+        >
+          {tooltip.text}
+        </div>
+      )}
     </div>
   );
 };
