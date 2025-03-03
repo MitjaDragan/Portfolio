@@ -106,11 +106,11 @@ const WorkDiary = ({ theme }) => {
       <h2>Work Diary</h2>
       <div className="work-diary__heatmap">
         <div className="work-diary__months">
-          {contributions.months.slice(1).map((month, index) => (
+          {contributions.months.map((month, index) => (
             <div
               key={index}
               className="month-label"
-              style={{ gridColumnStart: calculateMonthAlignment(month.firstDay) }}
+              style={{ gridColumnStart: index === 0 ? 1 : calculateMonthAlignment(month.firstDay), }}
             >
               {month.name}
             </div>
